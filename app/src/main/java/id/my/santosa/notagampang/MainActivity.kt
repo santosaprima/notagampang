@@ -25,18 +25,18 @@ class MainActivity : ComponentActivity() {
     setContent {
       MaterialTheme {
         Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background,
+          modifier = Modifier.fillMaxSize(),
+          color = MaterialTheme.colorScheme.background,
         ) {
           val floatingTabsViewModel: FloatingTabsViewModel =
-                  viewModel(factory = FloatingTabsViewModelFactory(repository))
+            viewModel(factory = FloatingTabsViewModelFactory(repository))
 
           FloatingTabsScreen(
-                  viewModel = floatingTabsViewModel,
-                  onTabClick = { groupId ->
-                    // TODO: Navigate to Order Entry Screen for this groupId!
-                    // For example: navController.navigate("order_entry/$groupId")
-                  }
+            viewModel = floatingTabsViewModel,
+            onTabClick = { groupId ->
+              // TODO: Navigate to Order Entry Screen for this groupId!
+              // For example: navController.navigate("order_entry/$groupId")
+            },
           )
         }
       }

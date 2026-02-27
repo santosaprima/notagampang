@@ -18,14 +18,14 @@ interface CustomerGroupDao {
   fun getGroupsByStatus(status: String): Flow<List<CustomerGroupEntity>>
 
   @Query(
-          """
+    """
     SELECT cg.*, COALESCE(SUM(oi.priceAtOrder * oi.quantity), 0) as totalUnpaid 
     FROM customer_groups cg 
     LEFT JOIN order_items oi ON cg.id = oi.customerGroupId AND oi.status = 'Unpaid' 
     WHERE cg.status = :status 
     GROUP BY cg.id 
     ORDER BY cg.createdAt DESC
-  """
+  """,
   )
   fun getGroupsWithTotalUnpaidByStatus(status: String): Flow<List<CustomerGroupWithTotalDaoModel>>
 

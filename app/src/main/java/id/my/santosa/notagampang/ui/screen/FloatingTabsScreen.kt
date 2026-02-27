@@ -44,153 +44,186 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FloatingTabsScreen(
-        viewModel: FloatingTabsViewModel,
-        onTabClick: (Long) -> Unit,
+  viewModel: FloatingTabsViewModel,
+  onTabClick: (Long) -> Unit,
 ) {
-    val activeGroups by viewModel.activeGroups.collectAsState()
-    var showNewTabDialog by remember { mutableStateOf(false) }
+  val activeGroups by viewModel.activeGroups.collectAsState()
+  var showNewTabDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-            topBar = {
-                TopAppBar(
-                        title = { Text("Nota Aktif") },
-                        colors =
-                                TopAppBarDefaults.topAppBarColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                        titleContentColor =
-                                                MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                        onClick = { showNewTabDialog = true },
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                ) { Icon(Icons.Filled.Add, contentDescription = "Buka Nota Baru") }
-            }
-    ) { padding ->
-        Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-            if (activeGroups.isEmpty()) {
-                EmptyState(modifier = Modifier.weight(1f))
-            } else {
-                ActiveTabsGrid(
-                        groups = activeGroups,
-                        onTabClick = onTabClick,
-                        modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        if (showNewTabDialog) {
-            NewTabDialog(
-                    onDismiss = { showNewTabDialog = false },
-                    onConfirm = { alias ->
-                        viewModel.createNewTab(alias)
-                        showNewTabDialog = false
-                    }
-            )
-        }
+  Scaffold(
+    topBar = {
+      TopAppBar(
+        title = { Text("Nota Aktif") },
+        colors =
+          TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor =
+              MaterialTheme.colorScheme.onPrimaryContainer,
+          ),
+      )
+    },
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { showNewTabDialog = true },
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+      ) { Icon(Icons.Filled.Add, contentDescription = "Buka Nota Baru") }
+    },
+  ) { padding ->
+    Column(modifier = Modifier.fillMaxSize().padding(padding)) {
+      if (activeGroups.isEmpty()) {
+        EmptyState(modifier = Modifier.weight(1f))
+      } else {
+        ActiveTabsGrid(
+          groups = activeGroups,
+          onTabClick = onTabClick,
+          modifier = Modifier.weight(1f),
+        )
+      }
     }
+
+    if (showNewTabDialog) {
+      NewTabDialog(
+        onDismiss = { showNewTabDialog = false },
+        onConfirm = { alias ->
+          viewModel.createNewTab(alias)
+          showNewTabDialog = false
+        },
+      )
+    }
+  }
 }
 
 @Composable
 fun EmptyState(modifier: Modifier = Modifier) {
-    Column(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-                text = "Belum ada nota aktif",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-                text = "Tekan tombol + untuk membuka nota baru",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+  Column(
+    modifier = modifier.fillMaxSize(),
+    verticalArrangement = Arrangement.Center,
+    horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    Text(
+      text = "Belum ada nota aktif",
+      style = MaterialTheme.typography.titleLarge,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Text(
+      text = "Tekan tombol + untuk membuka nota baru",
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+  }
 }
 
 @Composable
 fun ActiveTabsGrid(
-        groups: List<CustomerGroupWithTotal>,
-        onTabClick: (Long) -> Unit,
-        modifier: Modifier = Modifier
+  groups: List<CustomerGroupWithTotal>,
+  onTabClick: (Long) -> Unit,
+  modifier: Modifier = Modifier,
 ) {
-    LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = modifier
-    ) {
-        items(groups, key = { it.group.id }) { groupWithTotal ->
-            TabCard(
-                    groupWithTotal = groupWithTotal,
-                    onClick = { onTabClick(groupWithTotal.group.id) }
-            )
-        }
+  LazyVerticalGrid(
+    columns = GridCells.Adaptive(minSize = 150.dp),
+    contentPadding = PaddingValues(16.dp),
+    verticalArrangement = Arrangement.spacedBy(16.dp),
+    horizontalArrangement = Arrangement.spacedBy(16.dp),
+    modifier = modifier,
+  ) {
+    items(groups, key = { it.group.id }) { groupWithTotal ->
+      TabCard(
+        groupWithTotal = groupWithTotal,
+        onClick = { onTabClick(groupWithTotal.group.id) },
+      )
     }
+  }
 }
 
 @Composable
-fun TabCard(groupWithTotal: CustomerGroupWithTotal, onClick: () -> Unit) {
-    val currencyFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-    currencyFormat.maximumFractionDigits = 0
+fun TabCard(
+  groupWithTotal: CustomerGroupWithTotal,
+  onClick: () -> Unit,
+) {
+  val currencyFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
+  currencyFormat.maximumFractionDigits = 0
 
-    Card(
-            modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors =
-                    CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
+  Card(
+    modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    colors =
+      CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+      ),
+  ) {
+    Column(
+      modifier = Modifier.padding(16.dp).fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+      Text(
+        text = groupWithTotal.group.alias,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
+        maxLines = 2,
+      )
+      Text(
+        text = currencyFormat.format(groupWithTotal.totalAmount),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
+        modifier = Modifier.padding(top = 8.dp),
+      )
+    }
+  }
+}
+
+@Composable
+fun NewTabDialog(
+  onDismiss: () -> Unit,
+  onConfirm: (String) -> Unit,
+) {
+  var alias by remember { mutableStateOf("") }
+
+  val suggestions = listOf("Bungkus", "Makan Sini", "Ojol", "Rombongan")
+
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text("Nota Baru") },
+    text = {
+      Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        OutlinedTextField(
+          value = alias,
+          onValueChange = { alias = it },
+          label = { Text("Nama/Ciri (Cth: Topi Merah)") },
+          singleLine = true,
+          modifier = Modifier.fillMaxWidth(),
+        )
+
+        Text("Pilihan Cepat:", style = MaterialTheme.typography.labelMedium)
+
+        LazyVerticalGrid(
+          columns = GridCells.Fixed(2),
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp),
+          modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(
-                    text = groupWithTotal.group.alias,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    maxLines = 2
-            )
-            Text(
-                    text = currencyFormat.format(groupWithTotal.totalAmount),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
-                    modifier = Modifier.padding(top = 8.dp)
-            )
+          items(suggestions) { suggestion ->
+            Button(
+              onClick = {
+                alias =
+                  if (alias.isEmpty()) {
+                    suggestion
+                  } else {
+                    "$alias $suggestion"
+                  }
+              },
+              contentPadding = PaddingValues(0.dp),
+            ) { Text(suggestion) }
+          }
         }
-    }
-}
-
-@Composable
-fun NewTabDialog(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
-    var alias by remember { mutableStateOf("") }
-
-    AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Nota Baru") },
-            text = {
-                OutlinedTextField(
-                        value = alias,
-                        onValueChange = { alias = it },
-                        label = { Text("Nama/Ciri Pelanggan (Cth: Topi Merah)") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                Button(onClick = { onConfirm(alias) }, enabled = alias.isNotBlank()) {
-                    Text("Buka Nota")
-                }
-            },
-            dismissButton = { TextButton(onClick = onDismiss) { Text("Batal") } }
-    )
+      }
+    },
+    confirmButton = {
+      Button(onClick = { onConfirm(alias) }, enabled = alias.isNotBlank()) {
+        Text("Buka Nota")
+      }
+    },
+    dismissButton = { TextButton(onClick = onDismiss) { Text("Batal") } },
+  )
 }
