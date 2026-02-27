@@ -151,7 +151,7 @@ fun TabCard(
   groupWithTotal: CustomerGroupWithTotal,
   onClick: () -> Unit,
 ) {
-  val currencyFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
+  val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
   currencyFormat.maximumFractionDigits = 0
 
   Card(
