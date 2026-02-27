@@ -12,12 +12,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -45,7 +47,9 @@ import java.util.Locale
 @Composable
 fun FloatingTabsScreen(
   viewModel: FloatingTabsViewModel,
+  suggestions: List<String>,
   onTabClick: (Long) -> Unit,
+  onSettingsClick: () -> Unit,
 ) {
   val activeGroups by viewModel.activeGroups.collectAsState()
   var showNewTabDialog by remember { mutableStateOf(false) }
@@ -54,6 +58,11 @@ fun FloatingTabsScreen(
     topBar = {
       TopAppBar(
         title = { Text("Nota Aktif") },
+        actions = {
+          IconButton(onClick = onSettingsClick) {
+            Icon(Icons.Filled.Settings, contentDescription = "Pengaturan")
+          }
+        },
         colors =
           TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -84,6 +93,7 @@ fun FloatingTabsScreen(
 
     if (showNewTabDialog) {
       NewTabBottomSheet(
+        suggestions = suggestions,
         onDismiss = { showNewTabDialog = false },
         onConfirm = { alias ->
           viewModel.createNewTab(alias)
@@ -176,27 +186,12 @@ fun TabCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTabBottomSheet(
+  suggestions: List<String>,
   onDismiss: () -> Unit,
   onConfirm: (String) -> Unit,
 ) {
   var alias by remember { mutableStateOf("") }
   val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-  val suggestions =
-    listOf(
-      "Bungkus",
-      "Makan Sini",
-      "Ojol",
-      "Gojek",
-      "Grab",
-      "ShopeeFood",
-      "Rombongan",
-      "Keluarga",
-      "Meeting",
-      "Pojok Kanan",
-      "Dekat Kasir",
-      "Luar",
-    )
 
   ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
     Column(

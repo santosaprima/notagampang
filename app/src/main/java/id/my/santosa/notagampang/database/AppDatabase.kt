@@ -8,10 +8,12 @@ import id.my.santosa.notagampang.database.dao.CustomerGroupDao
 import id.my.santosa.notagampang.database.dao.DebtRecordDao
 import id.my.santosa.notagampang.database.dao.MenuItemDao
 import id.my.santosa.notagampang.database.dao.OrderItemDao
+import id.my.santosa.notagampang.database.dao.SuggestionPresetDao
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.database.entity.OrderItemEntity
+import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
 
 @Database(
   entities =
@@ -20,8 +22,9 @@ import id.my.santosa.notagampang.database.entity.OrderItemEntity
       MenuItemEntity::class,
       OrderItemEntity::class,
       DebtRecordEntity::class,
+      SuggestionPresetEntity::class,
     ],
-  version = 1,
+  version = 2,
   exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,13 +36,15 @@ abstract class AppDatabase : RoomDatabase() {
 
   abstract fun debtRecordDao(): DebtRecordDao
 
+  abstract fun suggestionPresetDao(): SuggestionPresetDao
+
   companion object {
-    @Volatile private var INSTANCE: AppDatabase? = null
+    @Volatile private var instance: AppDatabase? = null
 
     fun getDatabase(context: Context): AppDatabase {
-      return INSTANCE
+      return instance
         ?: synchronized(this) {
-          val instance =
+          val newInstance =
             Room.databaseBuilder(
               context.applicationContext,
               AppDatabase::class.java,
@@ -47,8 +52,8 @@ abstract class AppDatabase : RoomDatabase() {
             )
               .fallbackToDestructiveMigration()
               .build()
-          INSTANCE = instance
-          instance
+          instance = newInstance
+          newInstance
         }
     }
   }
