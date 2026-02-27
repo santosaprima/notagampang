@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,12 +19,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -83,7 +83,7 @@ fun FloatingTabsScreen(
     }
 
     if (showNewTabDialog) {
-      NewTabDialog(
+      NewTabBottomSheet(
         onDismiss = { showNewTabDialog = false },
         onConfirm = { alias ->
           viewModel.createNewTab(alias)
@@ -173,57 +173,86 @@ fun TabCard(
   }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewTabDialog(
+fun NewTabBottomSheet(
   onDismiss: () -> Unit,
   onConfirm: (String) -> Unit,
 ) {
   var alias by remember { mutableStateOf("") }
+  val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-  val suggestions = listOf("Bungkus", "Makan Sini", "Ojol", "Rombongan")
+  val suggestions =
+    listOf(
+      "Bungkus",
+      "Makan Sini",
+      "Ojol",
+      "Gojek",
+      "Grab",
+      "ShopeeFood",
+      "Rombongan",
+      "Keluarga",
+      "Meeting",
+      "Pojok Kanan",
+      "Dekat Kasir",
+      "Luar",
+    )
 
-  AlertDialog(
-    onDismissRequest = onDismiss,
-    title = { Text("Nota Baru") },
-    text = {
-      Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        OutlinedTextField(
-          value = alias,
-          onValueChange = { alias = it },
-          label = { Text("Nama/Ciri (Cth: Topi Merah)") },
-          singleLine = true,
-          modifier = Modifier.fillMaxWidth(),
-        )
+  ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+    Column(
+      modifier =
+        Modifier.fillMaxWidth()
+          .padding(horizontal = 16.dp, vertical = 8.dp)
+          // Extra padding for system nav bar
+          .padding(bottom = 32.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+      Text(
+        text = "Buka Nota Baru",
+        style = MaterialTheme.typography.titleLarge,
+        fontWeight = FontWeight.Bold,
+      )
 
-        Text("Pilihan Cepat:", style = MaterialTheme.typography.labelMedium)
+      OutlinedTextField(
+        value = alias,
+        onValueChange = { alias = it },
+        label = { Text("Nama/Ciri Pelanggan (Cth: Topi Merah)") },
+        minLines = 2,
+        // Allow multiline but cap it
+        maxLines = 4,
+        modifier = Modifier.fillMaxWidth(),
+      )
 
-        LazyVerticalGrid(
-          columns = GridCells.Fixed(2),
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-          verticalArrangement = Arrangement.spacedBy(8.dp),
-          modifier = Modifier.fillMaxWidth(),
-        ) {
-          items(suggestions) { suggestion ->
-            Button(
-              onClick = {
-                alias =
-                  if (alias.isEmpty()) {
-                    suggestion
-                  } else {
-                    "$alias $suggestion"
-                  }
-              },
-              contentPadding = PaddingValues(0.dp),
-            ) { Text(suggestion) }
-          }
+      Text("Pilihan Cepat:", style = MaterialTheme.typography.labelMedium)
+
+      LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 100.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth(),
+      ) {
+        items(suggestions) { suggestion ->
+          Button(
+            onClick = {
+              alias =
+                if (alias.isEmpty()) {
+                  suggestion
+                } else if (alias.endsWith(" ")) {
+                  "$alias$suggestion"
+                } else {
+                  "$alias $suggestion"
+                }
+            },
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+          ) { Text(suggestion) }
         }
       }
-    },
-    confirmButton = {
-      Button(onClick = { onConfirm(alias) }, enabled = alias.isNotBlank()) {
-        Text("Buka Nota")
-      }
-    },
-    dismissButton = { TextButton(onClick = onDismiss) { Text("Batal") } },
-  )
+
+      Button(
+        onClick = { onConfirm(alias) },
+        enabled = alias.isNotBlank(),
+        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+      ) { Text("Buka Nota") }
+    }
+  }
 }
