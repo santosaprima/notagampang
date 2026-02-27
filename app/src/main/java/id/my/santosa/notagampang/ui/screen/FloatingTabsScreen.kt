@@ -2,6 +2,7 @@ package id.my.santosa.notagampang.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -50,17 +54,43 @@ fun FloatingTabsScreen(
   suggestions: List<String>,
   onTabClick: (Long) -> Unit,
   onSettingsClick: () -> Unit,
+  onMenuSettingsClick: () -> Unit,
 ) {
   val activeGroups by viewModel.activeGroups.collectAsState()
   var showNewTabDialog by remember { mutableStateOf(false) }
 
   Scaffold(
     topBar = {
+      var showMenu by remember { mutableStateOf(false) }
       TopAppBar(
         title = { Text("Nota Aktif") },
         actions = {
-          IconButton(onClick = onSettingsClick) {
-            Icon(Icons.Filled.Settings, contentDescription = "Pengaturan")
+          Box {
+            IconButton(onClick = { showMenu = !showMenu }) {
+              Icon(Icons.Filled.MoreVert, contentDescription = "Lainnya")
+            }
+            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+              DropdownMenuItem(
+                text = { Text("Atur Pilihan Cepat") },
+                onClick = {
+                  showMenu = false
+                  onSettingsClick()
+                },
+                leadingIcon = {
+                  Icon(Icons.Filled.Settings, contentDescription = null)
+                },
+              )
+              DropdownMenuItem(
+                text = { Text("Kelola Menu (Makanan/Minuman)") },
+                onClick = {
+                  showMenu = false
+                  onMenuSettingsClick()
+                },
+                leadingIcon = {
+                  Icon(Icons.Filled.Add, contentDescription = null)
+                },
+              )
+            }
           }
         },
         colors =

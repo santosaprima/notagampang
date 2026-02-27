@@ -9,9 +9,7 @@ class MenuItemRepository(private val menuItemDao: MenuItemDao) {
 
   suspend fun insertMenuItem(menuItem: MenuItemEntity) = menuItemDao.insertMenuItem(menuItem)
 
-  suspend fun getCount(): Int {
-    // We can add a simple count query to DAO later if needed,
-    // for now we'll just help MainActivity seed if list is empty.
-    return 0
-  }
+  suspend fun deleteMenuItem(menuItem: MenuItemEntity) = menuItemDao.deleteMenuItem(menuItem)
+
+  suspend fun getCount(): Int = menuItemDao.getCount()
 }

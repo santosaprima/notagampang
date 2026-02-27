@@ -19,10 +19,13 @@ import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import id.my.santosa.notagampang.ui.screen.FloatingTabsScreen
+import id.my.santosa.notagampang.ui.screen.MenuManagementScreen
 import id.my.santosa.notagampang.ui.screen.OrderEntryScreen
 import id.my.santosa.notagampang.ui.screen.SuggestionPresetsScreen
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModelFactory
+import id.my.santosa.notagampang.viewmodel.MenuManagementViewModel
+import id.my.santosa.notagampang.viewmodel.MenuManagementViewModelFactory
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModelFactory
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
@@ -34,6 +37,8 @@ sealed class Screen {
 
   object SuggestionPresets : Screen()
 
+  object MenuManagement : Screen()
+
   data class OrderEntry(val groupId: Long) : Screen()
 }
 
@@ -43,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
     val database = AppDatabase.getDatabase(this)
     val groupRepository =
-      CustomerGroupRepository(database.customerGroupDao(), database.orderItemDao())
+            CustomerGroupRepository(database.customerGroupDao(), database.orderItemDao())
     val presetDao = database.suggestionPresetDao()
     val menuRepository = MenuItemRepository(database.menuItemDao())
     val orderRepository = OrderRepository(database.orderItemDao())
@@ -51,16 +56,19 @@ class MainActivity : ComponentActivity() {
     setContent {
       MaterialTheme {
         Surface(
-          modifier = Modifier.fillMaxSize(),
-          color = MaterialTheme.colorScheme.background,
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background,
         ) {
           var currentScreen by remember { mutableStateOf<Screen>(Screen.FloatingTabs) }
 
           val floatingTabsViewModel: FloatingTabsViewModel =
-            viewModel(factory = FloatingTabsViewModelFactory(groupRepository))
+                  viewModel(factory = FloatingTabsViewModelFactory(groupRepository))
 
           val presetsViewModel: SuggestionPresetsViewModel =
-            viewModel(factory = SuggestionPresetsViewModelFactory(presetDao))
+                  viewModel(factory = SuggestionPresetsViewModelFactory(presetDao))
+
+          val menuManagementViewModel: MenuManagementViewModel =
+                  viewModel(factory = MenuManagementViewModelFactory(menuRepository))
 
           // Seed defaults if empty
           presetsViewModel.seedDefaults()
@@ -71,35 +79,42 @@ class MainActivity : ComponentActivity() {
           when (val screen = currentScreen) {
             is Screen.FloatingTabs -> {
               FloatingTabsScreen(
-                viewModel = floatingTabsViewModel,
-                suggestions = presets.map { it.label },
-                onTabClick = { groupId -> currentScreen = Screen.OrderEntry(groupId) },
-                onSettingsClick = { currentScreen = Screen.SuggestionPresets },
+                      viewModel = floatingTabsViewModel,
+                      suggestions = presets.map { it.label },
+                      onTabClick = { groupId -> currentScreen = Screen.OrderEntry(groupId) },
+                      onSettingsClick = { currentScreen = Screen.SuggestionPresets },
+                      onMenuSettingsClick = { currentScreen = Screen.MenuManagement },
               )
             }
             is Screen.SuggestionPresets -> {
               SuggestionPresetsScreen(
-                viewModel = presetsViewModel,
-                onBack = { currentScreen = Screen.FloatingTabs },
+                      viewModel = presetsViewModel,
+                      onBack = { currentScreen = Screen.FloatingTabs },
+              )
+            }
+            is Screen.MenuManagement -> {
+              MenuManagementScreen(
+                      viewModel = menuManagementViewModel,
+                      onBack = { currentScreen = Screen.FloatingTabs },
               )
             }
             is Screen.OrderEntry -> {
               val orderEntryViewModel: OrderEntryViewModel =
-                viewModel(
-                  key = "OrderEntry_${screen.groupId}",
-                  factory =
-                    OrderEntryViewModelFactory(
-                      screen.groupId,
-                      menuRepository,
-                      orderRepository,
-                    ),
-                )
+                      viewModel(
+                              key = "OrderEntry_${screen.groupId}",
+                              factory =
+                                      OrderEntryViewModelFactory(
+                                              screen.groupId,
+                                              menuRepository,
+                                              orderRepository,
+                                      ),
+                      )
               OrderEntryScreen(
-                viewModel = orderEntryViewModel,
-                onBack = { currentScreen = Screen.FloatingTabs },
-                onCheckout = {
-                  // TODO: Navigate to Checkout Screen
-                },
+                      viewModel = orderEntryViewModel,
+                      onBack = { currentScreen = Screen.FloatingTabs },
+                      onCheckout = {
+                        // TODO: Navigate to Checkout Screen
+                      },
               )
             }
           }
@@ -110,29 +125,31 @@ class MainActivity : ComponentActivity() {
 
   private fun seedDefaultMenu(repository: MenuItemRepository) {
     val scope = kotlinx.coroutines.MainScope()
-    scope.launch {
-      val menu =
-        listOf(
-          MenuItemEntity(name = "Es Teh", price = 3000, category = "Minuman"),
-          MenuItemEntity(name = "Teh Hangat", price = 3000, category = "Minuman"),
-          MenuItemEntity(name = "Es Jeruk", price = 4000, category = "Minuman"),
-          MenuItemEntity(name = "Kopi Hitam", price = 4000, category = "Minuman"),
-          MenuItemEntity(name = "Sate Usus", price = 2000, category = "Sate"),
-          MenuItemEntity(name = "Sate Kulit", price = 2000, category = "Sate"),
-          MenuItemEntity(name = "Sate Telur Puyuh", price = 3000, category = "Sate"),
-          MenuItemEntity(
-            name = "Nasi Kucing (Teri)",
-            price = 3000,
-            category = "Makanan",
-          ),
-          MenuItemEntity(
-            name = "Nasi Kucing (Sambal)",
-            price = 3000,
-            category = "Makanan",
-          ),
-          MenuItemEntity(name = "Gorengan", price = 1000, category = "Snack"),
-        )
-      menu.forEach { repository.insertMenuItem(it) }
+    scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+      if (repository.getCount() == 0) {
+        val menu =
+                listOf(
+                        MenuItemEntity(name = "Es Teh", price = 3000, category = "Minuman"),
+                        MenuItemEntity(name = "Teh Hangat", price = 3000, category = "Minuman"),
+                        MenuItemEntity(name = "Es Jeruk", price = 4000, category = "Minuman"),
+                        MenuItemEntity(name = "Kopi Hitam", price = 4000, category = "Minuman"),
+                        MenuItemEntity(name = "Sate Usus", price = 2000, category = "Sate"),
+                        MenuItemEntity(name = "Sate Kulit", price = 2000, category = "Sate"),
+                        MenuItemEntity(name = "Sate Telur Puyuh", price = 3000, category = "Sate"),
+                        MenuItemEntity(
+                                name = "Nasi Kucing (Teri)",
+                                price = 3000,
+                                category = "Makanan",
+                        ),
+                        MenuItemEntity(
+                                name = "Nasi Kucing (Sambal)",
+                                price = 3000,
+                                category = "Makanan",
+                        ),
+                        MenuItemEntity(name = "Gorengan", price = 1000, category = "Snack"),
+                )
+        menu.forEach { repository.insertMenuItem(it) }
+      }
     }
   }
 }
