@@ -21,6 +21,8 @@ class CustomerGroupRepository(
     }
   }
 
+  suspend fun getGroupById(groupId: Long): CustomerGroupEntity? = customerGroupDao.getGroupById(groupId)
+
   suspend fun createNewGroup(alias: String): Long {
     val newGroup =
       CustomerGroupEntity(
@@ -29,5 +31,9 @@ class CustomerGroupRepository(
         status = "Active",
       )
     return customerGroupDao.insertGroup(newGroup)
+  }
+
+  suspend fun updateGroup(group: CustomerGroupEntity) {
+    customerGroupDao.updateGroup(group)
   }
 }

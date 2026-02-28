@@ -14,6 +14,9 @@ interface CustomerGroupDao {
   @Query("SELECT * FROM customer_groups ORDER BY createdAt DESC")
   fun getAllGroups(): Flow<List<CustomerGroupEntity>>
 
+  @Query("SELECT * FROM customer_groups WHERE id = :groupId LIMIT 1")
+  suspend fun getGroupById(groupId: Long): CustomerGroupEntity?
+
   @Query("SELECT * FROM customer_groups WHERE status = :status ORDER BY createdAt DESC")
   fun getGroupsByStatus(status: String): Flow<List<CustomerGroupEntity>>
 

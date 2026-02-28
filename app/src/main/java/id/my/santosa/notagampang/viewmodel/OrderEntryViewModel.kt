@@ -25,13 +25,13 @@ class OrderEntryViewModel(
   private val menuRepository: MenuItemRepository,
   private val orderRepository: OrderRepository,
 ) : ViewModel() {
-  private val _selectedCategory = MutableStateFlow("Semua")
+  private val selectedCategoryState = MutableStateFlow("Semua")
 
   val uiState: StateFlow<OrderEntryUiState> =
     combine(
       menuRepository.getAllMenuItems(),
       orderRepository.getOrdersForGroup(groupId),
-      _selectedCategory,
+      selectedCategoryState,
     ) { menu, orders, category ->
       val filteredMenu =
         if (category == "Semua") {
@@ -52,7 +52,7 @@ class OrderEntryViewModel(
       )
 
   fun setCategory(category: String) {
-    _selectedCategory.value = category
+    selectedCategoryState.value = category
   }
 
   fun addItemToOrder(menuItem: MenuItemEntity) {
@@ -64,11 +64,11 @@ class OrderEntryViewModel(
         }
 
       if (existing != null) {
-        orderRepository.addOrUpdateOrderItem(
+        orderRepository.updateOrderItem(
           existing.copy(quantity = existing.quantity + 1),
         )
       } else {
-        orderRepository.addOrUpdateOrderItem(
+        orderRepository.insertOrderItem(
           OrderItemEntity(
             customerGroupId = groupId,
             menuItemId = menuItem.id,
@@ -88,7 +88,7 @@ class OrderEntryViewModel(
     price: Int,
   ) {
     viewModelScope.launch {
-      orderRepository.addOrUpdateOrderItem(
+      orderRepository.insertOrderItem(
         OrderItemEntity(
           customerGroupId = groupId,
           menuItemId = null,

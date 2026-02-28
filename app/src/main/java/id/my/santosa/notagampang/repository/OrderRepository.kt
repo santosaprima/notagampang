@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 class OrderRepository(private val orderItemDao: OrderItemDao) {
   fun getOrdersForGroup(groupId: Long): Flow<List<OrderItemEntity>> = orderItemDao.getOrderItemsForGroup(groupId)
 
-  suspend fun addOrUpdateOrderItem(orderItem: OrderItemEntity) {
-    // Basic logic: if item with same group and menuItemId exists (and is Unpaid), increment it.
-    // For now we'll just insert/replace as per simple MVP.
-    orderItemDao.insertOrderItem(orderItem)
-  }
+  suspend fun insertOrderItem(orderItem: OrderItemEntity) = orderItemDao.insertOrderItem(orderItem)
+
+  suspend fun updateOrderItems(orderItems: List<OrderItemEntity>) = orderItemDao.updateOrderItems(orderItems)
+
+  suspend fun updateOrderItem(orderItem: OrderItemEntity) = orderItemDao.updateOrderItem(orderItem)
 
   suspend fun deleteOrder(orderItem: OrderItemEntity) = orderItemDao.deleteOrderItem(orderItem)
 }
