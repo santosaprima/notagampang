@@ -89,6 +89,24 @@ class OrderEntryViewModel(
     }
   }
 
+  fun removeItemFromOrder(menuItemId: Long) {
+    viewModelScope.launch {
+      val existing =
+        uiState.value.currentOrders.find {
+          it.menuItemId == menuItemId && it.status == "Unpaid"
+        }
+      if (existing != null) {
+        if (existing.quantity > 1) {
+          orderRepository.updateOrderItem(
+            existing.copy(quantity = existing.quantity - 1),
+          )
+        } else {
+          orderRepository.deleteOrder(existing)
+        }
+      }
+    }
+  }
+
   fun addCustomItem(
     name: String,
     price: Int,

@@ -1,426 +1,138 @@
 package id.my.santosa.notagampang.ui.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.MergeType
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
-import java.text.NumberFormat
-import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderEntryScreen(
-  viewModel: OrderEntryViewModel,
-  onBack: () -> Unit,
-  onCheckout: () -> Unit,
-  onDeleteGroup: () -> Unit,
+        viewModel: OrderEntryViewModel,
+        onBack: () -> Unit = {},
+        onCheckout: () -> Unit
 ) {
-  val uiState by viewModel.uiState.collectAsState()
-  var showCustomItemDialog by remember { mutableStateOf(false) }
-  var showDeleteDialog by remember { mutableStateOf(false) }
-  var showMergeDialog by remember { mutableStateOf(false) }
-  var showMenu by remember { mutableStateOf(false) }
+        val uiState by viewModel.uiState.collectAsState()
 
-  val categories = listOf("Semua", "Minuman", "Makanan", "Sate", "Snack")
-  val totalItems = uiState.currentOrders.sumOf { it.quantity }
-  val totalPrice = uiState.currentOrders.sumOf { it.priceAtOrder * it.quantity }
+        Box(modifier = Modifier.fillMaxSize()) {
+                Column(modifier = Modifier.fillMaxSize().imePadding()) {
+                        Text(
+                                "Daftar Menu",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(16.dp)
+                        )
 
-  val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
-  currencyFormat.maximumFractionDigits = 0
+                        LazyColumn(
+                                modifier = Modifier.weight(1f),
+                                contentPadding =
+                                        PaddingValues(
+                                                bottom = 80.dp
+                                        ) // Provide space for bottom bar
+                        ) {
+                                items(uiState.menuItems) { menu ->
+                                        val order =
+                                                uiState.currentOrders.find {
+                                                        it.menuItemId == menu.id
+                                                }
+                                        val quantity = order?.quantity ?: 0
 
-  Scaffold(
-    topBar = {
-      TopAppBar(
-        title = { Text("Pesan Menu") },
-        navigationIcon = {
-          IconButton(onClick = onBack) {
-            Icon(
-              Icons.AutoMirrored.Filled.ArrowBack,
-              contentDescription = "Kembali",
-            )
-          }
-        },
-        actions = {
-          Box {
-            IconButton(onClick = { showMenu = !showMenu }) {
-              Icon(Icons.Filled.MoreVert, contentDescription = "Lainnya")
-            }
-            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-              DropdownMenuItem(
-                text = { Text("Gabung Nota (Merge)") },
-                onClick = {
-                  showMenu = false
-                  showMergeDialog = true
-                },
-                leadingIcon = {
-                  Icon(Icons.Filled.MergeType, contentDescription = null)
-                },
-              )
-              DropdownMenuItem(
-                text = { Text("Hapus Nota") },
-                onClick = {
-                  showMenu = false
-                  showDeleteDialog = true
-                },
-                leadingIcon = {
-                  Icon(Icons.Filled.Delete, contentDescription = null)
-                },
-              )
-            }
-          }
-          BadgedBox(
-            badge = {
-              if (totalItems > 0) {
-                Badge { Text(totalItems.toString()) }
-              }
-            },
-          ) {
-            IconButton(onClick = onCheckout) {
-              Icon(
-                Icons.Filled.ShoppingCart,
-                contentDescription = "Keranjang",
-              )
-            }
-          }
-        },
-        colors =
-          TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor =
-              MaterialTheme.colorScheme.onPrimaryContainer,
-          ),
-      )
-    },
-  ) { padding ->
-    Column(modifier = Modifier.fillMaxSize().padding(padding)) {
-      // Category Selector
-      LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.padding(vertical = 8.dp),
-      ) {
-        items(categories) { category ->
-          FilterChip(
-            selected = uiState.selectedCategory == category,
-            onClick = { viewModel.setCategory(category) },
-            label = { Text(category) },
-          )
-        }
-      }
-
-      // Menu Grid
-      LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 120.dp),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.weight(1f),
-      ) {
-        items(uiState.menuItems, key = { it.id }) { menuItem ->
-          MenuItemCard(
-            menuItem = menuItem,
-            onClick = { viewModel.addItemToOrder(menuItem) },
-          )
-        }
-
-        // Custom Item Button
-        item { CustomItemCard(onClick = { showCustomItemDialog = true }) }
-      }
-
-      if (totalItems > 0) {
-        Surface(
-          modifier = Modifier.fillMaxWidth(),
-          shadowElevation = 8.dp,
-          color = MaterialTheme.colorScheme.surface,
-        ) {
-          Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-          ) {
-            Column {
-              Text(
-                "Total Sementara",
-                style = MaterialTheme.typography.labelMedium,
-              )
-              Text(
-                text = currencyFormat.format(totalPrice),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-              )
-            }
-            Button(onClick = onCheckout) { Text("Bayar (Checkout)") }
-          }
-        }
-      }
-    }
-
-    if (showCustomItemDialog) {
-      CustomItemDialog(
-        onDismiss = { showCustomItemDialog = false },
-        onConfirm = { name, price ->
-          viewModel.addCustomItem(name, price)
-          showCustomItemDialog = false
-        },
-      )
-    }
-
-    if (showDeleteDialog) {
-      AlertDialog(
-        onDismissRequest = { showDeleteDialog = false },
-        title = { Text("Hapus Nota") },
-        text = {
-          Text(
-            "Apakah Anda yakin ingin menghapus nota ini? Semua pesanan di dalamnya akan dihapus.",
-          )
-        },
-        confirmButton = {
-          Button(
-            onClick = {
-              showDeleteDialog = false
-              onDeleteGroup()
-            },
-            colors =
-              androidx.compose.material3.ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-              ),
-          ) { Text("Ya, Hapus") }
-        },
-        dismissButton = {
-          TextButton(onClick = { showDeleteDialog = false }) { Text("Batal") }
-        },
-      )
-    }
-
-    if (showMergeDialog) {
-      AlertDialog(
-        onDismissRequest = { showMergeDialog = false },
-        title = { Text("Gabung Nota") },
-        text = {
-          Column {
-            Text("Pilih nota tujuan untuk menggabungkan semua pesanan ini:")
-            if (uiState.otherActiveGroups.isEmpty()) {
-              Text(
-                "Tidak ada nota aktif lain untuk digabungkan.",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 8.dp),
-              )
-            } else {
-              uiState.otherActiveGroups.forEach { other ->
-                Card(
-                  modifier =
-                    Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable {
-                      viewModel.mergeWithOtherGroup(other.id)
-                      showMergeDialog = false
-                      onBack()
-                    },
-                  colors =
-                    CardDefaults.cardColors(
-                      containerColor =
-                        MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                ) {
-                  Text(
-                    other.alias,
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = FontWeight.SemiBold,
-                  )
+                                        MenuItemRow(
+                                                name = menu.name,
+                                                price = menu.price,
+                                                quantity = quantity,
+                                                onIncrease = { viewModel.addItemToOrder(menu) },
+                                                onDecrease = {
+                                                        viewModel.removeItemFromOrder(menu.id)
+                                                }
+                                        )
+                                }
+                        }
                 }
-              }
-            }
-          }
-        },
-        confirmButton = {},
-        dismissButton = {
-          TextButton(onClick = { showMergeDialog = false }) { Text("Kembali") }
-        },
-      )
-    }
-  }
+
+                // Custom Bottom Bar for Checkout
+                val total = uiState.currentOrders.sumOf { it.priceAtOrder * it.quantity }
+                Surface(
+                        tonalElevation = 8.dp,
+                        modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.secondaryContainer
+                ) {
+                        Row(
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                        ) {
+                                Column {
+                                        Text("Total", style = MaterialTheme.typography.labelMedium)
+                                        Text(
+                                                "Rp $total",
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.Bold
+                                        )
+                                }
+                                Button(
+                                        onClick = onCheckout,
+                                        enabled = uiState.currentOrders.isNotEmpty()
+                                ) { Text("Checkout") }
+                        }
+                }
+        }
 }
 
 @Composable
-fun MenuItemCard(
-  menuItem: MenuItemEntity,
-  onClick: () -> Unit,
+fun MenuItemRow(
+        name: String,
+        price: Int,
+        quantity: Int,
+        onIncrease: () -> Unit,
+        onDecrease: () -> Unit
 ) {
-  val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
-  currencyFormat.maximumFractionDigits = 0
+        Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)) {
+                Row(
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                        name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Medium
+                                )
+                                Text("Rp $price", style = MaterialTheme.typography.bodySmall)
+                        }
 
-  Card(
-    modifier = Modifier.fillMaxWidth().height(130.dp).clickable(onClick = onClick),
-    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    colors =
-      CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-      ),
-  ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-      Column(
-        modifier = Modifier.padding(12.dp).fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-        Text(
-          text = menuItem.name,
-          style = MaterialTheme.typography.titleSmall,
-          fontWeight = FontWeight.Bold,
-          maxLines = 2,
-          modifier = Modifier.fillMaxWidth(),
-        )
-        Text(
-          text = currencyFormat.format(menuItem.price),
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.primary,
-        )
-      }
-
-      // Add icon overlay
-      Box(
-        modifier =
-          Modifier.align(Alignment.BottomEnd)
-            .padding(8.dp)
-            .size(24.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape),
-        contentAlignment = Alignment.Center,
-      ) {
-        Icon(
-          Icons.Filled.Add,
-          contentDescription = null,
-          tint = MaterialTheme.colorScheme.onPrimary,
-          modifier = Modifier.size(16.dp),
-        )
-      }
-    }
-  }
-}
-
-@Composable
-fun CustomItemCard(onClick: () -> Unit) {
-  Card(
-    modifier = Modifier.fillMaxWidth().height(130.dp).clickable(onClick = onClick),
-    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-    colors =
-      CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-      ),
-  ) {
-    Column(
-      modifier = Modifier.padding(12.dp).fillMaxSize(),
-      verticalArrangement = Arrangement.Center,
-      horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Icon(
-        Icons.Filled.Add,
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSecondaryContainer,
-      )
-      Text(
-        text = "Item Bebas",
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onSecondaryContainer,
-      )
-    }
-  }
-}
-
-@Composable
-fun CustomItemDialog(
-  onDismiss: () -> Unit,
-  onConfirm: (String, Int) -> Unit,
-) {
-  var name by remember { mutableStateOf("") }
-  var priceStr by remember { mutableStateOf("") }
-
-  AlertDialog(
-    onDismissRequest = onDismiss,
-    title = { Text("Item Tambahan") },
-    text = {
-      Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
-          value = name,
-          onValueChange = { name = it },
-          label = { Text("Nama Item (Cth: Risol Mayo)") },
-          singleLine = true,
-          modifier = Modifier.fillMaxWidth(),
-        )
-        OutlinedTextField(
-          value = priceStr,
-          onValueChange = { if (it.all { char -> char.isDigit() }) priceStr = it },
-          label = { Text("Harga (Rp)") },
-          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-          singleLine = true,
-          modifier = Modifier.fillMaxWidth(),
-        )
-      }
-    },
-    confirmButton = {
-      Button(
-        onClick = {
-          val price = priceStr.toIntOrNull() ?: 0
-          onConfirm(name, price)
-        },
-        enabled = name.isNotBlank() && priceStr.isNotBlank(),
-      ) { Text("Tambah") }
-    },
-    dismissButton = { TextButton(onClick = onDismiss) { Text("Batal") } },
-  )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = onDecrease, enabled = quantity > 0) {
+                                        Icon(
+                                                imageVector = Icons.Default.RemoveCircleOutline,
+                                                contentDescription = "Kurangi",
+                                                tint =
+                                                        if (quantity > 0)
+                                                                MaterialTheme.colorScheme.primary
+                                                        else MaterialTheme.colorScheme.outline
+                                        )
+                                }
+                                Text(
+                                        quantity.toString(),
+                                        modifier = Modifier.padding(horizontal = 8.dp),
+                                        style = MaterialTheme.typography.titleMedium
+                                )
+                                IconButton(onClick = onIncrease) {
+                                        Icon(
+                                                Icons.Default.Add,
+                                                contentDescription = "Tambah",
+                                                tint = MaterialTheme.colorScheme.primary
+                                        )
+                                }
+                        }
+                }
+        }
 }

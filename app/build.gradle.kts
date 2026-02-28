@@ -1,8 +1,3 @@
-
-
-
-
-
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
@@ -22,17 +17,15 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    vectorDrawables {
-      useSupportLibrary = true
-    }
+    vectorDrawables { useSupportLibrary = true }
   }
 
   buildTypes {
     release {
       isMinifyEnabled = true
       proguardFiles(
-        getDefaultProguardFile("proguard-android-optimize.txt"),
-        "proguard-rules.pro",
+              getDefaultProguardFile("proguard-android-optimize.txt"),
+              "proguard-rules.pro",
       )
     }
   }
@@ -40,20 +33,10 @@ android {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
   }
-  kotlinOptions {
-    jvmTarget = "17"
-  }
-  buildFeatures {
-    compose = true
-  }
-  composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.8"
-  }
-  packaging {
-    resources {
-      excludes += "/META-INF/{AL2.0,LGPL2.1}"
-    }
-  }
+  kotlinOptions { jvmTarget = "17" }
+  buildFeatures { compose = true }
+  composeOptions { kotlinCompilerExtensionVersion = "1.5.8" }
+  packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
 }
 
 dependencies {
@@ -65,8 +48,11 @@ dependencies {
   implementation("androidx.compose.ui:ui")
   implementation("androidx.compose.ui:ui-graphics")
   implementation("androidx.compose.ui:ui-tooling-preview")
-  implementation("androidx.datastore:datastore-preferences:1.0.0")
   implementation("androidx.compose.material3:material3")
+  implementation("androidx.compose.material:material-icons-extended")
+
+  // DataStore
+  implementation("androidx.datastore:datastore-preferences:1.0.0")
 
   // Room
   val roomVersion = "2.6.1"

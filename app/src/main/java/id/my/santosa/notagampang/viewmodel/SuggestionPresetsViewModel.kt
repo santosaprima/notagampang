@@ -38,16 +38,19 @@ class SuggestionPresetsViewModel(
           listOf(
             "Bungkus",
             "Makan Sini",
+            "Bungkus",
+            "Topi",
+            "Jaket",
+            "Helm",
+            "Kacamata",
+            "Peci",
             "Ojol",
             "Gojek",
             "Grab",
             "ShopeeFood",
             "Rombongan",
-            "Keluarga",
-            "Meeting",
-            "Pojok Kanan",
-            "Dekat Kasir",
-            "Luar",
+            "Pojok",
+            "Lesehan",
           )
         defaults.forEachIndexed { index, label ->
           dao.insertPreset(SuggestionPresetEntity(label = label, sortOrder = index))
