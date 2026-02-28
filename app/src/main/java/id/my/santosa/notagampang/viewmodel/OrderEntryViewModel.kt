@@ -74,7 +74,7 @@ class OrderEntryViewModel(
           OrderItemEntity(
             customerGroupId = groupId,
             menuItemId = menuItem.id,
-            customName = null,
+            customName = menuItem.name,
             priceAtOrder = menuItem.price,
             quantity = 1,
             timestamp = System.currentTimeMillis(),
@@ -90,17 +90,31 @@ class OrderEntryViewModel(
     price: Int,
   ) {
     viewModelScope.launch {
-      orderRepository.insertOrderItem(
-        OrderItemEntity(
-          customerGroupId = groupId,
-          menuItemId = null,
-          customName = name,
-          priceAtOrder = price,
-          quantity = 1,
-          timestamp = System.currentTimeMillis(),
-          status = "Unpaid",
-        ),
-      )
+      val existing =
+        uiState.value.currentOrders.find {
+          it.menuItemId == null &&
+            it.customName == name &&
+            it.priceAtOrder == price &&
+            it.status == "Unpaid"
+        }
+
+      if (existing != null) {
+        orderRepository.updateOrderItem(
+          existing.copy(quantity = existing.quantity + 1),
+        )
+      } else {
+        orderRepository.insertOrderItem(
+          OrderItemEntity(
+            customerGroupId = groupId,
+            menuItemId = null,
+            customName = name,
+            priceAtOrder = price,
+            quantity = 1,
+            timestamp = System.currentTimeMillis(),
+            status = "Unpaid",
+          ),
+        )
+      }
     }
   }
 
