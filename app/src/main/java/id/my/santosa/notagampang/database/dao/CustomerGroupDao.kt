@@ -38,4 +38,7 @@ interface CustomerGroupDao {
   @Update suspend fun updateGroup(group: CustomerGroupEntity)
 
   @Delete suspend fun deleteGroup(group: CustomerGroupEntity)
+
+  @Query("DELETE FROM customer_groups WHERE status = 'Paid'")
+  suspend fun deletePaidGroups()
 }

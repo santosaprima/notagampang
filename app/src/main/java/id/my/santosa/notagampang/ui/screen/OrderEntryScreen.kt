@@ -23,6 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MergeType
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
@@ -30,6 +32,8 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -69,6 +73,8 @@ fun OrderEntryScreen(
   val uiState by viewModel.uiState.collectAsState()
   var showCustomItemDialog by remember { mutableStateOf(false) }
   var showDeleteDialog by remember { mutableStateOf(false) }
+  var showMergeDialog by remember { mutableStateOf(false) }
+  var showMenu by remember { mutableStateOf(false) }
 
   val categories = listOf("Semua", "Minuman", "Makanan", "Sate", "Snack")
   val totalItems = uiState.currentOrders.sumOf { it.quantity }
@@ -90,11 +96,32 @@ fun OrderEntryScreen(
           }
         },
         actions = {
-          IconButton(onClick = { showDeleteDialog = true }) {
-            Icon(
-              Icons.Filled.Delete,
-              contentDescription = "Hapus Nota",
-            )
+          Box {
+            IconButton(onClick = { showMenu = !showMenu }) {
+              Icon(Icons.Filled.MoreVert, contentDescription = "Lainnya")
+            }
+            DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+              DropdownMenuItem(
+                text = { Text("Gabung Nota (Merge)") },
+                onClick = {
+                  showMenu = false
+                  showMergeDialog = true
+                },
+                leadingIcon = {
+                  Icon(Icons.Filled.MergeType, contentDescription = null)
+                },
+              )
+              DropdownMenuItem(
+                text = { Text("Hapus Nota") },
+                onClick = {
+                  showMenu = false
+                  showDeleteDialog = true
+                },
+                leadingIcon = {
+                  Icon(Icons.Filled.Delete, contentDescription = null)
+                },
+              )
+            }
           }
           BadgedBox(
             badge = {
@@ -209,10 +236,60 @@ fun OrderEntryScreen(
               showDeleteDialog = false
               onDeleteGroup()
             },
+            colors =
+              androidx.compose.material3.ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+              ),
           ) { Text("Ya, Hapus") }
         },
         dismissButton = {
           TextButton(onClick = { showDeleteDialog = false }) { Text("Batal") }
+        },
+      )
+    }
+
+    if (showMergeDialog) {
+      AlertDialog(
+        onDismissRequest = { showMergeDialog = false },
+        title = { Text("Gabung Nota") },
+        text = {
+          Column {
+            Text("Pilih nota tujuan untuk menggabungkan semua pesanan ini:")
+            if (uiState.otherActiveGroups.isEmpty()) {
+              Text(
+                "Tidak ada nota aktif lain untuk digabungkan.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp),
+              )
+            } else {
+              uiState.otherActiveGroups.forEach { other ->
+                Card(
+                  modifier =
+                    Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable {
+                      viewModel.mergeWithOtherGroup(other.id)
+                      showMergeDialog = false
+                      onBack()
+                    },
+                  colors =
+                    CardDefaults.cardColors(
+                      containerColor =
+                        MaterialTheme.colorScheme.surfaceVariant,
+                    ),
+                ) {
+                  Text(
+                    other.alias,
+                    modifier = Modifier.padding(16.dp),
+                    fontWeight = FontWeight.SemiBold,
+                  )
+                }
+              }
+            }
+          }
+        },
+        confirmButton = {},
+        dismissButton = {
+          TextButton(onClick = { showMergeDialog = false }) { Text("Kembali") }
         },
       )
     }

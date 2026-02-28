@@ -43,4 +43,25 @@ class CustomerGroupRepository(
       customerGroupDao.deleteGroup(group)
     }
   }
+
+  suspend fun deletePaidGroups() = customerGroupDao.deletePaidGroups()
+
+  suspend fun mergeGroups(
+    sourceId: Long,
+    targetId: Long,
+  ) {
+    // 1. Transfer all items from source to target
+    orderItemDao.transferItems(sourceId, targetId)
+    // 2. Delete the source group
+    val sourceGroup = customerGroupDao.getGroupById(sourceId)
+    if (sourceGroup != null) {
+      customerGroupDao.deleteGroup(sourceGroup)
+    }
+  }
+
+  fun getOtherActiveGroups(excludeGroupId: Long): Flow<List<CustomerGroupEntity>> {
+    return customerGroupDao.getGroupsByStatus("Active").map { groups ->
+      groups.filter { it.id != excludeGroupId }
+    }
+  }
 }

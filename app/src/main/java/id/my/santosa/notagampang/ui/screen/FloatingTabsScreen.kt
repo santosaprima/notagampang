@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -56,6 +57,7 @@ fun FloatingTabsScreen(
   onKasbonClick: () -> Unit,
   onSettingsClick: () -> Unit,
   onMenuSettingsClick: () -> Unit,
+  onShiftManagementClick: () -> Unit,
 ) {
   val activeGroups by viewModel.activeGroups.collectAsState()
   var showNewTabDialog by remember { mutableStateOf(false) }
@@ -96,6 +98,16 @@ fun FloatingTabsScreen(
                 },
                 leadingIcon = {
                   Icon(Icons.Filled.Add, contentDescription = null)
+                },
+              )
+              DropdownMenuItem(
+                text = { Text("Tutup Kasir (Shift)") },
+                onClick = {
+                  showMenu = false
+                  onShiftManagementClick()
+                },
+                leadingIcon = {
+                  Icon(Icons.Filled.Refresh, contentDescription = null)
                 },
               )
             }

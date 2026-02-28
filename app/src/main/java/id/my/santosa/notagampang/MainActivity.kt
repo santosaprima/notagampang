@@ -29,6 +29,7 @@ import id.my.santosa.notagampang.ui.screen.FloatingTabsScreen
 import id.my.santosa.notagampang.ui.screen.KasbonScreen
 import id.my.santosa.notagampang.ui.screen.MenuManagementScreen
 import id.my.santosa.notagampang.ui.screen.OrderEntryScreen
+import id.my.santosa.notagampang.ui.screen.ShiftManagementScreen
 import id.my.santosa.notagampang.ui.screen.SuggestionPresetsScreen
 import id.my.santosa.notagampang.viewmodel.CheckoutViewModel
 import id.my.santosa.notagampang.viewmodel.CheckoutViewModelFactory
@@ -40,6 +41,8 @@ import id.my.santosa.notagampang.viewmodel.MenuManagementViewModel
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModelFactory
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModelFactory
+import id.my.santosa.notagampang.viewmodel.ShiftManagementViewModel
+import id.my.santosa.notagampang.viewmodel.ShiftManagementViewModelFactory
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModelFactory
 import kotlinx.coroutines.flow.map
@@ -57,6 +60,8 @@ sealed class Screen {
   data class Checkout(val groupId: Long) : Screen()
 
   object Kasbon : Screen()
+
+  object ShiftManagement : Screen()
 }
 
 val Context.dataStore by preferencesDataStore(name = "settings")
@@ -146,6 +151,7 @@ class MainActivity : ComponentActivity() {
                 onKasbonClick = { currentScreen = Screen.Kasbon },
                 onSettingsClick = { currentScreen = Screen.SuggestionPresets },
                 onMenuSettingsClick = { currentScreen = Screen.MenuManagement },
+                onShiftManagementClick = { currentScreen = Screen.ShiftManagement },
               )
             }
             is Screen.SuggestionPresets -> {
@@ -215,6 +221,21 @@ class MainActivity : ComponentActivity() {
                 viewModel(factory = KasbonViewModelFactory(debtRecordRepository))
               KasbonScreen(
                 viewModel = kasbonViewModel,
+                onBack = { currentScreen = Screen.FloatingTabs },
+              )
+            }
+            is Screen.ShiftManagement -> {
+              val shiftManagementViewModel: ShiftManagementViewModel =
+                viewModel(
+                  factory =
+                    ShiftManagementViewModelFactory(
+                      orderRepository,
+                      groupRepository,
+                      debtRecordRepository,
+                    ),
+                )
+              ShiftManagementScreen(
+                viewModel = shiftManagementViewModel,
                 onBack = { currentScreen = Screen.FloatingTabs },
               )
             }

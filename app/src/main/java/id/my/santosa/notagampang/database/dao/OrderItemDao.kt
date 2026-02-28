@@ -31,4 +31,15 @@ interface OrderItemDao {
 
   @Query("DELETE FROM order_items WHERE customerGroupId = :groupId")
   suspend fun deleteOrderItemsForGroup(groupId: Long)
+
+  @Query("SELECT COALESCE(SUM(priceAtOrder * quantity), 0) FROM order_items WHERE status = 'Paid'")
+  fun getTotalPaidIncome(): Flow<Int>
+
+  @Query(
+    "UPDATE order_items SET customerGroupId = :targetGroupId WHERE customerGroupId = :sourceGroupId",
+  )
+  suspend fun transferItems(
+    sourceGroupId: Long,
+    targetGroupId: Long,
+  )
 }

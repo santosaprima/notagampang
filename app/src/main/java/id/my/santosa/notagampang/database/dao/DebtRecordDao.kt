@@ -23,4 +23,10 @@ interface DebtRecordDao {
   @Update suspend fun updateDebtRecord(debtRecord: DebtRecordEntity)
 
   @Delete suspend fun deleteDebtRecord(debtRecord: DebtRecordEntity)
+
+  @Query("SELECT COALESCE(SUM(paidAmount), 0) FROM debt_records")
+  fun getTotalKasbonIncome(): Flow<Int>
+
+  @Query("SELECT COALESCE(SUM(remainingDebt), 0) FROM debt_records")
+  fun getTotalActiveKasbon(): Flow<Int>
 }

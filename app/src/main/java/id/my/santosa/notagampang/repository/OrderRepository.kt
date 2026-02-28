@@ -14,4 +14,6 @@ class OrderRepository(private val orderItemDao: OrderItemDao) {
   suspend fun updateOrderItem(orderItem: OrderItemEntity) = orderItemDao.updateOrderItem(orderItem)
 
   suspend fun deleteOrder(orderItem: OrderItemEntity) = orderItemDao.deleteOrderItem(orderItem)
+
+  fun getTotalPaidIncome(): Flow<Int> = orderItemDao.getTotalPaidIncome()
 }

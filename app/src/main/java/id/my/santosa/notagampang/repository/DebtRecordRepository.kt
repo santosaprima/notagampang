@@ -14,4 +14,8 @@ class DebtRecordRepository(private val debtRecordDao: DebtRecordDao) {
   suspend fun updateDebtRecord(record: DebtRecordEntity) = debtRecordDao.updateDebtRecord(record)
 
   suspend fun deleteDebtRecord(record: DebtRecordEntity) = debtRecordDao.deleteDebtRecord(record)
+
+  fun getTotalKasbonIncome(): Flow<Int> = debtRecordDao.getTotalKasbonIncome()
+
+  fun getTotalActiveKasbon(): Flow<Int> = debtRecordDao.getTotalActiveKasbon()
 }

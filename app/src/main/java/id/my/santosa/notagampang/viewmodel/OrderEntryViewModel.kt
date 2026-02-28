@@ -19,6 +19,8 @@ data class OrderEntryUiState(
   val menuItems: List<MenuItemEntity> = emptyList(),
   val currentOrders: List<OrderItemEntity> = emptyList(),
   val selectedCategory: String = "Semua",
+  val otherActiveGroups: List<id.my.santosa.notagampang.database.entity.CustomerGroupEntity> =
+    emptyList(),
 )
 
 class OrderEntryViewModel(
@@ -34,7 +36,8 @@ class OrderEntryViewModel(
       menuRepository.getAllMenuItems(),
       orderRepository.getOrdersForGroup(groupId),
       selectedCategoryState,
-    ) { menu, orders, category ->
+      groupRepository.getOtherActiveGroups(groupId),
+    ) { menu, orders, category, otherGroups ->
       val filteredMenu =
         if (category == "Semua") {
           menu
@@ -45,6 +48,7 @@ class OrderEntryViewModel(
         menuItems = filteredMenu,
         currentOrders = orders,
         selectedCategory = category,
+        otherActiveGroups = otherGroups,
       )
     }
       .stateIn(
@@ -120,6 +124,10 @@ class OrderEntryViewModel(
 
   fun deleteGroup() {
     viewModelScope.launch { groupRepository.deleteGroup(groupId) }
+  }
+
+  fun mergeWithOtherGroup(targetGroupId: Long) {
+    viewModelScope.launch { groupRepository.mergeGroups(groupId, targetGroupId) }
   }
 }
 
