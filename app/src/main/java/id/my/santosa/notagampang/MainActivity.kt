@@ -20,6 +20,7 @@ import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import id.my.santosa.notagampang.ui.screen.CheckoutScreen
 import id.my.santosa.notagampang.ui.screen.FloatingTabsScreen
+import id.my.santosa.notagampang.ui.screen.KasbonScreen
 import id.my.santosa.notagampang.ui.screen.MenuManagementScreen
 import id.my.santosa.notagampang.ui.screen.OrderEntryScreen
 import id.my.santosa.notagampang.ui.screen.SuggestionPresetsScreen
@@ -27,6 +28,8 @@ import id.my.santosa.notagampang.viewmodel.CheckoutViewModel
 import id.my.santosa.notagampang.viewmodel.CheckoutViewModelFactory
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModelFactory
+import id.my.santosa.notagampang.viewmodel.KasbonViewModel
+import id.my.santosa.notagampang.viewmodel.KasbonViewModelFactory
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModel
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModelFactory
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
@@ -45,6 +48,8 @@ sealed class Screen {
   data class OrderEntry(val groupId: Long) : Screen()
 
   data class Checkout(val groupId: Long) : Screen()
+
+  object Kasbon : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -117,6 +122,7 @@ class MainActivity : ComponentActivity() {
                       groupId,
                     )
                 },
+                onKasbonClick = { currentScreen = Screen.Kasbon },
                 onSettingsClick = { currentScreen = Screen.SuggestionPresets },
                 onMenuSettingsClick = { currentScreen = Screen.MenuManagement },
               )
@@ -176,6 +182,14 @@ class MainActivity : ComponentActivity() {
                     )
                 },
                 onCheckoutComplete = { currentScreen = Screen.FloatingTabs },
+              )
+            }
+            is Screen.Kasbon -> {
+              val kasbonViewModel: KasbonViewModel =
+                viewModel(factory = KasbonViewModelFactory(debtRecordRepository))
+              KasbonScreen(
+                viewModel = kasbonViewModel,
+                onBack = { currentScreen = Screen.FloatingTabs },
               )
             }
           }

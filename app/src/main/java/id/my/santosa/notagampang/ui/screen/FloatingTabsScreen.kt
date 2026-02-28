@@ -53,6 +53,7 @@ fun FloatingTabsScreen(
   viewModel: FloatingTabsViewModel,
   suggestions: List<String>,
   onTabClick: (Long) -> Unit,
+  onKasbonClick: () -> Unit,
   onSettingsClick: () -> Unit,
   onMenuSettingsClick: () -> Unit,
 ) {
@@ -78,6 +79,13 @@ fun FloatingTabsScreen(
                 },
                 leadingIcon = {
                   Icon(Icons.Filled.Settings, contentDescription = null)
+                },
+              )
+              DropdownMenuItem(
+                text = { Text("Buku Kasbon") },
+                onClick = {
+                  showMenu = false
+                  onKasbonClick()
                 },
               )
               DropdownMenuItem(
