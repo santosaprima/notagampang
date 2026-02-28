@@ -15,7 +15,7 @@ import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
 
 @Composable
-fun SuggestionPresetsScreen(viewModel: SuggestionPresetsViewModel, onBack: () -> Unit = {}) {
+fun SuggestionPresetsScreen(viewModel: SuggestionPresetsViewModel) {
   val presets by viewModel.presets.collectAsState()
   var newLabel by remember { mutableStateOf("") }
 

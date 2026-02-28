@@ -72,6 +72,7 @@ class MainActivity : ComponentActivity() {
                                         }
                                         var showDeleteConfirm by remember { mutableStateOf(false) }
                                         var showMergeDialog by remember { mutableStateOf(false) }
+                                        var showAddMenuSheet by remember { mutableStateOf(false) }
                                         val scope = rememberCoroutineScope()
 
                                         // ViewModels
@@ -171,7 +172,9 @@ class MainActivity : ComponentActivity() {
                                                                         currentScreen !is
                                                                                 Screen.MenuManagement &&
                                                                         currentScreen !is
-                                                                                Screen.ShiftManagement
+                                                                                Screen.ShiftManagement &&
+                                                                        currentScreen !is
+                                                                                Screen.SuggestionPresets
 
                                                         CenterAlignedTopAppBar(
                                                                 title = { Text(title) },
@@ -559,6 +562,31 @@ class MainActivity : ComponentActivity() {
                                                                         )
                                                                 }
                                                         }
+                                                },
+                                                floatingActionButton = {
+                                                        if (currentScreen is Screen.MenuManagement
+                                                        ) {
+                                                                FloatingActionButton(
+                                                                        onClick = {
+                                                                                showAddMenuSheet =
+                                                                                        true
+                                                                        },
+                                                                        containerColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
+                                                                        contentColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onPrimary
+                                                                ) {
+                                                                        Icon(
+                                                                                Icons.Default.Add,
+                                                                                contentDescription =
+                                                                                        "Tambah"
+                                                                        )
+                                                                }
+                                                        }
                                                 }
                                         ) { innerPadding ->
                                                 Surface(
@@ -587,20 +615,18 @@ class MainActivity : ComponentActivity() {
                                                                 is Screen.SuggestionPresets -> {
                                                                         SuggestionPresetsScreen(
                                                                                 viewModel =
-                                                                                        presetsViewModel,
-                                                                                onBack = {
-                                                                                        currentScreen =
-                                                                                                Screen.FloatingTabs
-                                                                                }
+                                                                                        presetsViewModel
                                                                         )
                                                                 }
                                                                 is Screen.MenuManagement -> {
                                                                         MenuManagementScreen(
                                                                                 viewModel =
                                                                                         menuManagementViewModel,
-                                                                                onBack = {
-                                                                                        currentScreen =
-                                                                                                Screen.FloatingTabs
+                                                                                showBottomSheet =
+                                                                                        showAddMenuSheet,
+                                                                                onSheetDismiss = {
+                                                                                        showAddMenuSheet =
+                                                                                                false
                                                                                 }
                                                                         )
                                                                 }

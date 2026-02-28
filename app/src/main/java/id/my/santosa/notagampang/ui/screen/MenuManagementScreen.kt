@@ -22,150 +22,148 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MenuManagementScreen(viewModel: MenuManagementViewModel, onBack: () -> Unit = {}) {
+fun MenuManagementScreen(
+        viewModel: MenuManagementViewModel,
+        showBottomSheet: Boolean,
+        onSheetDismiss: () -> Unit
+) {
         val menuItems by viewModel.menuItems.collectAsState()
+        val sheetState = rememberModalBottomSheetState()
 
         var name by remember { mutableStateOf("") }
         var priceStr by remember { mutableStateOf("") }
         var category by remember { mutableStateOf("Minuman") }
 
         val categories = listOf("Minuman", "Makanan", "Sate", "Snack")
+        val groupedItems = menuItems.groupBy { it.category }
         var expanded by remember { mutableStateOf(false) }
 
         LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxSize(),
+                contentPadding =
+                        PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-                item {
-                        Card(
-                                colors =
-                                        CardDefaults.cardColors(
-                                                containerColor =
-                                                        MaterialTheme.colorScheme.surfaceVariant
-                                                                .copy(alpha = 0.5f)
-                                        ),
-                                modifier = Modifier.fillMaxWidth()
-                        ) {
-                                Column(
-                                        modifier = Modifier.padding(16.dp),
-                                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
+                categories.forEach { cat ->
+                        val itemsInCategory = groupedItems[cat] ?: emptyList()
+                        if (itemsInCategory.isNotEmpty()) {
+                                item {
                                         Text(
-                                                "Tambah Menu Baru",
+                                                cat,
                                                 style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                modifier =
+                                                        Modifier.padding(top = 12.dp, bottom = 4.dp)
                                         )
-
-                                        OutlinedTextField(
-                                                value = name,
-                                                onValueChange = { name = it },
-                                                label = { Text("Nama Menu (Cth: Es Teh)") },
-                                                singleLine = true,
-                                                modifier = Modifier.fillMaxWidth(),
-                                                keyboardOptions =
-                                                        KeyboardOptions(
-                                                                capitalization =
-                                                                        KeyboardCapitalization.Words
-                                                        )
+                                }
+                                items(itemsInCategory, key = { it.id }) { item ->
+                                        MenuManagementItemCard(
+                                                menuItem = item,
+                                                onDelete = { viewModel.deleteMenuItem(item) }
                                         )
-
-                                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                                OutlinedTextField(
-                                                        value = priceStr,
-                                                        onValueChange = {
-                                                                if (it.all { char ->
-                                                                                char.isDigit()
-                                                                        }
-                                                                )
-                                                                        priceStr = it
-                                                        },
-                                                        label = { Text("Harga (Rp)") },
-                                                        keyboardOptions =
-                                                                KeyboardOptions(
-                                                                        keyboardType =
-                                                                                KeyboardType.Number
-                                                                ),
-                                                        singleLine = true,
-                                                        modifier = Modifier.weight(1f)
-                                                )
-
-                                                ExposedDropdownMenuBox(
-                                                        expanded = expanded,
-                                                        onExpandedChange = { expanded = !expanded },
-                                                        modifier = Modifier.weight(1f)
-                                                ) {
-                                                        OutlinedTextField(
-                                                                value = category,
-                                                                onValueChange = {},
-                                                                readOnly = true,
-                                                                label = { Text("Kategori") },
-                                                                trailingIcon = {
-                                                                        ExposedDropdownMenuDefaults
-                                                                                .TrailingIcon(
-                                                                                        expanded =
-                                                                                                expanded
-                                                                                )
-                                                                },
-                                                                modifier = Modifier.menuAnchor()
-                                                        )
-                                                        ExposedDropdownMenu(
-                                                                expanded = expanded,
-                                                                onDismissRequest = {
-                                                                        expanded = false
-                                                                }
-                                                        ) {
-                                                                categories.forEach { selection ->
-                                                                        DropdownMenuItem(
-                                                                                text = {
-                                                                                        Text(
-                                                                                                selection
-                                                                                        )
-                                                                                },
-                                                                                onClick = {
-                                                                                        category =
-                                                                                                selection
-                                                                                        expanded =
-                                                                                                false
-                                                                                }
-                                                                        )
-                                                                }
-                                                        }
-                                                }
-                                        }
-
-                                        Button(
-                                                onClick = {
-                                                        val price = priceStr.toIntOrNull() ?: 0
-                                                        viewModel.addMenuItem(name, price, category)
-                                                        name = ""
-                                                        priceStr = ""
-                                                },
-                                                modifier = Modifier.fillMaxWidth(),
-                                                enabled = name.isNotBlank() && priceStr.isNotBlank()
-                                        ) {
-                                                Icon(Icons.Filled.Add, contentDescription = null)
-                                                Text(
-                                                        "Simpan ke Menu",
-                                                        modifier = Modifier.padding(start = 8.dp)
-                                                )
-                                        }
                                 }
                         }
                 }
+        }
 
-                item {
-                        Text(
-                                "Daftar Menu Saat Ini",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                        )
-                }
+        if (showBottomSheet) {
+                ModalBottomSheet(onDismissRequest = onSheetDismiss, sheetState = sheetState) {
+                        Column(
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .padding(16.dp)
+                                                .padding(bottom = 16.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                                Text(
+                                        "Tambah Menu Baru",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                )
 
-                items(menuItems, key = { it.id }) { item ->
-                        MenuManagementItemCard(
-                                menuItem = item,
-                                onDelete = { viewModel.deleteMenuItem(item) }
-                        )
+                                OutlinedTextField(
+                                        value = name,
+                                        onValueChange = { name = it },
+                                        label = { Text("Nama Menu (Cth: Es Teh)") },
+                                        singleLine = true,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        keyboardOptions =
+                                                KeyboardOptions(
+                                                        capitalization =
+                                                                KeyboardCapitalization.Words
+                                                )
+                                )
+
+                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        OutlinedTextField(
+                                                value = priceStr,
+                                                onValueChange = {
+                                                        if (it.all { char -> char.isDigit() })
+                                                                priceStr = it
+                                                },
+                                                label = { Text("Harga (Rp)") },
+                                                keyboardOptions =
+                                                        KeyboardOptions(
+                                                                keyboardType = KeyboardType.Number
+                                                        ),
+                                                singleLine = true,
+                                                modifier = Modifier.weight(1f)
+                                        )
+
+                                        ExposedDropdownMenuBox(
+                                                expanded = expanded,
+                                                onExpandedChange = { expanded = !expanded },
+                                                modifier = Modifier.weight(1f)
+                                        ) {
+                                                OutlinedTextField(
+                                                        value = category,
+                                                        onValueChange = {},
+                                                        readOnly = true,
+                                                        label = { Text("Kategori") },
+                                                        trailingIcon = {
+                                                                ExposedDropdownMenuDefaults
+                                                                        .TrailingIcon(
+                                                                                expanded = expanded
+                                                                        )
+                                                        },
+                                                        modifier = Modifier.menuAnchor()
+                                                )
+                                                ExposedDropdownMenu(
+                                                        expanded = expanded,
+                                                        onDismissRequest = { expanded = false }
+                                                ) {
+                                                        categories.forEach { selection ->
+                                                                DropdownMenuItem(
+                                                                        text = { Text(selection) },
+                                                                        onClick = {
+                                                                                category = selection
+                                                                                expanded = false
+                                                                        }
+                                                                )
+                                                        }
+                                                }
+                                        }
+                                }
+
+                                Button(
+                                        onClick = {
+                                                val price = priceStr.toIntOrNull() ?: 0
+                                                viewModel.addMenuItem(name, price, category)
+                                                name = ""
+                                                priceStr = ""
+                                                onSheetDismiss()
+                                        },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        enabled = name.isNotBlank() && priceStr.isNotBlank()
+                                ) {
+                                        Icon(Icons.Filled.Add, contentDescription = null)
+                                        Text(
+                                                "Simpan ke Menu",
+                                                modifier = Modifier.padding(start = 8.dp)
+                                        )
+                                }
+                        }
                 }
         }
 }
