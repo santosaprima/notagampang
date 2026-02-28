@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
@@ -63,9 +64,11 @@ fun OrderEntryScreen(
   viewModel: OrderEntryViewModel,
   onBack: () -> Unit,
   onCheckout: () -> Unit,
+  onDeleteGroup: () -> Unit,
 ) {
   val uiState by viewModel.uiState.collectAsState()
   var showCustomItemDialog by remember { mutableStateOf(false) }
+  var showDeleteDialog by remember { mutableStateOf(false) }
 
   val categories = listOf("Semua", "Minuman", "Makanan", "Sate", "Snack")
   val totalItems = uiState.currentOrders.sumOf { it.quantity }
@@ -87,6 +90,12 @@ fun OrderEntryScreen(
           }
         },
         actions = {
+          IconButton(onClick = { showDeleteDialog = true }) {
+            Icon(
+              Icons.Filled.Delete,
+              contentDescription = "Hapus Nota",
+            )
+          }
           BadgedBox(
             badge = {
               if (totalItems > 0) {
@@ -109,35 +118,6 @@ fun OrderEntryScreen(
               MaterialTheme.colorScheme.onPrimaryContainer,
           ),
       )
-    },
-    bottomBar = {
-      if (totalItems > 0) {
-        Surface(
-          modifier = Modifier.fillMaxWidth(),
-          shadowElevation = 8.dp,
-          color = MaterialTheme.colorScheme.surface,
-        ) {
-          Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-          ) {
-            Column {
-              Text(
-                "Total Sementara",
-                style = MaterialTheme.typography.labelMedium,
-              )
-              Text(
-                text = currencyFormat.format(totalPrice),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-              )
-            }
-            Button(onClick = onCheckout) { Text("Bayar (Checkout)") }
-          }
-        }
-      }
     },
   ) { padding ->
     Column(modifier = Modifier.fillMaxSize().padding(padding)) {
@@ -174,6 +154,34 @@ fun OrderEntryScreen(
         // Custom Item Button
         item { CustomItemCard(onClick = { showCustomItemDialog = true }) }
       }
+
+      if (totalItems > 0) {
+        Surface(
+          modifier = Modifier.fillMaxWidth(),
+          shadowElevation = 8.dp,
+          color = MaterialTheme.colorScheme.surface,
+        ) {
+          Row(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Column {
+              Text(
+                "Total Sementara",
+                style = MaterialTheme.typography.labelMedium,
+              )
+              Text(
+                text = currencyFormat.format(totalPrice),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+              )
+            }
+            Button(onClick = onCheckout) { Text("Bayar (Checkout)") }
+          }
+        }
+      }
     }
 
     if (showCustomItemDialog) {
@@ -182,6 +190,29 @@ fun OrderEntryScreen(
         onConfirm = { name, price ->
           viewModel.addCustomItem(name, price)
           showCustomItemDialog = false
+        },
+      )
+    }
+
+    if (showDeleteDialog) {
+      AlertDialog(
+        onDismissRequest = { showDeleteDialog = false },
+        title = { Text("Hapus Nota") },
+        text = {
+          Text(
+            "Apakah Anda yakin ingin menghapus nota ini? Semua pesanan di dalamnya akan dihapus.",
+          )
+        },
+        confirmButton = {
+          Button(
+            onClick = {
+              showDeleteDialog = false
+              onDeleteGroup()
+            },
+          ) { Text("Ya, Hapus") }
+        },
+        dismissButton = {
+          TextButton(onClick = { showDeleteDialog = false }) { Text("Batal") }
         },
       )
     }
@@ -296,9 +327,7 @@ fun CustomItemDialog(
         )
         OutlinedTextField(
           value = priceStr,
-          onValueChange = {
-            if (it.all { char -> char.isDigit() }) priceStr = it
-          },
+          onValueChange = { if (it.all { char -> char.isDigit() }) priceStr = it },
           label = { Text("Harga (Rp)") },
           keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
           singleLine = true,

@@ -36,4 +36,11 @@ class CustomerGroupRepository(
   suspend fun updateGroup(group: CustomerGroupEntity) {
     customerGroupDao.updateGroup(group)
   }
+
+  suspend fun deleteGroup(groupId: Long) {
+    val group = customerGroupDao.getGroupById(groupId)
+    if (group != null) {
+      customerGroupDao.deleteGroup(group)
+    }
+  }
 }

@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.my.santosa.notagampang.database.AppDatabase
-import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
@@ -36,7 +35,6 @@ import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModelFactory
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModelFactory
-import kotlinx.coroutines.launch
 
 sealed class Screen {
   object FloatingTabs : Screen()
@@ -104,8 +102,6 @@ class MainActivity : ComponentActivity() {
 
           // Seed defaults if empty
           presetsViewModel.seedDefaults()
-          seedDefaultMenu(menuRepository)
-
           val presets by
             presetsViewModel.presets.collectAsState(
               initial = emptyList(),
@@ -146,6 +142,7 @@ class MainActivity : ComponentActivity() {
                   factory =
                     OrderEntryViewModelFactory(
                       screen.groupId,
+                      groupRepository,
                       menuRepository,
                       orderRepository,
                     ),
@@ -158,6 +155,10 @@ class MainActivity : ComponentActivity() {
                     Screen.Checkout(
                       screen.groupId,
                     )
+                },
+                onDeleteGroup = {
+                  orderEntryViewModel.deleteGroup()
+                  currentScreen = Screen.FloatingTabs
                 },
               )
             }
@@ -194,68 +195,6 @@ class MainActivity : ComponentActivity() {
             }
           }
         }
-      }
-    }
-  }
-
-  private fun seedDefaultMenu(repository: MenuItemRepository) {
-    val scope = kotlinx.coroutines.MainScope()
-    scope.launch(kotlinx.coroutines.Dispatchers.IO) {
-      if (repository.getCount() == 0) {
-        val menu =
-          listOf(
-            MenuItemEntity(
-              name = "Es Teh",
-              price = 3000,
-              category = "Minuman",
-            ),
-            MenuItemEntity(
-              name = "Teh Hangat",
-              price = 3000,
-              category = "Minuman",
-            ),
-            MenuItemEntity(
-              name = "Es Jeruk",
-              price = 4000,
-              category = "Minuman",
-            ),
-            MenuItemEntity(
-              name = "Kopi Hitam",
-              price = 4000,
-              category = "Minuman",
-            ),
-            MenuItemEntity(
-              name = "Sate Usus",
-              price = 2000,
-              category = "Sate",
-            ),
-            MenuItemEntity(
-              name = "Sate Kulit",
-              price = 2000,
-              category = "Sate",
-            ),
-            MenuItemEntity(
-              name = "Sate Telur Puyuh",
-              price = 3000,
-              category = "Sate",
-            ),
-            MenuItemEntity(
-              name = "Nasi Kucing (Teri)",
-              price = 3000,
-              category = "Makanan",
-            ),
-            MenuItemEntity(
-              name = "Nasi Kucing (Sambal)",
-              price = 3000,
-              category = "Makanan",
-            ),
-            MenuItemEntity(
-              name = "Gorengan",
-              price = 1000,
-              category = "Snack",
-            ),
-          )
-        menu.forEach { repository.insertMenuItem(it) }
       }
     }
   }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.database.entity.OrderItemEntity
+import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ data class OrderEntryUiState(
 
 class OrderEntryViewModel(
   private val groupId: Long,
+  private val groupRepository: CustomerGroupRepository,
   private val menuRepository: MenuItemRepository,
   private val orderRepository: OrderRepository,
 ) : ViewModel() {
@@ -101,17 +103,22 @@ class OrderEntryViewModel(
       )
     }
   }
+
+  fun deleteGroup() {
+    viewModelScope.launch { groupRepository.deleteGroup(groupId) }
+  }
 }
 
 class OrderEntryViewModelFactory(
   private val groupId: Long,
+  private val groupRepository: CustomerGroupRepository,
   private val menuRepository: MenuItemRepository,
   private val orderRepository: OrderRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(OrderEntryViewModel::class.java)) {
       @Suppress("UNCHECKED_CAST")
-      return OrderEntryViewModel(groupId, menuRepository, orderRepository) as T
+      return OrderEntryViewModel(groupId, groupRepository, menuRepository, orderRepository) as T
     }
     throw IllegalArgumentException("Unknown ViewModel class")
   }
