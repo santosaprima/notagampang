@@ -1,20 +1,27 @@
 package id.my.santosa.notagampang
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.my.santosa.notagampang.database.AppDatabase
+import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
+import id.my.santosa.notagampang.repository.DebtRecordRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import id.my.santosa.notagampang.ui.screen.CheckoutScreen
@@ -35,6 +42,8 @@ import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModelFactory
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModelFactory
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 sealed class Screen {
   object FloatingTabs : Screen()
@@ -49,6 +58,8 @@ sealed class Screen {
 
   object Kasbon : Screen()
 }
+
+val Context.dataStore by preferencesDataStore(name = "settings")
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,8 +111,22 @@ class MainActivity : ComponentActivity() {
                 ),
             )
 
-          // Seed defaults if empty
-          presetsViewModel.seedDefaults()
+          val isFirstRunFlow =
+            dataStore.data.map { preferences ->
+              preferences[booleanPreferencesKey("is_first_run")] ?: true
+            }
+          val isFirstRun by isFirstRunFlow.collectAsState(initial = null)
+
+          LaunchedEffect(isFirstRun) {
+            if (isFirstRun == true) {
+              presetsViewModel.seedDefaults()
+              seedDefaultMenu(menuRepository)
+              dataStore.edit { preferences ->
+                preferences[booleanPreferencesKey("is_first_run")] = false
+              }
+            }
+          }
+
           val presets by
             presetsViewModel.presets.collectAsState(
               initial = emptyList(),
@@ -194,6 +219,80 @@ class MainActivity : ComponentActivity() {
               )
             }
           }
+        }
+      }
+    }
+  }
+
+  private fun seedDefaultMenu(repository: MenuItemRepository) {
+    val scope = kotlinx.coroutines.MainScope()
+    scope.launch(kotlinx.coroutines.Dispatchers.IO) {
+      if (repository.getCount() == 0) {
+        val menu =
+          listOf(
+            MenuItemEntity(
+              name = "Es Teh",
+              price = 3000,
+              category = "Minuman",
+            ),
+            MenuItemEntity(
+              name = "Teh Hangat",
+              price = 3000,
+              category = "Minuman",
+            ),
+            MenuItemEntity(
+              name = "Es Jeruk",
+              price = 4000,
+              category = "Minuman",
+            ),
+            MenuItemEntity(
+              name = "Kopi Hitam",
+              price = 4000,
+              category = "Minuman",
+            ),
+            MenuItemEntity(
+              name = "Sate Usus",
+              price = 2000,
+              category = "Sate",
+            ),
+            MenuItemEntity(
+              name = "Sate Kulit",
+              price = 2000,
+              category = "Sate",
+            ),
+            MenuItemEntity(
+              name = "Sate Telur Puyuh",
+              price = 3000,
+              category = "Sate",
+            ),
+            MenuItemEntity(
+              name = "Nasi Kucing (Teri)",
+              price = 3000,
+              category = "Makanan",
+            ),
+            MenuItemEntity(
+              name = "Nasi Kucing (Sambal)",
+              price = 3000,
+              category = "Makanan",
+            ),
+            MenuItemEntity(
+              name = "Nasi Kucing (Bandeng)",
+              price = 3500,
+              category = "Makanan",
+            ),
+            MenuItemEntity(
+              name = "Singkong Goreng",
+              price = 2000,
+              category = "Snack",
+            ),
+            MenuItemEntity(
+              name = "Tempe Mendoan",
+              price = 1500,
+              category = "Snack",
+            ),
+          )
+        for (item in menu) {
+          repository.insertMenuItem(item)
         }
       }
     }
