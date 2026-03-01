@@ -87,7 +87,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                         start = 20.dp,
                                                         top = 0.dp,
                                                         end = 20.dp,
-                                                        bottom = 64.dp
+                                                        bottom = 160.dp
                                                 ),
                                         verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
