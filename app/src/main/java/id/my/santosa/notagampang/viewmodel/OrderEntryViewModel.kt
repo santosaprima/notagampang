@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 data class OrderEntryUiState(
         val menuItems: List<MenuItemEntity> = emptyList(),
         val currentOrders: List<OrderItemEntity> = emptyList(),
+        val categories: List<String> = emptyList(),
         val selectedCategory: String = "Semua",
         val otherActiveGroups: List<id.my.santosa.notagampang.database.entity.CustomerGroupEntity> =
                 emptyList(),
@@ -29,17 +30,35 @@ class OrderEntryViewModel(
         private val groupRepository: CustomerGroupRepository,
         private val menuRepository: MenuItemRepository,
         private val orderRepository: OrderRepository,
+        private val categoryRepository: id.my.santosa.notagampang.repository.CategoryRepository,
 ) : ViewModel() {
   private val selectedCategoryState = MutableStateFlow("Semua")
 
   val uiState: StateFlow<OrderEntryUiState> =
           combine(
-                          menuRepository.getAllMenuItems(),
-                          orderRepository.getOrdersForGroup(groupId),
-                          selectedCategoryState,
-                          groupRepository.getOtherActiveGroups(groupId),
-                          groupRepository.getGroupFlowById(groupId),
-                  ) { menu, orders, category, otherGroups, group ->
+                          listOf(
+                                  menuRepository.getAllMenuItems(),
+                                  orderRepository.getOrdersForGroup(groupId),
+                                  selectedCategoryState,
+                                  groupRepository.getOtherActiveGroups(groupId),
+                                  groupRepository.getGroupFlowById(groupId),
+                                  categoryRepository.getAllCategories()
+                          )
+                  ) { args: Array<Any?> ->
+                    val menu = args[0] as List<MenuItemEntity>
+                    val orders = args[1] as List<OrderItemEntity>
+                    val category = args[2] as String
+                    val otherGroups =
+                            args[3] as
+                                    List<
+                                            id.my.santosa.notagampang.database.entity.CustomerGroupEntity>
+                    val group =
+                            args[4] as?
+                                    id.my.santosa.notagampang.database.entity.CustomerGroupEntity
+                    val categories =
+                            args[5] as
+                                    List<id.my.santosa.notagampang.database.entity.CategoryEntity>
+
                     val filteredMenu =
                             if (category == "Semua") {
                               menu
@@ -49,6 +68,7 @@ class OrderEntryViewModel(
                     OrderEntryUiState(
                             menuItems = filteredMenu,
                             currentOrders = orders,
+                            categories = categories.map { it.name },
                             selectedCategory = category,
                             otherActiveGroups = otherGroups,
                             group = group,
@@ -157,11 +177,19 @@ class OrderEntryViewModelFactory(
         private val groupRepository: CustomerGroupRepository,
         private val menuRepository: MenuItemRepository,
         private val orderRepository: OrderRepository,
+        private val categoryRepository: id.my.santosa.notagampang.repository.CategoryRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(OrderEntryViewModel::class.java)) {
       @Suppress("UNCHECKED_CAST")
-      return OrderEntryViewModel(groupId, groupRepository, menuRepository, orderRepository) as T
+      return OrderEntryViewModel(
+              groupId,
+              groupRepository,
+              menuRepository,
+              orderRepository,
+              categoryRepository
+      ) as
+              T
     }
     throw IllegalArgumentException("Unknown ViewModel class")
   }

@@ -77,7 +77,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                 )
                                 )
 
-                                val categories = listOf("Minuman", "Makanan", "Sate", "Snack")
+                                val categories = uiState.categories
                                 val groupedItems = uiState.menuItems.groupBy { it.category }
 
                                 LazyColumn(

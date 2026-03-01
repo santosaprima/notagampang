@@ -24,8 +24,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.my.santosa.notagampang.data.PreferenceManager
 import id.my.santosa.notagampang.data.ThemeMode
 import id.my.santosa.notagampang.database.AppDatabase
-import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
-import id.my.santosa.notagampang.database.entity.MenuItemEntity
+import id.my.santosa.notagampang.database.entity.*
+import id.my.santosa.notagampang.repository.CategoryRepository
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.DebtRecordRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
@@ -58,9 +58,11 @@ class MainActivity : ComponentActivity() {
                 val menuRepository = MenuItemRepository(db.menuItemDao())
                 val orderRepository = OrderRepository(db.orderItemDao())
                 val debtRecordRepository = DebtRecordRepository(db.debtRecordDao())
+                val categoryRepository = CategoryRepository(db.categoryDao())
                 val preferenceManager = PreferenceManager(applicationContext)
 
                 seedDefaultMenu(menuRepository)
+                seedDefaultCategories(categoryRepository)
 
                 setContent {
                         val settingsViewModel: SettingsViewModel =
@@ -95,6 +97,13 @@ class MainActivity : ComponentActivity() {
                                                                 db.suggestionPresetDao()
                                                         )
                                         )
+                                val categoryManagementViewModel: CategoryManagementViewModel =
+                                        viewModel(
+                                                factory =
+                                                        CategoryManagementViewModelFactory(
+                                                                categoryRepository
+                                                        )
+                                        )
                                 val kasbonViewModel: KasbonViewModel =
                                         viewModel(
                                                 factory =
@@ -113,7 +122,7 @@ class MainActivity : ComponentActivity() {
                                 var currentScreen by remember {
                                         mutableStateOf<Screen>(Screen.FloatingTabs)
                                 }
-                                var showAddMenuSheet by remember { mutableStateOf(false) }
+                                var showAddManagementSheet by remember { mutableStateOf(false) }
                                 var showDeleteConfirm by remember { mutableStateOf(false) }
                                 var showMergeDialog by remember { mutableStateOf(false) }
                                 val scope = rememberCoroutineScope()
@@ -519,7 +528,8 @@ class MainActivity : ComponentActivity() {
                                                 if (currentScreen is Screen.Management) {
                                                         FloatingActionButton(
                                                                 onClick = {
-                                                                        showAddMenuSheet = true
+                                                                        showAddManagementSheet =
+                                                                                true
                                                                 },
                                                                 modifier =
                                                                         Modifier.offset(
@@ -745,13 +755,15 @@ class MainActivity : ComponentActivity() {
                                                                                 menuManagementViewModel,
                                                                         presetsViewModel =
                                                                                 presetsViewModel,
-                                                                        showAddMenuSheet =
-                                                                                showAddMenuSheet,
+                                                                        categoryViewModel =
+                                                                                categoryManagementViewModel,
+                                                                        showAddSheet =
+                                                                                showAddManagementSheet,
                                                                         bottomPadding =
                                                                                 innerPadding
                                                                                         .calculateBottomPadding(),
                                                                         onSheetDismiss = {
-                                                                                showAddMenuSheet =
+                                                                                showAddManagementSheet =
                                                                                         false
                                                                         }
                                                                 )
@@ -767,7 +779,8 @@ class MainActivity : ComponentActivity() {
                                                                                                 screen.groupId,
                                                                                                 groupRepository,
                                                                                                 menuRepository,
-                                                                                                orderRepository
+                                                                                                orderRepository,
+                                                                                                categoryRepository
                                                                                         )
                                                                         )
                                                                 OrderEntryScreen(
@@ -909,6 +922,24 @@ class MainActivity : ComponentActivity() {
                                         )
                                 for (item in menu) {
                                         repository.insertMenuItem(item)
+                                }
+                        }
+                }
+        }
+
+        private fun seedDefaultCategories(repository: CategoryRepository) {
+                val scope = MainScope()
+                scope.launch(Dispatchers.IO) {
+                        if (repository.getCount() == 0) {
+                                val categories =
+                                        listOf(
+                                                CategoryEntity(name = "Makanan"),
+                                                CategoryEntity(name = "Minuman"),
+                                                CategoryEntity(name = "Sate"),
+                                                CategoryEntity(name = "Snack")
+                                        )
+                                for (category in categories) {
+                                        repository.insertCategory(category)
                                 }
                         }
                 }
