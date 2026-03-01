@@ -78,6 +78,9 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                         }
                                 }
 
+                                val categories = listOf("Minuman", "Makanan", "Sate", "Snack")
+                                val groupedItems = uiState.menuItems.groupBy { it.category }
+
                                 LazyColumn(
                                         modifier = Modifier.weight(1f),
                                         contentPadding =
@@ -89,27 +92,62 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                 ),
                                         verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                        items(uiState.menuItems) { menu ->
-                                                val order =
-                                                        uiState.currentOrders.find {
-                                                                it.menuItemId == menu.id
-                                                        }
-                                                val quantity = order?.quantity ?: 0
-
-                                                MenuItemRow(
-                                                        name = menu.name,
-                                                        price = menu.price,
-                                                        quantity = quantity,
-                                                        currencyFormat = currencyFormat,
-                                                        onIncrease = {
-                                                                viewModel.addItemToOrder(menu)
-                                                        },
-                                                        onDecrease = {
-                                                                viewModel.removeItemFromOrder(
-                                                                        menu.id
+                                        categories.forEach { cat ->
+                                                val itemsInCategory =
+                                                        groupedItems[cat] ?: emptyList()
+                                                if (itemsInCategory.isNotEmpty()) {
+                                                        item {
+                                                                Text(
+                                                                        cat,
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .titleMedium,
+                                                                        fontWeight =
+                                                                                FontWeight
+                                                                                        .ExtraBold,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
+                                                                        modifier =
+                                                                                Modifier.padding(
+                                                                                        top = 16.dp,
+                                                                                        bottom =
+                                                                                                8.dp
+                                                                                )
                                                                 )
                                                         }
-                                                )
+                                                        items(itemsInCategory, key = { it.id }) {
+                                                                menu ->
+                                                                val order =
+                                                                        uiState.currentOrders.find {
+                                                                                it.menuItemId ==
+                                                                                        menu.id
+                                                                        }
+                                                                val quantity = order?.quantity ?: 0
+
+                                                                MenuItemRow(
+                                                                        name = menu.name,
+                                                                        price = menu.price,
+                                                                        quantity = quantity,
+                                                                        currencyFormat =
+                                                                                currencyFormat,
+                                                                        onIncrease = {
+                                                                                viewModel
+                                                                                        .addItemToOrder(
+                                                                                                menu
+                                                                                        )
+                                                                        },
+                                                                        onDecrease = {
+                                                                                viewModel
+                                                                                        .removeItemFromOrder(
+                                                                                                menu.id
+                                                                                        )
+                                                                        }
+                                                                )
+                                                        }
+                                                }
                                         }
                                 }
                         }
@@ -143,7 +181,8 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                 "Total",
                                                                 style =
                                                                         MaterialTheme.typography
-                                                                                .labelSmall,
+                                                                                .titleSmall,
+                                                                fontWeight = FontWeight.Bold,
                                                                 color =
                                                                         MaterialTheme.colorScheme
                                                                                 .onSurfaceVariant
