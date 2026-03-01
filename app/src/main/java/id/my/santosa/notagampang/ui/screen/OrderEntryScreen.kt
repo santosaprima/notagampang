@@ -53,7 +53,11 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                         }
                                                         Text(
                                                                 text =
-                                                                        "Buka: ${dateFormat.format(Date(group.createdAt))}",
+                                                                        dateFormat.format(
+                                                                                Date(
+                                                                                        group.createdAt
+                                                                                )
+                                                                        ),
                                                                 style =
                                                                         MaterialTheme.typography
                                                                                 .bodySmall,
