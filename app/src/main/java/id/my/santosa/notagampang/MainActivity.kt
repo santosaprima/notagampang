@@ -522,7 +522,9 @@ class MainActivity : ComponentActivity() {
                                                                         showAddMenuSheet = true
                                                                 },
                                                                 modifier =
-                                                                        Modifier.offset(y = 20.dp),
+                                                                        Modifier.offset(
+                                                                                y = (-30).dp
+                                                                        ),
                                                                 containerColor =
                                                                         MaterialTheme.colorScheme
                                                                                 .primary,
@@ -699,7 +701,22 @@ class MainActivity : ComponentActivity() {
                                         }
 
                                         Surface(
-                                                modifier = Modifier.padding(innerPadding),
+                                                modifier =
+                                                        Modifier.padding(
+                                                                top =
+                                                                        innerPadding
+                                                                                .calculateTopPadding(),
+                                                                bottom =
+                                                                        if (currentScreen is
+                                                                                        Screen.FloatingTabs ||
+                                                                                        currentScreen is
+                                                                                                Screen.Management
+                                                                        )
+                                                                                0.dp
+                                                                        else
+                                                                                innerPadding
+                                                                                        .calculateBottomPadding()
+                                                        ),
                                                 color = MaterialTheme.colorScheme.background
                                         ) {
                                                 when (val screen = currentScreen) {
@@ -711,6 +728,9 @@ class MainActivity : ComponentActivity() {
                                                                                 presets.map {
                                                                                         it.label
                                                                                 },
+                                                                        bottomPadding =
+                                                                                innerPadding
+                                                                                        .calculateBottomPadding(),
                                                                         onTabClick = { groupId ->
                                                                                 currentScreen =
                                                                                         Screen.OrderEntry(
@@ -727,6 +747,9 @@ class MainActivity : ComponentActivity() {
                                                                                 presetsViewModel,
                                                                         showAddMenuSheet =
                                                                                 showAddMenuSheet,
+                                                                        bottomPadding =
+                                                                                innerPadding
+                                                                                        .calculateBottomPadding(),
                                                                         onSheetDismiss = {
                                                                                 showAddMenuSheet =
                                                                                         false

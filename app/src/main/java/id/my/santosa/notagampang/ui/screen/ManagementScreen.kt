@@ -28,6 +28,7 @@ fun ManagementScreen(
         menuViewModel: MenuManagementViewModel,
         presetsViewModel: SuggestionPresetsViewModel,
         showAddMenuSheet: Boolean,
+        bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
         onSheetDismiss: () -> Unit
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -71,9 +72,14 @@ fun ManagementScreen(
                         MenuManagementTab(
                                 viewModel = menuViewModel,
                                 showBottomSheet = showAddMenuSheet,
+                                bottomPadding = bottomPadding,
                                 onSheetDismiss = onSheetDismiss
                         )
-                1 -> SuggestionPresetsTab(viewModel = presetsViewModel)
+                1 ->
+                        SuggestionPresetsTab(
+                                viewModel = presetsViewModel,
+                                bottomPadding = bottomPadding
+                        )
             }
         }
     }
@@ -84,6 +90,7 @@ fun ManagementScreen(
 fun MenuManagementTab(
         viewModel: MenuManagementViewModel,
         showBottomSheet: Boolean,
+        bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
         onSheetDismiss: () -> Unit
 ) {
     val menuItems by viewModel.menuItems.collectAsState()
@@ -100,7 +107,12 @@ fun MenuManagementTab(
     LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding =
-                    PaddingValues(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 100.dp),
+                    PaddingValues(
+                            start = 20.dp,
+                            end = 20.dp,
+                            top = 24.dp,
+                            bottom = bottomPadding + 20.dp
+                    ),
             verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         categories.forEach { cat ->
@@ -228,7 +240,10 @@ fun MenuManagementTab(
 }
 
 @Composable
-fun SuggestionPresetsTab(viewModel: SuggestionPresetsViewModel) {
+fun SuggestionPresetsTab(
+        viewModel: SuggestionPresetsViewModel,
+        bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
+) {
     val presets by viewModel.presets.collectAsState()
     var newLabel by remember { mutableStateOf("") }
 
@@ -274,6 +289,7 @@ fun SuggestionPresetsTab(viewModel: SuggestionPresetsViewModel) {
         } else {
             LazyColumn(
                     modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = bottomPadding + 20.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(presets, key = { it.id }) { preset ->

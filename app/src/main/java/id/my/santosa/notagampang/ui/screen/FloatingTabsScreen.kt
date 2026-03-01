@@ -29,6 +29,7 @@ import java.util.Locale
 fun FloatingTabsScreen(
         viewModel: FloatingTabsViewModel,
         suggestions: List<String>,
+        bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
         onTabClick: (Long) -> Unit
 ) {
         val activeGroups by viewModel.activeGroups.collectAsState()
@@ -126,12 +127,16 @@ fun FloatingTabsScreen(
                 floatingActionButton = {
                         FloatingActionButton(
                                 onClick = { showAddDialog = true },
-                                modifier = Modifier.offset(y = 20.dp),
+                                modifier = Modifier.offset(y = (-30).dp - bottomPadding),
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = MaterialTheme.colorScheme.secondary, // Amber Gold
-                                shape = MaterialTheme.shapes.large
-                        ) { Icon(Icons.Default.Add, contentDescription = "Tambah Nota") }
-                }
+                                shape = MaterialTheme.shapes.large,
+                                content = {
+                                        Icon(Icons.Default.Add, contentDescription = "Tambah Nota")
+                                }
+                        )
+                },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { paddingValues ->
                 Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
                         if (activeGroups.isEmpty() && searchQuery.isEmpty()) {
@@ -190,7 +195,7 @@ fun FloatingTabsScreen(
                                                         start = 20.dp,
                                                         top = 20.dp,
                                                         end = 20.dp,
-                                                        bottom = 0.dp
+                                                        bottom = bottomPadding + 20.dp
                                                 ),
                                         verticalArrangement = Arrangement.spacedBy(12.dp),
                                         modifier = Modifier.fillMaxSize()
