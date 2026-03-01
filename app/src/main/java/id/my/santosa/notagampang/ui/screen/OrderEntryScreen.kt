@@ -5,7 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.RemoveCircleOutline
+import androidx.compose.material.icons.outlined.RemoveCircleOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -129,7 +129,7 @@ fun MenuItemRow(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = onDecrease, enabled = quantity > 0) {
                                         Icon(
-                                                imageVector = Icons.Default.RemoveCircleOutline,
+                                                imageVector = Icons.Outlined.RemoveCircleOutline,
                                                 contentDescription = "Kurangi",
                                                 tint =
                                                         if (quantity > 0)

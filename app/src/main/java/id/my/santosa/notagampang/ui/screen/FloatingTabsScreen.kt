@@ -1,147 +1,278 @@
 package id.my.santosa.notagampang.ui.screen
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.repository.CustomerGroupWithTotal
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FloatingTabsScreen(
         viewModel: FloatingTabsViewModel,
         suggestions: List<String>,
         onTabClick: (Long) -> Unit
 ) {
-  val activeGroups by viewModel.activeGroups.collectAsState()
-  var showAddDialog by remember { mutableStateOf(false) }
-  var newGroupName by remember { mutableStateOf("") }
+        val activeGroups by viewModel.activeGroups.collectAsState()
+        val searchQuery by viewModel.searchQuery.collectAsState()
+        var showAddDialog by remember { mutableStateOf(false) }
+        var newGroupName by remember { mutableStateOf("") }
 
-  Box(modifier = Modifier.fillMaxSize()) {
-    Column(modifier = Modifier.fillMaxSize()) {
-      Row(
-              modifier = Modifier.fillMaxWidth().padding(8.dp),
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically
-      ) {
-        Text(
-                "Nota Aktif",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 8.dp)
-        )
-      }
+        Scaffold(
+                topBar = {
+                        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+                                Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                        Surface(
+                                                modifier = Modifier.size(36.dp),
+                                                color = MaterialTheme.colorScheme.primary,
+                                                shape = MaterialTheme.shapes.small
+                                        ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                        Text(
+                                                                "N",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .titleLarge,
+                                                                fontWeight = FontWeight.ExtraBold,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary // Amber
+                                                                // Gold
+                                                                )
+                                                }
+                                        }
+                                        Text(
+                                                "NotaGampang",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                }
 
-      if (activeGroups.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-          Text(
-                  "Belum ada nota aktif.\nKetuk + untuk menambah.",
-                  style = MaterialTheme.typography.bodyLarge,
-                  modifier = Modifier.padding(16.dp)
-          )
-        }
-      } else {
-        LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 150.dp),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
-        ) {
-          items(activeGroups, key = { it.group.id }) { groupWithTotal ->
-            NotaCard(
-                    groupWithTotal = groupWithTotal,
-                    onClick = { onTabClick(groupWithTotal.group.id) }
-            )
-          }
-        }
-      }
-    }
+                                Spacer(modifier = Modifier.height(24.dp))
 
-    FloatingActionButton(
-            onClick = { showAddDialog = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
-    ) { Icon(Icons.Default.Add, contentDescription = "Tambah Nota") }
-  }
+                                Text(
+                                        "Nota Aktif",
+                                        style = MaterialTheme.typography.displaySmall,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                        "Kelola semua grup dan pesanan aktif di sini",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
 
-  if (showAddDialog) {
-    AlertDialog(
-            onDismissRequest = {
-              showAddDialog = false
-              newGroupName = ""
-            },
-            title = { Text("Tambah Nota Baru") },
-            text = {
-              Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                OutlinedTextField(
-                        value = newGroupName,
-                        onValueChange = { newGroupName = it },
-                        label = { Text("Nama Nota (misal: Meja 1)") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = false,
-                        minLines = 2,
-                        maxLines = 4
-                )
+                                Spacer(modifier = Modifier.height(20.dp))
 
-                Text("Pilihan Cepat:", style = MaterialTheme.typography.labelMedium)
-
-                LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 100.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp)
-                ) {
-                  items(suggestions) { suggestion ->
-                    Button(
-                            onClick = {
-                              newGroupName =
-                                      if (newGroupName.isEmpty()) {
-                                        suggestion
-                                      } else if (newGroupName.endsWith(" ")) {
-                                        "$newGroupName$suggestion"
-                                      } else {
-                                        "$newGroupName $suggestion"
-                                      }
-                            },
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-                    ) { Text(suggestion) }
-                  }
-                }
-              }
-            },
-            confirmButton = {
-              Button(
-                      onClick = {
-                        if (newGroupName.isNotBlank()) {
-                          viewModel.createNewTab(newGroupName)
-                          showAddDialog = false
-                          newGroupName = ""
+                                OutlinedTextField(
+                                        value = searchQuery,
+                                        onValueChange = { viewModel.onSearchQueryChange(it) },
+                                        placeholder = { Text("Cari nota...") },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.medium,
+                                        leadingIcon = {
+                                                Icon(
+                                                        Icons.Default.Search,
+                                                        contentDescription = null,
+                                                        tint =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
+                                                )
+                                        },
+                                        singleLine = true,
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedContainerColor =
+                                                                MaterialTheme.colorScheme.surface,
+                                                        unfocusedContainerColor =
+                                                                MaterialTheme.colorScheme.surface,
+                                                        focusedBorderColor =
+                                                                MaterialTheme.colorScheme.primary,
+                                                        unfocusedBorderColor =
+                                                                MaterialTheme.colorScheme
+                                                                        .outlineVariant
+                                                )
+                                )
                         }
-                      }
-              ) { Text("Tambah") }
-            },
-            dismissButton = {
-              TextButton(
-                      onClick = {
-                        showAddDialog = false
-                        newGroupName = ""
-                      }
-              ) { Text("Batal") }
-            }
-    )
-  }
+                },
+                floatingActionButton = {
+                        FloatingActionButton(
+                                onClick = { showAddDialog = true },
+                                modifier = Modifier.offset(y = 20.dp),
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.secondary, // Amber Gold
+                                shape = MaterialTheme.shapes.large
+                        ) { Icon(Icons.Default.Add, contentDescription = "Tambah Nota") }
+                }
+        ) { paddingValues ->
+                Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+                        if (activeGroups.isEmpty() && searchQuery.isEmpty()) {
+                                Column(
+                                        modifier = Modifier.fillMaxSize().padding(32.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                ) {
+                                        Surface(
+                                                modifier = Modifier.size(120.dp),
+                                                color =
+                                                        MaterialTheme.colorScheme.primaryContainer
+                                                                .copy(alpha = 0.3f),
+                                                shape = MaterialTheme.shapes.large
+                                        ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                        Icon(
+                                                                Icons.AutoMirrored.Filled
+                                                                        .ReceiptLong,
+                                                                contentDescription = null,
+                                                                modifier = Modifier.size(48.dp),
+                                                                tint =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary
+                                                        )
+                                                }
+                                        }
+                                        Spacer(modifier = Modifier.height(24.dp))
+                                        Text(
+                                                "Belum ada nota aktif",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        Text(
+                                                "Ketuk tombol + di pojok bawah untuk membuat nota baru bagi pelanggan Anda.",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                textAlign = TextAlign.Center,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                }
+                        } else if (activeGroups.isEmpty() && searchQuery.isNotEmpty()) {
+                                Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                ) {
+                                        Text(
+                                                "Tidak ditemukan: \"$searchQuery\"",
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                }
+                        } else {
+                                LazyVerticalGrid(
+                                        columns = GridCells.Fixed(2),
+                                        contentPadding = PaddingValues(20.dp),
+                                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        modifier = Modifier.fillMaxSize()
+                                ) {
+                                        items(activeGroups, key = { it.group.id }) { groupWithTotal
+                                                ->
+                                                NotaCard(
+                                                        groupWithTotal = groupWithTotal,
+                                                        onClick = {
+                                                                onTabClick(groupWithTotal.group.id)
+                                                        }
+                                                )
+                                        }
+                                }
+                        }
+                }
+        }
+
+        if (showAddDialog) {
+                AlertDialog(
+                        onDismissRequest = {
+                                showAddDialog = false
+                                newGroupName = ""
+                        },
+                        title = { Text("Tambah Nota Baru") },
+                        text = {
+                                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                                        OutlinedTextField(
+                                                value = newGroupName,
+                                                onValueChange = { newGroupName = it },
+                                                label = { Text("Nama Nota (misal: Meja 1)") },
+                                                modifier = Modifier.fillMaxWidth(),
+                                                shape = MaterialTheme.shapes.medium
+                                        )
+
+                                        Text(
+                                                "Pilihan Cepat:",
+                                                style = MaterialTheme.typography.labelLarge
+                                        )
+
+                                        FlowRow(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                                suggestions.forEach { suggestion ->
+                                                        FilterChip(
+                                                                selected = false,
+                                                                onClick = {
+                                                                        newGroupName =
+                                                                                if (newGroupName
+                                                                                                .isEmpty()
+                                                                                )
+                                                                                        suggestion
+                                                                                else if (newGroupName
+                                                                                                .endsWith(
+                                                                                                        " "
+                                                                                                )
+                                                                                )
+                                                                                        "$newGroupName$suggestion"
+                                                                                else
+                                                                                        "$newGroupName $suggestion"
+                                                                },
+                                                                label = { Text(suggestion) },
+                                                                shape = MaterialTheme.shapes.medium
+                                                        )
+                                                }
+                                        }
+                                }
+                        },
+                        confirmButton = {
+                                Button(
+                                        onClick = {
+                                                if (newGroupName.isNotBlank()) {
+                                                        viewModel.createNewTab(newGroupName)
+                                                        showAddDialog = false
+                                                        newGroupName = ""
+                                                }
+                                        },
+                                        shape = MaterialTheme.shapes.medium
+                                ) { Text("Buat Nota") }
+                        },
+                        dismissButton = {
+                                TextButton(
+                                        onClick = {
+                                                showAddDialog = false
+                                                newGroupName = ""
+                                        }
+                                ) { Text("Batal") }
+                        }
+                )
+        }
 }
 
 @Composable
@@ -149,34 +280,94 @@ fun NotaCard(
         groupWithTotal: CustomerGroupWithTotal,
         onClick: () -> Unit,
 ) {
-  val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
-  currencyFormat.maximumFractionDigits = 0
+        val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
+        currencyFormat.maximumFractionDigits = 0
 
-  Card(
-          modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
-          elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-          colors =
-                  CardDefaults.cardColors(
-                          containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                  ),
-  ) {
-    Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-      Text(
-              text = groupWithTotal.group.alias,
-              style = MaterialTheme.typography.titleMedium,
-              fontWeight = FontWeight.Bold,
-              color = MaterialTheme.colorScheme.onSecondaryContainer,
-              maxLines = 2,
-      )
-      Text(
-              text = currencyFormat.format(groupWithTotal.totalAmount),
-              style = MaterialTheme.typography.bodyLarge,
-              color = MaterialTheme.colorScheme.onSecondaryContainer,
-              modifier = Modifier.padding(top = 8.dp),
-      )
-    }
-  }
+        Surface(
+                onClick = onClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.surface,
+                tonalElevation = 1.dp,
+                border =
+                        BorderStroke(
+                                0.5.dp,
+                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                        )
+        ) {
+                Column(
+                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                        Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                        ) {
+                                Box(
+                                        modifier =
+                                                Modifier.size(32.dp)
+                                                        .background(
+                                                                MaterialTheme.colorScheme.primary,
+                                                                MaterialTheme.shapes.small
+                                                        ),
+                                        contentAlignment = Alignment.Center
+                                ) {
+                                        Icon(
+                                                Icons.AutoMirrored.Filled.ReceiptLong,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                }
+
+                                Surface(
+                                        color =
+                                                MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                        alpha = 0.7f
+                                                ),
+                                        shape = MaterialTheme.shapes.extraSmall
+                                ) {
+                                        Text(
+                                                "AKTIF",
+                                                modifier =
+                                                        Modifier.padding(
+                                                                horizontal = 6.dp,
+                                                                vertical = 2.dp
+                                                        ),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color =
+                                                        MaterialTheme.colorScheme
+                                                                .onSecondaryContainer
+                                        )
+                                }
+                        }
+
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(
+                                        text = groupWithTotal.group.alias,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                )
+
+                                Text(
+                                        text = currencyFormat.format(groupWithTotal.totalAmount),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.secondary
+                                )
+
+                                Text(
+                                        text =
+                                                "${groupWithTotal.itemCount} ${if (groupWithTotal.itemCount > 1) "items" else "item"}",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                        }
+                }
+        }
 }

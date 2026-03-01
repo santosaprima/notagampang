@@ -5,22 +5,33 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.CustomerGroupWithTotal
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FloatingTabsViewModel(
         private val repository: CustomerGroupRepository,
 ) : ViewModel() {
+  private val _searchQuery = MutableStateFlow("")
+  val searchQuery: StateFlow<String> = _searchQuery
+
   val activeGroups: StateFlow<List<CustomerGroupWithTotal>> =
-          repository
-                  .getActiveGroupsWithTotals()
+          combine(repository.getActiveGroupsWithTotals(), _searchQuery) { groups, query ->
+                    if (query.isEmpty()) groups
+                    else groups.filter { it.group.alias.contains(query, ignoreCase = true) }
+                  }
                   .stateIn(
                           scope = viewModelScope,
                           started = SharingStarted.WhileSubscribed(5000),
                           initialValue = emptyList(),
                   )
+
+  fun onSearchQueryChange(newQuery: String) {
+    _searchQuery.value = newQuery
+  }
 
   fun createNewTab(alias: String) {
     if (alias.isNotBlank()) {

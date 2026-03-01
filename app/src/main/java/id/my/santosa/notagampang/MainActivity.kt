@@ -7,12 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.CallMerge
-import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -26,6 +26,7 @@ import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import id.my.santosa.notagampang.ui.screen.*
+import id.my.santosa.notagampang.ui.theme.NotaGampangTheme
 import id.my.santosa.notagampang.viewmodel.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
                         )
 
                 setContent {
-                        MaterialTheme {
+                        NotaGampangTheme {
                                 Surface(
                                         modifier = Modifier.fillMaxSize(),
                                         color = MaterialTheme.colorScheme.background,
@@ -164,6 +165,9 @@ class MainActivity : ComponentActivity() {
                                                                                 "Checkout"
                                                                 }
 
+                                                        val showTopBar =
+                                                                currentScreen !is
+                                                                        Screen.FloatingTabs
                                                         val showBack =
                                                                 currentScreen !is
                                                                         Screen.FloatingTabs &&
@@ -176,265 +180,124 @@ class MainActivity : ComponentActivity() {
                                                                         currentScreen !is
                                                                                 Screen.SuggestionPresets
 
-                                                        CenterAlignedTopAppBar(
-                                                                title = { Text(title) },
-                                                                navigationIcon = {
-                                                                        if (showBack) {
-                                                                                IconButton(
-                                                                                        onClick = {
-                                                                                                currentScreen =
-                                                                                                        when (val s =
-                                                                                                                        currentScreen
-                                                                                                        ) {
-                                                                                                                is Screen.OrderEntry ->
-                                                                                                                        Screen.FloatingTabs
-                                                                                                                is Screen.Checkout ->
-                                                                                                                        Screen.OrderEntry(
-                                                                                                                                s.groupId
-                                                                                                                        )
-                                                                                                                else ->
-                                                                                                                        Screen.FloatingTabs
-                                                                                                        }
-                                                                                        }
-                                                                                ) {
-                                                                                        Icon(
-                                                                                                Icons.AutoMirrored
-                                                                                                        .Filled
-                                                                                                        .ArrowBack,
-                                                                                                contentDescription =
-                                                                                                        "Kembali"
-                                                                                        )
-                                                                                }
-                                                                        }
-                                                                },
-                                                                actions = {
-                                                                        if (currentScreen is
-                                                                                        Screen.OrderEntry
-                                                                        ) {
-                                                                                IconButton(
-                                                                                        onClick = {
-                                                                                                showMergeDialog =
-                                                                                                        true
-                                                                                        }
-                                                                                ) {
-                                                                                        Icon(
-                                                                                                Icons.AutoMirrored
-                                                                                                        .Filled
-                                                                                                        .CallMerge,
-                                                                                                contentDescription =
-                                                                                                        "Gabung Nota"
-                                                                                        )
-                                                                                }
-                                                                                IconButton(
-                                                                                        onClick = {
-                                                                                                showDeleteConfirm =
-                                                                                                        true
-                                                                                        }
-                                                                                ) {
-                                                                                        Icon(
-                                                                                                Icons.Default
-                                                                                                        .Delete,
-                                                                                                contentDescription =
-                                                                                                        "Hapus Nota",
-                                                                                                tint =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .error
-                                                                                        )
-                                                                                }
-                                                                        }
-                                                                },
-                                                                colors =
-                                                                        TopAppBarDefaults
-                                                                                .centerAlignedTopAppBarColors(
-                                                                                        containerColor =
-                                                                                                MaterialTheme
-                                                                                                        .colorScheme
-                                                                                                        .primaryContainer,
-                                                                                        titleContentColor =
-                                                                                                MaterialTheme
-                                                                                                        .colorScheme
-                                                                                                        .onPrimaryContainer,
-                                                                                        navigationIconContentColor =
-                                                                                                MaterialTheme
-                                                                                                        .colorScheme
-                                                                                                        .onPrimaryContainer
-                                                                                )
-                                                        )
-
-                                                        if (showDeleteConfirm) {
-                                                                AlertDialog(
-                                                                        onDismissRequest = {
-                                                                                showDeleteConfirm =
-                                                                                        false
-                                                                        },
+                                                        if (showTopBar) {
+                                                                CenterAlignedTopAppBar(
                                                                         title = {
-                                                                                Text("Hapus Nota")
+                                                                                Row(
+                                                                                        verticalAlignment =
+                                                                                                Alignment
+                                                                                                        .CenterVertically,
+                                                                                        horizontalArrangement =
+                                                                                                Arrangement
+                                                                                                        .spacedBy(
+                                                                                                                8.dp
+                                                                                                        )
+                                                                                ) {
+                                                                                        if (!showBack
+                                                                                        ) {
+                                                                                                Icon(
+                                                                                                        Icons.Default
+                                                                                                                .Notes,
+                                                                                                        contentDescription =
+                                                                                                                null,
+                                                                                                        modifier =
+                                                                                                                Modifier.size(
+                                                                                                                        24.dp
+                                                                                                                ),
+                                                                                                        tint =
+                                                                                                                MaterialTheme
+                                                                                                                        .colorScheme
+                                                                                                                        .primary
+                                                                                                )
+                                                                                        }
+                                                                                        Text(title)
+                                                                                }
                                                                         },
-                                                                        text = {
-                                                                                Text(
-                                                                                        "Apakah Anda yakin ingin menghapus nota ini? Semua pesanan akan dihapus."
-                                                                                )
-                                                                        },
-                                                                        confirmButton = {
-                                                                                Button(
-                                                                                        onClick = {
-                                                                                                val screen =
-                                                                                                        currentScreen
-                                                                                                if (screen is
-                                                                                                                Screen.OrderEntry
-                                                                                                ) {
-                                                                                                        scope
-                                                                                                                .launch {
-                                                                                                                        groupRepository
-                                                                                                                                .deleteGroup(
-                                                                                                                                        screen.groupId
+                                                                        navigationIcon = {
+                                                                                if (showBack) {
+                                                                                        IconButton(
+                                                                                                onClick = {
+                                                                                                        currentScreen =
+                                                                                                                when (val s =
+                                                                                                                                currentScreen
+                                                                                                                ) {
+                                                                                                                        is Screen.OrderEntry ->
+                                                                                                                                Screen.FloatingTabs
+                                                                                                                        is Screen.Checkout ->
+                                                                                                                                Screen.OrderEntry(
+                                                                                                                                        s.groupId
                                                                                                                                 )
-                                                                                                                        currentScreen =
+                                                                                                                        else ->
                                                                                                                                 Screen.FloatingTabs
                                                                                                                 }
                                                                                                 }
-                                                                                                showDeleteConfirm =
-                                                                                                        false
-                                                                                        },
-                                                                                        colors =
-                                                                                                ButtonDefaults
-                                                                                                        .buttonColors(
-                                                                                                                containerColor =
-                                                                                                                        MaterialTheme
-                                                                                                                                .colorScheme
-                                                                                                                                .error
-                                                                                                        )
-                                                                                ) { Text("Hapus") }
-                                                                        },
-                                                                        dismissButton = {
-                                                                                TextButton(
-                                                                                        onClick = {
-                                                                                                showDeleteConfirm =
-                                                                                                        false
-                                                                                        }
-                                                                                ) { Text("Batal") }
-                                                                        }
-                                                                )
-                                                        }
-
-                                                        val otherGroups by
-                                                                if (currentScreen is
-                                                                                Screen.OrderEntry
-                                                                ) {
-                                                                        groupRepository
-                                                                                .getOtherActiveGroups(
-                                                                                        (currentScreen as
-                                                                                                        Screen.OrderEntry)
-                                                                                                .groupId
-                                                                                )
-                                                                                .collectAsState(
-                                                                                        initial =
-                                                                                                emptyList()
-                                                                                )
-                                                                } else {
-                                                                        remember {
-                                                                                mutableStateOf(
-                                                                                        emptyList<
-                                                                                                id.my.santosa.notagampang.database.entity.CustomerGroupEntity>()
-                                                                                )
-                                                                        }
-                                                                }
-
-                                                        if (showMergeDialog) {
-                                                                AlertDialog(
-                                                                        onDismissRequest = {
-                                                                                showMergeDialog =
-                                                                                        false
-                                                                        },
-                                                                        title = {
-                                                                                Text("Gabung Nota")
-                                                                        },
-                                                                        text = {
-                                                                                Column {
-                                                                                        Text(
-                                                                                                "Pilih nota tujuan untuk menggabungkan semua pesanan ini:"
-                                                                                        )
-                                                                                        if (otherGroups
-                                                                                                        .isEmpty()
                                                                                         ) {
-                                                                                                Text(
-                                                                                                        "Tidak ada nota aktif lain untuk digabungkan.",
-                                                                                                        style =
-                                                                                                                MaterialTheme
-                                                                                                                        .typography
-                                                                                                                        .bodySmall,
-                                                                                                        color =
-                                                                                                                MaterialTheme
-                                                                                                                        .colorScheme
-                                                                                                                        .error,
-                                                                                                        modifier =
-                                                                                                                Modifier.padding(
-                                                                                                                        top =
-                                                                                                                                8.dp
-                                                                                                                )
+                                                                                                Icon(
+                                                                                                        Icons.AutoMirrored
+                                                                                                                .Filled
+                                                                                                                .ArrowBack,
+                                                                                                        contentDescription =
+                                                                                                                "Kembali"
                                                                                                 )
-                                                                                        } else {
-                                                                                                otherGroups
-                                                                                                        .forEach {
-                                                                                                                other
-                                                                                                                ->
-                                                                                                                Card(
-                                                                                                                        modifier =
-                                                                                                                                Modifier.fillMaxWidth()
-                                                                                                                                        .padding(
-                                                                                                                                                vertical =
-                                                                                                                                                        4.dp
-                                                                                                                                        )
-                                                                                                                                        .clickable {
-                                                                                                                                                scope
-                                                                                                                                                        .launch {
-                                                                                                                                                                groupRepository
-                                                                                                                                                                        .mergeGroups(
-                                                                                                                                                                                (currentScreen as
-                                                                                                                                                                                                Screen.OrderEntry)
-                                                                                                                                                                                        .groupId,
-                                                                                                                                                                                other.id
-                                                                                                                                                                        )
-                                                                                                                                                                currentScreen =
-                                                                                                                                                                        Screen.FloatingTabs
-                                                                                                                                                        }
-                                                                                                                                                showMergeDialog =
-                                                                                                                                                        false
-                                                                                                                                        },
-                                                                                                                        colors =
-                                                                                                                                CardDefaults
-                                                                                                                                        .cardColors(
-                                                                                                                                                containerColor =
-                                                                                                                                                        MaterialTheme
-                                                                                                                                                                .colorScheme
-                                                                                                                                                                .surfaceVariant
-                                                                                                                                        )
-                                                                                                                ) {
-                                                                                                                        Text(
-                                                                                                                                other.alias,
-                                                                                                                                modifier =
-                                                                                                                                        Modifier.padding(
-                                                                                                                                                16.dp
-                                                                                                                                        ),
-                                                                                                                                fontWeight =
-                                                                                                                                        FontWeight
-                                                                                                                                                .SemiBold
-                                                                                                                        )
-                                                                                                                }
-                                                                                                        }
                                                                                         }
                                                                                 }
                                                                         },
-                                                                        confirmButton = {},
-                                                                        dismissButton = {
-                                                                                TextButton(
-                                                                                        onClick = {
-                                                                                                showMergeDialog =
-                                                                                                        false
+                                                                        actions = {
+                                                                                if (currentScreen is
+                                                                                                Screen.OrderEntry
+                                                                                ) {
+                                                                                        IconButton(
+                                                                                                onClick = {
+                                                                                                        showMergeDialog =
+                                                                                                                true
+                                                                                                }
+                                                                                        ) {
+                                                                                                Icon(
+                                                                                                        Icons.Default
+                                                                                                                .CallMerge,
+                                                                                                        contentDescription =
+                                                                                                                "Gabung Nota"
+                                                                                                )
                                                                                         }
-                                                                                ) { Text("Batal") }
-                                                                        }
+                                                                                        IconButton(
+                                                                                                onClick = {
+                                                                                                        showDeleteConfirm =
+                                                                                                                true
+                                                                                                }
+                                                                                        ) {
+                                                                                                Icon(
+                                                                                                        Icons.Default
+                                                                                                                .Delete,
+                                                                                                        contentDescription =
+                                                                                                                "Hapus Nota",
+                                                                                                        tint =
+                                                                                                                MaterialTheme
+                                                                                                                        .colorScheme
+                                                                                                                        .error
+                                                                                                )
+                                                                                        }
+                                                                                }
+                                                                        },
+                                                                        colors =
+                                                                                TopAppBarDefaults
+                                                                                        .centerAlignedTopAppBarColors(
+                                                                                                containerColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .surface,
+                                                                                                titleContentColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurface,
+                                                                                                navigationIconContentColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurface,
+                                                                                                actionIconContentColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurface
+                                                                                        )
                                                                 )
                                                         }
                                                 },
@@ -452,7 +315,13 @@ class MainActivity : ComponentActivity() {
                                                                                 Screen.SuggestionPresets
 
                                                         if (showBottomBar) {
-                                                                NavigationBar {
+                                                                NavigationBar(
+                                                                        containerColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .surface,
+                                                                        tonalElevation = 0.dp
+                                                                ) {
                                                                         NavigationBarItem(
                                                                                 icon = {
                                                                                         Icon(
@@ -472,7 +341,7 @@ class MainActivity : ComponentActivity() {
                                                                                 onClick = {
                                                                                         currentScreen =
                                                                                                 Screen.FloatingTabs
-                                                                                }
+                                                                                }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.secondary, selectedTextColor = MaterialTheme.colorScheme.secondary, indicatorColor = MaterialTheme.colorScheme.primary)
                                                                         )
                                                                         NavigationBarItem(
                                                                                 icon = {
@@ -494,7 +363,7 @@ class MainActivity : ComponentActivity() {
                                                                                 onClick = {
                                                                                         currentScreen =
                                                                                                 Screen.Kasbon
-                                                                                }
+                                                                                }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.secondary, selectedTextColor = MaterialTheme.colorScheme.secondary, indicatorColor = MaterialTheme.colorScheme.primary)
                                                                         )
                                                                         NavigationBarItem(
                                                                                 icon = {
@@ -514,7 +383,7 @@ class MainActivity : ComponentActivity() {
                                                                                 onClick = {
                                                                                         currentScreen =
                                                                                                 Screen.MenuManagement
-                                                                                }
+                                                                                }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.secondary, selectedTextColor = MaterialTheme.colorScheme.secondary, indicatorColor = MaterialTheme.colorScheme.primary)
                                                                         )
                                                                         NavigationBarItem(
                                                                                 icon = {
@@ -536,7 +405,7 @@ class MainActivity : ComponentActivity() {
                                                                                 onClick = {
                                                                                         currentScreen =
                                                                                                 Screen.ShiftManagement
-                                                                                }
+                                                                                }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.secondary, selectedTextColor = MaterialTheme.colorScheme.secondary, indicatorColor = MaterialTheme.colorScheme.primary)
                                                                         )
                                                                         NavigationBarItem(
                                                                                 icon = {
@@ -558,7 +427,7 @@ class MainActivity : ComponentActivity() {
                                                                                 onClick = {
                                                                                         currentScreen =
                                                                                                 Screen.SuggestionPresets
-                                                                                }
+                                                                                }, colors = NavigationBarItemDefaults.colors(selectedIconColor = MaterialTheme.colorScheme.secondary, selectedTextColor = MaterialTheme.colorScheme.secondary, indicatorColor = MaterialTheme.colorScheme.primary)
                                                                         )
                                                                 }
                                                         }
@@ -571,14 +440,14 @@ class MainActivity : ComponentActivity() {
                                                                                 showAddMenuSheet =
                                                                                         true
                                                                         },
-                                                                        containerColor =
+                                                                        modifier = Modifier.offset(y = 20.dp), containerColor =
                                                                                 MaterialTheme
                                                                                         .colorScheme
                                                                                         .primary,
                                                                         contentColor =
                                                                                 MaterialTheme
                                                                                         .colorScheme
-                                                                                        .onPrimary
+                                                                                        .secondary
                                                                 ) {
                                                                         Icon(
                                                                                 Icons.Default.Add,
@@ -589,6 +458,176 @@ class MainActivity : ComponentActivity() {
                                                         }
                                                 }
                                         ) { innerPadding ->
+                                                // State for dialogs
+                                                val otherGroups by
+                                                        if (currentScreen is Screen.OrderEntry) {
+                                                                groupRepository
+                                                                        .getOtherActiveGroups(
+                                                                                (currentScreen as
+                                                                                                Screen.OrderEntry)
+                                                                                        .groupId
+                                                                        )
+                                                                        .collectAsState(
+                                                                                initial =
+                                                                                        emptyList()
+                                                                        )
+                                                        } else {
+                                                                remember {
+                                                                        mutableStateOf(
+                                                                                emptyList<
+                                                                                        id.my.santosa.notagampang.database.entity.CustomerGroupEntity>()
+                                                                        )
+                                                                }
+                                                        }
+
+                                                // Dialogs
+                                                if (showDeleteConfirm) {
+                                                        AlertDialog(
+                                                                onDismissRequest = {
+                                                                        showDeleteConfirm = false
+                                                                },
+                                                                title = { Text("Hapus Nota") },
+                                                                text = {
+                                                                        Text(
+                                                                                "Apakah Anda yakin ingin menghapus nota ini? Semua pesanan akan dihapus."
+                                                                        )
+                                                                },
+                                                                confirmButton = {
+                                                                        Button(
+                                                                                onClick = {
+                                                                                        val screen =
+                                                                                                currentScreen
+                                                                                        if (screen is
+                                                                                                        Screen.OrderEntry
+                                                                                        ) {
+                                                                                                scope
+                                                                                                        .launch {
+                                                                                                                groupRepository
+                                                                                                                        .deleteGroup(
+                                                                                                                                screen.groupId
+                                                                                                                        )
+                                                                                                                currentScreen =
+                                                                                                                        Screen.FloatingTabs
+                                                                                                        }
+                                                                                        }
+                                                                                        showDeleteConfirm =
+                                                                                                false
+                                                                                },
+                                                                                colors =
+                                                                                        ButtonDefaults
+                                                                                                .buttonColors(
+                                                                                                        containerColor =
+                                                                                                                MaterialTheme
+                                                                                                                        .colorScheme
+                                                                                                                        .error
+                                                                                                )
+                                                                        ) { Text("Hapus") }
+                                                                },
+                                                                dismissButton = {
+                                                                        TextButton(
+                                                                                onClick = {
+                                                                                        showDeleteConfirm =
+                                                                                                false
+                                                                                }
+                                                                        ) { Text("Batal") }
+                                                                }
+                                                        )
+                                                }
+
+                                                if (showMergeDialog) {
+                                                        AlertDialog(
+                                                                onDismissRequest = {
+                                                                        showMergeDialog = false
+                                                                },
+                                                                title = { Text("Gabung Nota") },
+                                                                text = {
+                                                                        Column {
+                                                                                Text(
+                                                                                        "Pilih nota tujuan untuk menggabungkan semua pesanan ini:"
+                                                                                )
+                                                                                if (otherGroups
+                                                                                                .isEmpty()
+                                                                                ) {
+                                                                                        Text(
+                                                                                                "Tidak ada nota aktif lain untuk digabungkan.",
+                                                                                                style =
+                                                                                                        MaterialTheme
+                                                                                                                .typography
+                                                                                                                .bodySmall,
+                                                                                                color =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .error,
+                                                                                                modifier =
+                                                                                                        Modifier.padding(
+                                                                                                                top =
+                                                                                                                        8.dp
+                                                                                                        )
+                                                                                        )
+                                                                                } else {
+                                                                                        otherGroups
+                                                                                                .forEach {
+                                                                                                        other
+                                                                                                        ->
+                                                                                                        Card(
+                                                                                                                modifier =
+                                                                                                                        Modifier.fillMaxWidth()
+                                                                                                                                .padding(
+                                                                                                                                        vertical =
+                                                                                                                                                4.dp
+                                                                                                                                )
+                                                                                                                                .clickable {
+                                                                                                                                        scope
+                                                                                                                                                .launch {
+                                                                                                                                                        groupRepository
+                                                                                                                                                                .mergeGroups(
+                                                                                                                                                                        (currentScreen as
+                                                                                                                                                                                        Screen.OrderEntry)
+                                                                                                                                                                                .groupId,
+                                                                                                                                                                        other.id
+                                                                                                                                                                )
+                                                                                                                                                        currentScreen =
+                                                                                                                                                                Screen.FloatingTabs
+                                                                                                                                                }
+                                                                                                                                        showMergeDialog =
+                                                                                                                                                false
+                                                                                                                                },
+                                                                                                                colors =
+                                                                                                                        CardDefaults
+                                                                                                                                .cardColors(
+                                                                                                                                        containerColor =
+                                                                                                                                                MaterialTheme
+                                                                                                                                                        .colorScheme
+                                                                                                                                                        .surfaceVariant
+                                                                                                                                )
+                                                                                                        ) {
+                                                                                                                Text(
+                                                                                                                        other.alias,
+                                                                                                                        modifier =
+                                                                                                                                Modifier.padding(
+                                                                                                                                        16.dp
+                                                                                                                                ),
+                                                                                                                        fontWeight =
+                                                                                                                                FontWeight
+                                                                                                                                        .SemiBold
+                                                                                                                )
+                                                                                                        }
+                                                                                                }
+                                                                                }
+                                                                        }
+                                                                },
+                                                                confirmButton = {},
+                                                                dismissButton = {
+                                                                        TextButton(
+                                                                                onClick = {
+                                                                                        showMergeDialog =
+                                                                                                false
+                                                                                }
+                                                                        ) { Text("Batal") }
+                                                                }
+                                                        )
+                                                }
+
                                                 Surface(
                                                         modifier = Modifier.padding(innerPadding),
                                                         color = MaterialTheme.colorScheme.background

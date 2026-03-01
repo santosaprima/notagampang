@@ -7,29 +7,33 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 data class CustomerGroupWithTotal(
-  val group: CustomerGroupEntity,
-  val totalAmount: Int,
+        val group: CustomerGroupEntity,
+        val totalAmount: Int,
+        val itemCount: Int,
 )
 
 class CustomerGroupRepository(
-  private val customerGroupDao: CustomerGroupDao,
-  private val orderItemDao: OrderItemDao,
+        private val customerGroupDao: CustomerGroupDao,
+        private val orderItemDao: OrderItemDao,
 ) {
   fun getActiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
     return customerGroupDao.getGroupsWithTotalUnpaidByStatus("Active").map { groups ->
-      groups.map { daoModel -> CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid) }
+      groups.map { daoModel ->
+        CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid, daoModel.itemCount)
+      }
     }
   }
 
-  suspend fun getGroupById(groupId: Long): CustomerGroupEntity? = customerGroupDao.getGroupById(groupId)
+  suspend fun getGroupById(groupId: Long): CustomerGroupEntity? =
+          customerGroupDao.getGroupById(groupId)
 
   suspend fun createNewGroup(alias: String): Long {
     val newGroup =
-      CustomerGroupEntity(
-        alias = alias,
-        createdAt = System.currentTimeMillis(),
-        status = "Active",
-      )
+            CustomerGroupEntity(
+                    alias = alias,
+                    createdAt = System.currentTimeMillis(),
+                    status = "Active",
+            )
     return customerGroupDao.insertGroup(newGroup)
   }
 
@@ -47,8 +51,8 @@ class CustomerGroupRepository(
   suspend fun deletePaidGroups() = customerGroupDao.deletePaidGroups()
 
   suspend fun mergeGroups(
-    sourceId: Long,
-    targetId: Long,
+          sourceId: Long,
+          targetId: Long,
   ) {
     // 1. Transfer all items from source to target
     orderItemDao.transferItems(sourceId, targetId)

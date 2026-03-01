@@ -1,0 +1,71 @@
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:kspDebugKotlin UP-TO-DATE
+
+> Task :app:compileDebugKotlin FAILED
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:11:60 Unresolved reference: CallMerge
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:19:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:20:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:21:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:44:26 Unresolved reference: preferencesDataStore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:120:70 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:122:65 Unresolved reference: booleanPreferencesKey
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:134:74 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:136:73 Unresolved reference: booleanPreferencesKey
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:224:106 Unresolved reference: CallMerge
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:462:106 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:482:106 Unresolved reference: History
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:504:106 Unresolved reference: RestaurantMenu
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:524:106 Unresolved reference: ManageHistory
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:546:106 Unresolved reference: SettingsSuggest
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:11:47 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:75:37 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:210:31 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt:8:47 Unresolved reference: RemoveCircleOutline
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt:132:77 Unresolved reference: RemoveCircleOutline
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:7:33 Unresolved reference: googlefonts
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:8:33 Unresolved reference: googlefonts
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:13:9 Unresolved reference: GoogleFont
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:19:16 Unresolved reference: GoogleFont
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:23:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:24:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:25:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:26:17 Unresolved reference: Font
+
+[Incubating] Problems report is available at: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 1s
+15 actionable tasks: 2 executed, 13 up-to-date

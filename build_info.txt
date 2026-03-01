@@ -1,0 +1,289 @@
+Initialized native services in: /Users/santosaprima/.gradle/native
+Initialized jansi services in: /Users/santosaprima/.gradle/native
+The client will now receive all logging from the daemon (pid: 9548). The daemon log file: /Users/santosaprima/.gradle/daemon/8.14.2/daemon-9548.out.log
+Starting 55th build in daemon [uptime: 1 hrs 8 mins 50.922 secs, performance: 100%, GC rate: 0.00/s, heap usage: 3% of 2 GiB]
+Using 8 worker leases.
+Now considering [/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang] as hierarchies to watch
+Watching the file system is configured to be enabled if available
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/settings.gradle.kts'.
+Projects loaded. Root project using build file '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/build.gradle.kts'.
+Included projects: [root project 'notagampang', project ':app']
+
+> Configure project :
+Evaluating root project 'notagampang' using build file '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '8.2.2', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '1.9.22', apply: false]
+Resolved plugin [id: 'com.google.devtools.ksp', version: '1.9.22-1.0.17', apply: false]
+Resolved plugin [id: 'org.jlleitschuh.gradle.ktlint', version: '12.1.0', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build.gradle.kts'.
+Resolved plugin [id: 'com.android.application']
+Resolved plugin [id: 'org.jetbrains.kotlin.android']
+Resolved plugin [id: 'com.google.devtools.ksp']
+Resolved plugin [id: 'org.jlleitschuh.gradle.ktlint']
+Using default execution profile
+Using Kotlin Gradle Plugin gradle82 variant
+Parsed shrinker version: 8.2.47
+All projects evaluated.
+Task name matched 'compileDebugKotlin'
+Selected primary task 'compileDebugKotlin' from project :
+Tasks to be executed: [task ':app:checkKotlinGradlePluginConfigurationErrors', task ':app:preBuild', task ':app:preDebugBuild', task ':app:checkDebugAarMetadata', task ':app:generateDebugResValues', task ':app:mapDebugSourceSetPaths', task ':app:generateDebugResources', task ':app:mergeDebugResources', task ':app:packageDebugResources', task ':app:parseDebugLocalResources', task ':app:createDebugCompatibleScreenManifests', task ':app:extractDeepLinksDebug', task ':app:processDebugMainManifest', task ':app:processDebugManifest', task ':app:processDebugManifestForPackage', task ':app:processDebugResources', task ':app:kspDebugKotlin', task ':app:compileDebugKotlin']
+Tasks that were excluded: []
+Resolve mutations for :app:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+:app:checkKotlinGradlePluginConfigurationErrors (Thread[Execution worker,5,main]) started.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+Caching disabled for task ':app:checkKotlinGradlePluginConfigurationErrors' because:
+  Build cache is disabled
+Task ':app:checkKotlinGradlePluginConfigurationErrors' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+Resolve mutations for :app:preBuild (Thread[Execution worker,5,main]) started.
+:app:preBuild (Thread[Execution worker,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preDebugBuild (Thread[Execution worker,5,main]) started.
+:app:preDebugBuild (Thread[Execution worker,5,main]) started.
+
+> Task :app:preDebugBuild UP-TO-DATE
+Skipping task ':app:preDebugBuild' as it has no actions.
+Resolve mutations for :app:checkDebugAarMetadata (Thread[Execution worker,5,main]) started.
+:app:checkDebugAarMetadata (Thread[Execution worker,5,main]) started.
+
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+Caching disabled for task ':app:checkDebugAarMetadata' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:checkDebugAarMetadata' as it is up-to-date.
+Resolve mutations for :app:generateDebugResValues (Thread[Execution worker,5,main]) started.
+:app:generateDebugResValues (Thread[Execution worker,5,main]) started.
+
+> Task :app:generateDebugResValues UP-TO-DATE
+Caching disabled for task ':app:generateDebugResValues' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugResValues' as it is up-to-date.
+Resolve mutations for :app:mapDebugSourceSetPaths (Thread[Execution worker,5,main]) started.
+:app:mapDebugSourceSetPaths (Thread[Execution worker,5,main]) started.
+
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+Caching disabled for task ':app:mapDebugSourceSetPaths' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:mapDebugSourceSetPaths' as it is up-to-date.
+Resolve mutations for :app:generateDebugResources (Thread[Execution worker,5,main]) started.
+:app:generateDebugResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :app:generateDebugResources UP-TO-DATE
+Skipping task ':app:generateDebugResources' as it has no actions.
+Resolve mutations for :app:mergeDebugResources (Thread[Execution worker Thread 5,5,main]) started.
+:app:mergeDebugResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :app:mergeDebugResources UP-TO-DATE
+Caching disabled for task ':app:mergeDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:mergeDebugResources' as it is up-to-date.
+Resolve mutations for :app:packageDebugResources (Thread[Execution worker Thread 5,5,main]) started.
+:app:packageDebugResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :app:packageDebugResources UP-TO-DATE
+Caching disabled for task ':app:packageDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:packageDebugResources' as it is up-to-date.
+Resolve mutations for :app:parseDebugLocalResources (Thread[Execution worker Thread 5,5,main]) started.
+:app:parseDebugLocalResources (Thread[Execution worker Thread 5,5,main]) started.
+
+> Task :app:parseDebugLocalResources UP-TO-DATE
+Caching disabled for task ':app:parseDebugLocalResources' because:
+  Build cache is disabled
+Skipping task ':app:parseDebugLocalResources' as it is up-to-date.
+Resolve mutations for :app:createDebugCompatibleScreenManifests (Thread[Execution worker Thread 5,5,main]) started.
+:app:createDebugCompatibleScreenManifests (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+Caching disabled for task ':app:createDebugCompatibleScreenManifests' because:
+  Build cache is disabled
+  Caching has been disabled for the task
+Skipping task ':app:createDebugCompatibleScreenManifests' as it is up-to-date.
+Resolve mutations for :app:extractDeepLinksDebug (Thread[Execution worker Thread 6,5,main]) started.
+:app:extractDeepLinksDebug (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+Caching disabled for task ':app:extractDeepLinksDebug' because:
+  Build cache is disabled
+Skipping task ':app:extractDeepLinksDebug' as it is up-to-date.
+Resolve mutations for :app:processDebugMainManifest (Thread[Execution worker Thread 6,5,main]) started.
+:app:processDebugMainManifest (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:processDebugMainManifest UP-TO-DATE
+Caching disabled for task ':app:processDebugMainManifest' because:
+  Build cache is disabled
+Skipping task ':app:processDebugMainManifest' as it is up-to-date.
+Resolve mutations for :app:processDebugManifest (Thread[Execution worker Thread 6,5,main]) started.
+:app:processDebugManifest (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:processDebugManifest UP-TO-DATE
+Caching disabled for task ':app:processDebugManifest' because:
+  Build cache is disabled
+Skipping task ':app:processDebugManifest' as it is up-to-date.
+Resolve mutations for :app:processDebugManifestForPackage (Thread[Execution worker Thread 6,5,main]) started.
+:app:processDebugManifestForPackage (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+Custom actions are attached to task ':app:processDebugManifestForPackage'.
+Caching disabled for task ':app:processDebugManifestForPackage' because:
+  Build cache is disabled
+Skipping task ':app:processDebugManifestForPackage' as it is up-to-date.
+Resolve mutations for :app:processDebugResources (Thread[Execution worker Thread 6,5,main]) started.
+:app:processDebugResources (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:processDebugResources UP-TO-DATE
+Caching disabled for task ':app:processDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:processDebugResources' as it is up-to-date.
+Resolve mutations for :app:kspDebugKotlin (Thread[Execution worker Thread 6,5,main]) started.
+:app:kspDebugKotlin (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:kspDebugKotlin
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+Caching disabled for task ':app:kspDebugKotlin' because:
+  Build cache is disabled
+Task ':app:kspDebugKotlin' is not up-to-date because:
+  Input property 'sources' file /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt has changed.
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+Kotlin source files: /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/SuggestionPresetsViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/FloatingTabsViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/CheckoutViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/KasbonViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/OrderEntryViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/MenuManagementViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/ShiftManagementViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Shape.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Color.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Theme.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/ShiftManagementScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/KasbonScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/MenuManagementScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/SuggestionPresetsScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/CheckoutScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/CustomerGroupEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/MenuItemEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/DebtRecordEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/OrderItemEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/SuggestionPresetEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/CustomerGroupDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/SuggestionPresetDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/MenuItemDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/DebtRecordDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/OrderItemDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/CustomerGroupWithTotalDaoModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/AppDatabase.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/OrderRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/MenuItemRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/CustomerGroupRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/DebtRecordRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt
+Java source files: 
+Script source files: 
+Script file extensions: 
+[KOTLIN] Kotlin compilation 'jdkHome' argument: null
+i: found daemon on port 17474 (4102154 ms old), trying to connect
+i: connected to the daemon
+i: [ksp] loaded provider(s): [androidx.room.RoomKspProcessor$Provider]
+Resolve mutations for :app:compileDebugKotlin (Thread[Execution worker Thread 6,5,main]) started.
+:app:compileDebugKotlin (Thread[Execution worker Thread 6,5,main]) started.
+
+> Task :app:compileDebugKotlin FAILED
+Caching disabled for task ':app:compileDebugKotlin' because:
+  Build cache is disabled
+Task ':app:compileDebugKotlin' is not up-to-date because:
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file /Users/santosaprima/.gradle/caches/8.14.2/transforms/ff3d04991d8d4ea56febd37faee075b8/transformed/R_jar-snapshot.bin has been removed.
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file /Users/santosaprima/.gradle/caches/8.14.2/transforms/b705972a13c15a0e68cc3e850440ea9b/transformed/R_jar-snapshot.bin has been added.
+  Input property 'classpathSnapshotProperties.classpathSnapshot' file /Users/santosaprima/.gradle/caches/8.14.2/transforms/43ad6c7e831df236b0f2b4a0c2b63e0a/transformed/material-icons-extended-release-api_jar-snapshot.bin has been removed.
+  and more...
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/kotlin', not found
+file or directory '/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/debug/java', not found
+Kotlin source files: /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/SuggestionPresetsViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/FloatingTabsViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/CheckoutViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/KasbonViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/OrderEntryViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/MenuManagementViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/viewmodel/ShiftManagementViewModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Shape.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Color.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Theme.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/ShiftManagementScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/KasbonScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/MenuManagementScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/SuggestionPresetsScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/CheckoutScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/CustomerGroupEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/MenuItemEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/DebtRecordEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/OrderItemEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/entity/SuggestionPresetEntity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/CustomerGroupDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/SuggestionPresetDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/MenuItemDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/DebtRecordDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/OrderItemDao.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/dao/CustomerGroupWithTotalDaoModel.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/database/AppDatabase.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/OrderRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/MenuItemRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/CustomerGroupRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/repository/DebtRecordRepository.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt
+Java source files: /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/AppDatabase_Impl.java, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/dao/OrderItemDao_Impl.java, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/dao/SuggestionPresetDao_Impl.java, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/dao/CustomerGroupDao_Impl.java, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/dao/MenuItemDao_Impl.java, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/generated/ksp/debug/java/id/my/santosa/notagampang/database/dao/DebtRecordDao_Impl.java
+Script source files: 
+Script file extensions: 
+Using Kotlin/JVM incremental compilation
+[KOTLIN] Kotlin compilation 'jdkHome' argument: null
+i: found daemon on port 17474 (4102685 ms old), trying to connect
+i: connected to the daemon
+Options for KOTLIN DAEMON: IncrementalCompilationOptions(super=CompilationOptions(compilerMode=INCREMENTAL_COMPILER, targetPlatform=JVM, reportCategories=[0, 3], reportSeverity=2, requestedCompilationResults=[0], kotlinScriptExtensions=[]), areFileChangesKnown=true, modifiedFiles=[/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Color.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Shape.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Theme.kt, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt, /Users/santosaprima/.gradle/caches/8.14.2/transforms/b705972a13c15a0e68cc3e850440ea9b/transformed/R_jar-snapshot.bin], deletedFiles=[/Users/santosaprima/.gradle/caches/8.14.2/transforms/ff3d04991d8d4ea56febd37faee075b8/transformed/R_jar-snapshot.bin, /Users/santosaprima/.gradle/caches/8.14.2/transforms/43ad6c7e831df236b0f2b4a0c2b63e0a/transformed/material-icons-extended-release-api_jar-snapshot.bin, /Users/santosaprima/.gradle/caches/8.14.2/transforms/06d7c2f2fcdb53519a2c10c4b4b5b23a/transformed/datastore-preferences-1_0_0-api_jar-snapshot.bin, /Users/santosaprima/.gradle/caches/8.14.2/transforms/3d1137e47bb76f4fb381215fd7bb3f5c/transformed/datastore-1_0_0-api_jar-snapshot.bin, /Users/santosaprima/.gradle/caches/8.14.2/transforms/dd465881f5c193742ff2004ac586c9bb/transformed/datastore-preferences-core-1_0_0_jar-snapshot.bin, /Users/santosaprima/.gradle/caches/8.14.2/transforms/3f343cb9b0e83f115286f58da2dcf8f3/transformed/datastore-core-1_0_0_jar-snapshot.bin], classpathChanges=ToBeComputedByIncrementalCompiler, workingDir=/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/kotlin/compileDebugKotlin/cacheable, multiModuleICSettings=MultiModuleICSettings(buildHistoryFile=/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/kotlin/compileDebugKotlin/local-state/build-history.bin, useModuleDetection=true), usePreciseJavaTracking=true, outputFiles=[/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/tmp/kotlin-classes/debug, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/kotlin/compileDebugKotlin/cacheable, /Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/build/kotlin/compileDebugKotlin/local-state])
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:11:60 Unresolved reference: CallMerge
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:19:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:20:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:21:17 Unresolved reference: datastore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:44:26 Unresolved reference: preferencesDataStore
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:120:70 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:122:65 Unresolved reference: booleanPreferencesKey
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:134:74 Cannot infer a type for this parameter. Please specify it explicitly.
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:136:73 Unresolved reference: booleanPreferencesKey
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:223:106 Unresolved reference: CallMerge
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:460:106 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:480:106 Unresolved reference: History
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:502:106 Unresolved reference: RestaurantMenu
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:522:106 Unresolved reference: ManageHistory
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/MainActivity.kt:544:106 Unresolved reference: SettingsSuggest
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:11:47 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:75:37 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/FloatingTabsScreen.kt:210:31 Unresolved reference: ReceiptLong
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt:8:47 Unresolved reference: RemoveCircleOutline
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/screen/OrderEntryScreen.kt:132:77 Unresolved reference: RemoveCircleOutline
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:7:33 Unresolved reference: googlefonts
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:8:33 Unresolved reference: googlefonts
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:13:9 Unresolved reference: GoogleFont
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:19:16 Unresolved reference: GoogleFont
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:23:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:24:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:25:17 Unresolved reference: Font
+e: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/app/src/main/java/id/my/santosa/notagampang/ui/theme/Typography.kt:26:17 Unresolved reference: Font
+Restoring task outputs to pre-compilation state
+
+[Incubating] Problems report is available at: file:///Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.2/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 1s
+15 actionable tasks: 3 executed, 12 up-to-date
+Watched directory hierarchies: [/Volumes/D4-T4/Dev/Mobile/Android/Personal/notagampang]

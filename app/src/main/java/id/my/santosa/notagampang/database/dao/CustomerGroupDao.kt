@@ -21,8 +21,8 @@ interface CustomerGroupDao {
   fun getGroupsByStatus(status: String): Flow<List<CustomerGroupEntity>>
 
   @Query(
-    """
-    SELECT cg.*, COALESCE(SUM(oi.priceAtOrder * oi.quantity), 0) as totalUnpaid 
+          """
+    SELECT cg.*, COALESCE(SUM(oi.priceAtOrder * oi.quantity), 0) as totalUnpaid, COALESCE(SUM(oi.quantity), 0) as itemCount 
     FROM customer_groups cg 
     LEFT JOIN order_items oi ON cg.id = oi.customerGroupId AND oi.status = 'Unpaid' 
     WHERE cg.status = :status 
@@ -39,6 +39,5 @@ interface CustomerGroupDao {
 
   @Delete suspend fun deleteGroup(group: CustomerGroupEntity)
 
-  @Query("DELETE FROM customer_groups WHERE status = 'Paid'")
-  suspend fun deletePaidGroups()
+  @Query("DELETE FROM customer_groups WHERE status = 'Paid'") suspend fun deletePaidGroups()
 }
