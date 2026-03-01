@@ -775,12 +775,6 @@ class MainActivity : ComponentActivity() {
                                                                 CheckoutScreen(
                                                                         viewModel =
                                                                                 checkoutViewModel,
-                                                                        onBack = {
-                                                                                currentScreen =
-                                                                                        Screen.OrderEntry(
-                                                                                                screen.groupId
-                                                                                        )
-                                                                        },
                                                                         onCheckoutComplete = {
                                                                                 currentScreen =
                                                                                         Screen.FloatingTabs

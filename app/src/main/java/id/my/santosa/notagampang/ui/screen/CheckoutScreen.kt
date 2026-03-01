@@ -19,11 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CheckoutScreen(
-        viewModel: CheckoutViewModel,
-        onBack: () -> Unit = {},
-        onCheckoutComplete: () -> Unit
-) {
+fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit) {
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(uiState.checkoutComplete) {
