@@ -151,7 +151,7 @@ class MainActivity : ComponentActivity() {
                                                                 is Screen.ShiftManagement ->
                                                                         "Tutup Kasir (Shift)"
                                                                 is Screen.OrderEntry -> "Pesanan"
-                                                                is Screen.Checkout -> "Checkout"
+                                                                is Screen.Checkout -> "Bayar"
                                                                 is Screen.Settings -> "Setelan"
                                                         }
 

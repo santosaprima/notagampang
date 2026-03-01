@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -66,20 +64,6 @@ fun CheckoutScreen(
                                                 modifier = Modifier.padding(16.dp).fillMaxWidth(),
                                                 verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                                IconButton(onClick = onBack) {
-                                                        Icon(
-                                                                imageVector =
-                                                                        Icons.AutoMirrored.Filled
-                                                                                .ArrowBack,
-                                                                contentDescription = "Kembali",
-                                                                tint =
-                                                                        MaterialTheme.colorScheme
-                                                                                .onSurface
-                                                        )
-                                                }
-
-                                                Spacer(modifier = Modifier.width(8.dp))
-
                                                 Column(modifier = Modifier.weight(1f)) {
                                                         Text(
                                                                 text =
@@ -157,7 +141,7 @@ fun CheckoutScreen(
                                                 )
                                                 Text(
                                                         "Pilih Semua (Bayar Semua)",
-                                                        modifier = Modifier.padding(start = 16.dp),
+                                                        modifier = Modifier.padding(start = 8.dp),
                                                         style = MaterialTheme.typography.bodyLarge,
                                                         fontWeight = FontWeight.Bold,
                                                         color = MaterialTheme.colorScheme.primary
@@ -238,8 +222,7 @@ fun CheckoutScreen(
                                                                 modifier =
                                                                         Modifier.weight(1f)
                                                                                 .padding(
-                                                                                        start =
-                                                                                                16.dp
+                                                                                        start = 8.dp
                                                                                 )
                                                         ) {
                                                                 Text(
