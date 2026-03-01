@@ -18,49 +18,49 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class CheckoutUiState(
-  val group: CustomerGroupEntity? = null,
-  val unpaidItems: List<OrderItemEntity> = emptyList(),
-  val selectedItemIds: Set<Long> = emptySet(),
-  val isLoading: Boolean = true,
-  val checkoutComplete: Boolean = false,
+        val group: CustomerGroupEntity? = null,
+        val unpaidItems: List<OrderItemEntity> = emptyList(),
+        val selectedItemIds: Set<Long> = emptySet(),
+        val isLoading: Boolean = true,
+        val checkoutComplete: Boolean = false,
 )
 
 class CheckoutViewModel(
-  private val groupId: Long,
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+        private val groupId: Long,
+        private val orderRepository: OrderRepository,
+        private val customerGroupRepository: CustomerGroupRepository,
+        private val debtRecordRepository: DebtRecordRepository,
 ) : ViewModel() {
   private val selectedItemIdsState = MutableStateFlow<Set<Long>>(emptySet())
   private val groupState = MutableStateFlow<CustomerGroupEntity?>(null)
   private val checkoutCompleteState = MutableStateFlow(false)
 
   val uiState: StateFlow<CheckoutUiState> =
-    combine(
-      groupState,
-      orderRepository.getOrdersForGroup(groupId),
-      selectedItemIdsState,
-      checkoutCompleteState,
-    ) {
-        group: CustomerGroupEntity?,
-        items: List<OrderItemEntity>,
-        selectedIds: Set<Long>,
-        isComplete: Boolean,
-      ->
-      val unpaidItems = items.filter { it.status == "Unpaid" }
-      CheckoutUiState(
-        group = group,
-        unpaidItems = unpaidItems,
-        selectedItemIds = selectedIds,
-        isLoading = false,
-        checkoutComplete = isComplete,
-      )
-    }
-      .stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = CheckoutUiState(),
-      )
+          combine(
+                          groupState,
+                          orderRepository.getOrdersForGroup(groupId),
+                          selectedItemIdsState,
+                          checkoutCompleteState,
+                  ) {
+                          group: CustomerGroupEntity?,
+                          items: List<OrderItemEntity>,
+                          selectedIds: Set<Long>,
+                          isComplete: Boolean,
+                    ->
+                    val unpaidItems = items.filter { it.status == "Unpaid" }
+                    CheckoutUiState(
+                            group = group,
+                            unpaidItems = unpaidItems,
+                            selectedItemIds = selectedIds,
+                            isLoading = false,
+                            checkoutComplete = isComplete,
+                    )
+                  }
+                  .stateIn(
+                          scope = viewModelScope,
+                          started = SharingStarted.WhileSubscribed(5000),
+                          initialValue = CheckoutUiState(),
+                  )
 
   init {
     viewModelScope.launch {
@@ -85,9 +85,9 @@ class CheckoutViewModel(
   }
 
   fun processCheckout(
-    cashReceived: Int,
-    customerName: String,
-    customerPhone: String,
+          cashReceived: Int,
+          customerName: String,
+          customerPhone: String,
   ) {
     viewModelScope.launch {
       val state = uiState.value
@@ -104,15 +104,15 @@ class CheckoutViewModel(
       if (cashReceived < totalToPay) {
         val remainingDebt = totalToPay - cashReceived
         val debtRecord =
-          DebtRecordEntity(
-            customerName = customerName.ifBlank { state.group?.alias ?: "Unknown" },
-            customerPhone = customerPhone.ifBlank { null },
-            totalAmount = totalToPay,
-            paidAmount = cashReceived,
-            remainingDebt = remainingDebt,
-            status = "Unpaid",
-            timestamp = System.currentTimeMillis(),
-          )
+                DebtRecordEntity(
+                        customerName = customerName.ifBlank { state.group?.alias ?: "Unknown" },
+                        customerPhone = customerPhone.ifBlank { null },
+                        totalAmount = totalToPay,
+                        paidAmount = cashReceived,
+                        remainingDebt = remainingDebt,
+                        status = "Unpaid",
+                        timestamp = System.currentTimeMillis(),
+                )
         debtRecordRepository.insertDebtRecord(debtRecord)
       }
 
@@ -128,21 +128,21 @@ class CheckoutViewModel(
 }
 
 class CheckoutViewModelFactory(
-  private val groupId: Long,
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+        private val groupId: Long,
+        private val orderRepository: OrderRepository,
+        private val customerGroupRepository: CustomerGroupRepository,
+        private val debtRecordRepository: DebtRecordRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(CheckoutViewModel::class.java)) {
       @Suppress("UNCHECKED_CAST")
       return CheckoutViewModel(
-        groupId,
-        orderRepository,
-        customerGroupRepository,
-        debtRecordRepository,
+              groupId,
+              orderRepository,
+              customerGroupRepository,
+              debtRecordRepository,
       ) as
-        T
+              T
     }
     throw IllegalArgumentException("Unknown ViewModel class")
   }
