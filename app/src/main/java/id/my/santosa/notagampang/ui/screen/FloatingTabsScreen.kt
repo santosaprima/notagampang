@@ -3,9 +3,8 @@ package id.my.santosa.notagampang.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Add
@@ -21,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.repository.CustomerGroupWithTotal
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
@@ -183,15 +184,17 @@ fun FloatingTabsScreen(
                                         )
                                 }
                         } else {
-                                LazyVerticalGrid(
-                                        columns = GridCells.Fixed(2),
+                                LazyColumn(
                                         contentPadding = PaddingValues(20.dp),
-                                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
                                         modifier = Modifier.fillMaxSize()
                                 ) {
-                                        items(activeGroups, key = { it.group.id }) { groupWithTotal
-                                                ->
+                                        items(
+                                                items = activeGroups,
+                                                key = { item: CustomerGroupWithTotal ->
+                                                        item.group.id
+                                                }
+                                        ) { groupWithTotal: CustomerGroupWithTotal ->
                                                 NotaCard(
                                                         groupWithTotal = groupWithTotal,
                                                         onClick = {
@@ -288,6 +291,10 @@ fun NotaCard(
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         currencyFormat.maximumFractionDigits = 0
 
+        val dateFormat = remember {
+                SimpleDateFormat("dd MMM yyyy • HH:mm", Locale.forLanguageTag("id-ID"))
+        }
+
         Card(
                 onClick = onClick,
                 modifier = Modifier.fillMaxWidth(),
@@ -299,32 +306,62 @@ fun NotaCard(
                         ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-                Column(
-                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                Row(
+                        modifier = Modifier.padding(16.dp).fillMaxWidth().height(IntrinsicSize.Min),
+                        verticalAlignment = Alignment.Top
                 ) {
-                        Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                        Box(
+                                modifier =
+                                        Modifier.size(40.dp)
+                                                .background(
+                                                        MaterialTheme.colorScheme.primary,
+                                                        MaterialTheme.shapes.small
+                                                ),
+                                contentAlignment = Alignment.Center
                         ) {
-                                Box(
-                                        modifier =
-                                                Modifier.size(32.dp)
-                                                        .background(
-                                                                MaterialTheme.colorScheme.primary,
-                                                                MaterialTheme.shapes.small
-                                                        ),
-                                        contentAlignment = Alignment.Center
-                                ) {
-                                        Icon(
-                                                Icons.AutoMirrored.Filled.ReceiptLong,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(18.dp),
-                                                tint = MaterialTheme.colorScheme.secondary
-                                        )
-                                }
+                                Icon(
+                                        Icons.AutoMirrored.Filled.ReceiptLong,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.secondary
+                                )
+                        }
 
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                        text = "Nota #${groupWithTotal.group.id}",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                        text = groupWithTotal.group.alias,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                        text = currencyFormat.format(groupWithTotal.totalAmount),
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.secondary
+                                )
+                                Text(
+                                        text = "${groupWithTotal.itemCount} items",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                        }
+
+                        Column(
+                                modifier = Modifier.fillMaxHeight(),
+                                horizontalAlignment = Alignment.End,
+                                verticalArrangement = Arrangement.SpaceBetween
+                        ) {
                                 Surface(
                                         color =
                                                 MaterialTheme.colorScheme.secondaryContainer.copy(
@@ -346,30 +383,15 @@ fun NotaCard(
                                                                 .onSecondaryContainer
                                         )
                                 }
-                        }
-
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                                Text(
-                                        text = groupWithTotal.group.alias,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                )
-
-                                Text(
-                                        text = currencyFormat.format(groupWithTotal.totalAmount),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.secondary
-                                )
 
                                 Text(
                                         text =
-                                                "${groupWithTotal.itemCount} ${if (groupWithTotal.itemCount > 1) "items" else "item"}",
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                dateFormat.format(
+                                                        Date(groupWithTotal.group.createdAt)
+                                                ),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.End
                                 )
                         }
                 }

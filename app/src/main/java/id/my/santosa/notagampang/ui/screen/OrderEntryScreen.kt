@@ -13,26 +13,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
+import java.text.NumberFormat
+import java.util.Locale
 
 @Composable
 fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
         val uiState by viewModel.uiState.collectAsState()
+        val currencyFormat = remember {
+                val format = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
+                format.setMaximumFractionDigits(0)
+                format
+        }
 
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Box(modifier = Modifier.fillMaxSize()) {
                         Column(modifier = Modifier.fillMaxSize().imePadding()) {
                                 Text(
                                         "Daftar Menu",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.padding(16.dp)
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(20.dp)
                                 )
 
                                 LazyColumn(
                                         modifier = Modifier.weight(1f),
                                         contentPadding =
                                                 PaddingValues(
-                                                        bottom = 72.dp
-                                                ) // Adjusted for more compact bar
+                                                        start = 20.dp,
+                                                        top = 0.dp,
+                                                        end = 20.dp,
+                                                        bottom = 100.dp
+                                                ),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                         items(uiState.menuItems) { menu ->
                                                 val order =
@@ -45,6 +58,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                         name = menu.name,
                                                         price = menu.price,
                                                         quantity = quantity,
+                                                        currencyFormat = currencyFormat,
                                                         onIncrease = {
                                                                 viewModel.addItemToOrder(menu)
                                                         },
@@ -61,43 +75,70 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                         // Custom Bottom Bar for Checkout
                         val total = uiState.currentOrders.sumOf { it.priceAtOrder * it.quantity }
                         Surface(
-                                tonalElevation = 8.dp,
+                                tonalElevation = 0.dp,
                                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.secondaryContainer
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
                         ) {
-                                Row(
-                                        modifier =
-                                                Modifier.fillMaxWidth()
-                                                        .padding(
-                                                                horizontal = 16.dp,
-                                                                vertical = 8.dp
-                                                        ), // Reduced vertical padding
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                        Column {
-                                                Text(
-                                                        "Total",
-                                                        style = MaterialTheme.typography.labelMedium
-                                                )
-                                                Text(
-                                                        "Rp $total",
-                                                        style =
-                                                                MaterialTheme.typography
-                                                                        .headlineSmall,
-                                                        color = MaterialTheme.colorScheme.primary,
-                                                        fontWeight = FontWeight.Bold
-                                                )
-                                        }
-                                        Button(
-                                                onClick = onCheckout,
-                                                enabled = uiState.currentOrders.isNotEmpty(),
-                                                contentPadding =
-                                                        PaddingValues(
-                                                                horizontal = 24.dp,
-                                                                vertical = 8.dp
+                                Column {
+                                        HorizontalDivider(
+                                                color =
+                                                        MaterialTheme.colorScheme.outlineVariant
+                                                                .copy(alpha = 0.3f)
+                                        )
+                                        Row(
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .padding(
+                                                                        horizontal = 20.dp,
+                                                                        vertical = 16.dp
+                                                                ),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                                Column {
+                                                        Text(
+                                                                "Total Pesanan",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .labelMedium,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
                                                         )
-                                        ) { Text("Checkout") }
+                                                        Text(
+                                                                currencyFormat.format(total),
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .headlineSmall,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary,
+                                                                fontWeight = FontWeight.ExtraBold
+                                                        )
+                                                }
+                                                Button(
+                                                        onClick = onCheckout,
+                                                        enabled =
+                                                                uiState.currentOrders.isNotEmpty(),
+                                                        shape = MaterialTheme.shapes.medium,
+                                                        colors =
+                                                                ButtonDefaults.buttonColors(
+                                                                        containerColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary,
+                                                                        contentColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .secondary
+                                                                ),
+                                                        contentPadding =
+                                                                PaddingValues(
+                                                                        horizontal = 32.dp,
+                                                                        vertical = 12.dp
+                                                                )
+                                                ) { Text("Checkout", fontWeight = FontWeight.Bold) }
+                                        }
                                 }
                         }
                 }
@@ -109,52 +150,89 @@ fun MenuItemRow(
         name: String,
         price: Int,
         quantity: Int,
+        currencyFormat: NumberFormat,
         onIncrease: () -> Unit,
         onDecrease: () -> Unit
 ) {
+
         Card(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
                 colors =
                         CardDefaults.cardColors(
                                 containerColor =
                                         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        )
+                        ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
                 Row(
-                        modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                 ) {
                         Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                         name,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
                                 )
-                                Text("Rp $price", style = MaterialTheme.typography.bodySmall)
+                                Text(
+                                        currencyFormat.format(price),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                         }
 
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                IconButton(onClick = onDecrease, enabled = quantity > 0) {
-                                        Icon(
-                                                imageVector = Icons.Outlined.RemoveCircleOutline,
-                                                contentDescription = "Kurangi",
-                                                tint =
-                                                        if (quantity > 0)
-                                                                MaterialTheme.colorScheme.primary
-                                                        else MaterialTheme.colorScheme.outline
+                        Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                                if (quantity > 0) {
+                                        Surface(
+                                                modifier = Modifier.size(32.dp),
+                                                color =
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.1f
+                                                        ),
+                                                shape = MaterialTheme.shapes.small,
+                                                onClick = onDecrease
+                                        ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                        Icon(
+                                                                imageVector =
+                                                                        Icons.Outlined
+                                                                                .RemoveCircleOutline,
+                                                                contentDescription = "Kurangi",
+                                                                modifier = Modifier.size(20.dp),
+                                                                tint =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary
+                                                        )
+                                                }
+                                        }
+
+                                        Text(
+                                                quantity.toString(),
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
                                         )
                                 }
-                                Text(
-                                        quantity.toString(),
-                                        modifier = Modifier.padding(horizontal = 8.dp),
-                                        style = MaterialTheme.typography.titleMedium
-                                )
-                                IconButton(onClick = onIncrease) {
-                                        Icon(
-                                                Icons.Default.Add,
-                                                contentDescription = "Tambah",
-                                                tint = MaterialTheme.colorScheme.primary
-                                        )
+
+                                Surface(
+                                        modifier = Modifier.size(32.dp),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = MaterialTheme.shapes.small,
+                                        onClick = onIncrease
+                                ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                                Icon(
+                                                        Icons.Default.Add,
+                                                        contentDescription = "Tambah",
+                                                        modifier = Modifier.size(20.dp),
+                                                        tint = MaterialTheme.colorScheme.secondary
+                                                )
+                                        }
                                 }
                         }
                 }

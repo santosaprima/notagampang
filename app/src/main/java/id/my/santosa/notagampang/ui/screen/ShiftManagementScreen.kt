@@ -3,6 +3,7 @@ package id.my.santosa.notagampang.ui.screen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,77 +21,170 @@ fun ShiftManagementScreen(
         var showConfirmDialog by remember { mutableStateOf(false) }
 
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
-        currencyFormat.maximumFractionDigits = 0
+        currencyFormat.setMaximumFractionDigits(0)
 
         Column(
-                modifier = Modifier.fillMaxSize().padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier = Modifier.fillMaxSize().padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-                Text(
-                        "Rangkuman Pendapatan",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                )
+                Column {
+                        Text(
+                                "Rangkuman Pendapatan",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                                "Rincian pemasukan dari semua transaksi",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                }
 
                 Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                         colors =
                                 CardDefaults.cardColors(
                                         containerColor =
                                                 MaterialTheme.colorScheme.surfaceVariant.copy(
                                                         alpha = 0.5f
                                                 )
-                                )
+                                ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                         Column(
-                                modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                modifier = Modifier.padding(20.dp),
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                                Text(
-                                        "Pembayaran Lunas: ${currencyFormat.format(uiState.totalPaidIncome)}"
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                        Text(
+                                                "Pembayaran Lunas",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                                currencyFormat.format(uiState.totalPaidIncome),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                }
+
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                        Text(
+                                                "Pembayaran Kasbon",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                        Text(
+                                                currencyFormat.format(uiState.totalKasbonIncome),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                }
+
+                                HorizontalDivider(
+                                        modifier = Modifier.padding(vertical = 4.dp),
+                                        color =
+                                                MaterialTheme.colorScheme.outlineVariant.copy(
+                                                        alpha = 0.3f
+                                                )
                                 )
-                                Text(
-                                        "Pembayaran Kasbon: ${currencyFormat.format(uiState.totalKasbonIncome)}"
-                                )
-                                Text(
-                                        "Total Uang Masuk: ${currencyFormat.format(uiState.totalIncome)}",
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary
-                                )
+
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        Text(
+                                                "Total Uang Masuk",
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Text(
+                                                currencyFormat.format(uiState.totalIncome),
+                                                style = MaterialTheme.typography.headlineSmall,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = MaterialTheme.colorScheme.secondary
+                                        )
+                                }
                         }
                 }
 
-                Text(
-                        "Rangkuman Kasbon",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                )
+                Column {
+                        Text(
+                                "Rangkuman Kasbon",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                                "Total tagihan pelanggan yang belum lunas",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                }
 
                 Card(
                         modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                         colors =
                                 CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.errorContainer
-                                )
+                                        containerColor =
+                                                MaterialTheme.colorScheme.errorContainer.copy(
+                                                        alpha = 0.2f
+                                                )
+                                ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                                modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                        ) {
                                 Text(
-                                        "Total Kasbon Aktif: ${currencyFormat.format(uiState.totalActiveKasbon)}",
-                                        color = MaterialTheme.colorScheme.onErrorContainer,
-                                        fontWeight = FontWeight.Bold
+                                        "Total Kasbon Aktif",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                                Text(
+                                        currencyFormat.format(uiState.totalActiveKasbon),
+                                        style = MaterialTheme.typography.headlineSmall,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.error
                                 )
                         }
                 }
 
+                Spacer(modifier = Modifier.weight(1f))
+
                 Button(
                         onClick = { showConfirmDialog = true },
-                        modifier = Modifier.fillMaxWidth().padding(top = 24.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium,
                         colors =
                                 ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.error
-                                )
-                ) { Text("Tutup Kasir (Bersihkan Antrean)") }
+                                        containerColor =
+                                                MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
+                                        contentColor = MaterialTheme.colorScheme.onError
+                                ),
+                        contentPadding = PaddingValues(vertical = 16.dp)
+                ) {
+                        Text(
+                                "Tutup Kasir (Selesaikan Shift)",
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                        )
+                }
         }
 
         if (showConfirmDialog) {

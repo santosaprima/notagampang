@@ -49,74 +49,92 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
   } else {
     LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
       items(uiState.activeDebts, key = { it.id }) { record ->
         Card(
                 modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
                 colors =
                         CardDefaults.cardColors(
                                 containerColor =
                                         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        )
+                        ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
           Column(modifier = Modifier.padding(16.dp)) {
             Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.CenterVertically
             ) {
-              Text(
-                      record.customerName,
-                      fontWeight = FontWeight.Bold,
-                      style = MaterialTheme.typography.titleMedium
-              )
-              Text(
-                      dateFormat.format(Date(record.timestamp)),
-                      style = MaterialTheme.typography.bodySmall
-              )
+              Surface(
+                      modifier = Modifier.size(40.dp),
+                      color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
+                      shape = MaterialTheme.shapes.small
+              ) {
+                Box(contentAlignment = Alignment.Center) {
+                  Text(
+                          "!",
+                          style = MaterialTheme.typography.titleLarge,
+                          fontWeight = FontWeight.ExtraBold,
+                          color = MaterialTheme.colorScheme.error
+                  )
+                }
+              }
+
+              Spacer(modifier = Modifier.width(16.dp))
+
+              Column(modifier = Modifier.weight(1f)) {
+                Text(
+                        record.customerName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                        dateFormat.format(Date(record.timestamp)),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+              }
+
+              Column(horizontalAlignment = Alignment.End) {
+                Text(
+                        currencyFormat.format(record.remainingDebt),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.error
+                )
+                Text(
+                        "Sisa Tagihan",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+              }
             }
+
             if (!record.customerPhone.isNullOrBlank()) {
+              Spacer(modifier = Modifier.height(12.dp))
               Text(
                       record.customerPhone,
                       style = MaterialTheme.typography.bodySmall,
-                      color = MaterialTheme.colorScheme.primary
+                      fontWeight = FontWeight.Medium,
+                      color = MaterialTheme.colorScheme.primary,
+                      modifier = Modifier.padding(start = 56.dp)
               )
             }
 
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-              Text("Total Tagihan:")
-              Text(currencyFormat.format(record.totalAmount))
-            }
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-              Text("Sudah Dibayar:")
-              Text(currencyFormat.format(record.paidAmount))
-            }
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-              Text("Sisa Kasbon:", fontWeight = FontWeight.Bold)
-              Text(
-                      currencyFormat.format(record.remainingDebt),
-                      fontWeight = FontWeight.Bold,
-                      color = MaterialTheme.colorScheme.error
-              )
-            }
-
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
               if (!record.customerPhone.isNullOrBlank()) {
                 OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        shape = MaterialTheme.shapes.medium,
                         onClick = {
                           val phone = record.customerPhone
                           val formattedPhone =
@@ -134,11 +152,17 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
                                   )
                           context.startActivity(intent)
                         }
-                ) { Text("Tagih") }
-                Spacer(modifier = Modifier.width(8.dp))
+                ) { Text("Tagih WA") }
               }
 
               Button(
+                      modifier = Modifier.weight(1f),
+                      shape = MaterialTheme.shapes.medium,
+                      colors =
+                              ButtonDefaults.buttonColors(
+                                      containerColor = MaterialTheme.colorScheme.primary,
+                                      contentColor = MaterialTheme.colorScheme.secondary
+                              ),
                       onClick = {
                         selectedRecordForPayment = record
                         paymentAmountStr = ""
@@ -166,9 +190,11 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
                         onValueChange = {
                           if (it.all { char -> char.isDigit() }) paymentAmountStr = it
                         },
-                        label = { Text("Jumlah Dibayar (Rp)") },
+                        label = { Text("Jumlah Dibayar") },
+                        prefix = { Text("Rp ") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium
                 )
               }
             },
@@ -181,7 +207,13 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
                         }
                         selectedRecordForPayment = null
                       },
-                      enabled = paymentAmountStr.toIntOrNull() ?: 0 > 0
+                      enabled = (paymentAmountStr.toIntOrNull() ?: 0) > 0,
+                      shape = MaterialTheme.shapes.medium,
+                      colors =
+                              ButtonDefaults.buttonColors(
+                                      containerColor = MaterialTheme.colorScheme.primary,
+                                      contentColor = MaterialTheme.colorScheme.secondary
+                              )
               ) { Text("Simpan") }
             },
             dismissButton = {

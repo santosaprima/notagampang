@@ -20,7 +20,7 @@ val OnSurfaceLight = Color(0xFF0F172A)
 val OnSurfaceVariantLight = Color(0xFF64748B)
 
 // Dark Colors
-val PrimaryDark = Color(0xFF334155) // Slate 700ish
+val PrimaryDark = Color(0xFFE2E8F0) // Even brighter Slate for maximum visibility
 val OnPrimaryDark = Color(0xFFF8FAFC)
 val PrimaryContainerDark = Color(0xFF0F172A) // Very Dark Navy for container
 val OnPrimaryContainerDark = Color(0xFFE2E8F0)
