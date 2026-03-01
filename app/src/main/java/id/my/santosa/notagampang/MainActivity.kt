@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -19,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import id.my.santosa.notagampang.data.PreferenceManager
+import id.my.santosa.notagampang.data.ThemeMode
 import id.my.santosa.notagampang.database.AppDatabase
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
@@ -40,6 +43,7 @@ sealed class Screen {
         object Kasbon : Screen()
         data class OrderEntry(val groupId: Long) : Screen()
         data class Checkout(val groupId: Long) : Screen()
+        object Settings : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -53,11 +57,22 @@ class MainActivity : ComponentActivity() {
                 val menuRepository = MenuItemRepository(db.menuItemDao())
                 val orderRepository = OrderRepository(db.orderItemDao())
                 val debtRecordRepository = DebtRecordRepository(db.debtRecordDao())
+                val preferenceManager = PreferenceManager(applicationContext)
 
                 seedDefaultMenu(menuRepository)
 
                 setContent {
-                        NotaGampangTheme {
+                        val settingsViewModel: SettingsViewModel =
+                                viewModel(factory = SettingsViewModelFactory(preferenceManager))
+                        val themeMode by settingsViewModel.themeMode.collectAsState()
+                        val darkTheme =
+                                when (themeMode) {
+                                        ThemeMode.LIGHT -> false
+                                        ThemeMode.DARK -> true
+                                        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                                }
+
+                        NotaGampangTheme(darkTheme = darkTheme) {
                                 val floatingTabsViewModel: FloatingTabsViewModel =
                                         viewModel(
                                                 factory =
@@ -120,6 +135,7 @@ class MainActivity : ComponentActivity() {
                                                                         "Tutup Kasir (Shift)"
                                                                 is Screen.OrderEntry -> "Pesanan"
                                                                 is Screen.Checkout -> "Checkout"
+                                                                is Screen.Settings -> "Setelan"
                                                         }
 
                                                 val showTopBar =
@@ -130,7 +146,8 @@ class MainActivity : ComponentActivity() {
                                                                 currentScreen !is
                                                                         Screen.Management &&
                                                                 currentScreen !is
-                                                                        Screen.ShiftManagement
+                                                                        Screen.ShiftManagement &&
+                                                                currentScreen !is Screen.Settings
 
                                                 if (showTopBar) {
                                                         @OptIn(ExperimentalMaterial3Api::class)
@@ -262,7 +279,8 @@ class MainActivity : ComponentActivity() {
                                                                 currentScreen is
                                                                         Screen.Management ||
                                                                 currentScreen is
-                                                                        Screen.ShiftManagement
+                                                                        Screen.ShiftManagement ||
+                                                                currentScreen is Screen.Settings
 
                                                 if (showBottomBar) {
                                                         NavigationBar(
@@ -299,6 +317,14 @@ class MainActivity : ComponentActivity() {
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
                                                                                                                 .secondary,
+                                                                                                unselectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                unselectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -332,6 +358,14 @@ class MainActivity : ComponentActivity() {
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
                                                                                                                 .secondary,
+                                                                                                unselectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                unselectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -365,6 +399,14 @@ class MainActivity : ComponentActivity() {
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
                                                                                                                 .secondary,
+                                                                                                unselectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                unselectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -398,6 +440,55 @@ class MainActivity : ComponentActivity() {
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
                                                                                                                 .secondary,
+                                                                                                unselectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                unselectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                indicatorColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .primary
+                                                                                        )
+                                                                )
+                                                                NavigationBarItem(
+                                                                        icon = {
+                                                                                Icon(
+                                                                                        Icons.Default
+                                                                                                .Settings,
+                                                                                        "Setelan"
+                                                                                )
+                                                                        },
+                                                                        label = { Text("Setelan") },
+                                                                        selected =
+                                                                                currentScreen is
+                                                                                        Screen.Settings,
+                                                                        onClick = {
+                                                                                currentScreen =
+                                                                                        Screen.Settings
+                                                                        },
+                                                                        colors =
+                                                                                NavigationBarItemDefaults
+                                                                                        .colors(
+                                                                                                selectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .secondary,
+                                                                                                selectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .secondary,
+                                                                                                unselectedIconColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
+                                                                                                unselectedTextColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .onSurfaceVariant,
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -700,6 +791,12 @@ class MainActivity : ComponentActivity() {
                                                                                 currentScreen =
                                                                                         Screen.FloatingTabs
                                                                         }
+                                                                )
+                                                        }
+                                                        is Screen.Settings -> {
+                                                                SettingsScreen(
+                                                                        viewModel =
+                                                                                settingsViewModel
                                                                 )
                                                         }
                                                 }

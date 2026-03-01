@@ -30,7 +30,7 @@ val OnSecondaryDark = Color(0xFF451A03)
 val SecondaryContainerDark = Color(0xFF92400E)
 val OnSecondaryContainerDark = Color(0xFFFEF3C7)
 
-val BackgroundDark = Color(0xFF020617) // Deep Navy Black
-val SurfaceDark = Color(0xFF0F172A) // Midnight Navy
+val BackgroundDark = Color(0xFF051125) // Rich Navy from screenshot
+val SurfaceDark = Color(0xFF101C31) // Slightly lighter Navy for cards
 val OnSurfaceDark = Color(0xFFF8FAFC)
 val OnSurfaceVariantDark = Color(0xFF94A3B8)

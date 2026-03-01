@@ -112,7 +112,14 @@ fun MenuItemRow(
         onIncrease: () -> Unit,
         onDecrease: () -> Unit
 ) {
-        Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)) {
+        Card(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                colors =
+                        CardDefaults.cardColors(
+                                containerColor =
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+        ) {
                 Row(
                         modifier = Modifier.padding(12.dp).fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically

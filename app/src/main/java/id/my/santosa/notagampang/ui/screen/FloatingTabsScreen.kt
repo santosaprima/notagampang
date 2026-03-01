@@ -1,6 +1,5 @@
 package id.my.santosa.notagampang.ui.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -105,14 +104,20 @@ fun FloatingTabsScreen(
                                         colors =
                                                 OutlinedTextFieldDefaults.colors(
                                                         focusedContainerColor =
-                                                                MaterialTheme.colorScheme.surface,
+                                                                MaterialTheme.colorScheme
+                                                                        .surfaceVariant.copy(
+                                                                        alpha = 0.5f
+                                                                ),
                                                         unfocusedContainerColor =
-                                                                MaterialTheme.colorScheme.surface,
+                                                                MaterialTheme.colorScheme
+                                                                        .surfaceVariant.copy(
+                                                                        alpha = 0.5f
+                                                                ),
                                                         focusedBorderColor =
                                                                 MaterialTheme.colorScheme.primary,
                                                         unfocusedBorderColor =
-                                                                MaterialTheme.colorScheme
-                                                                        .outlineVariant
+                                                                androidx.compose.ui.graphics.Color
+                                                                        .Transparent
                                                 )
                                 )
                         }
@@ -283,17 +288,16 @@ fun NotaCard(
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         currencyFormat.maximumFractionDigits = 0
 
-        Surface(
+        Card(
                 onClick = onClick,
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.surface,
-                tonalElevation = 1.dp,
-                border =
-                        BorderStroke(
-                                0.5.dp,
-                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                        )
+                colors =
+                        CardDefaults.cardColors(
+                                containerColor =
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
                 Column(
                         modifier = Modifier.padding(12.dp).fillMaxWidth(),

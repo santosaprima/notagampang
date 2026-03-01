@@ -53,7 +53,14 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
       items(uiState.activeDebts, key = { it.id }) { record ->
-        Card(modifier = Modifier.fillMaxWidth()) {
+        Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors =
+                        CardDefaults.cardColors(
+                                containerColor =
+                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+        ) {
           Column(modifier = Modifier.padding(16.dp)) {
             Row(
                     modifier = Modifier.fillMaxWidth(),
