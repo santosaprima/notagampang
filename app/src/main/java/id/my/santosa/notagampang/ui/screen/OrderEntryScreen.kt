@@ -140,10 +140,10 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                         ) {
                                                 Column {
                                                         Text(
-                                                                "$totalItems items",
+                                                                "Total",
                                                                 style =
                                                                         MaterialTheme.typography
-                                                                                .labelMedium,
+                                                                                .labelSmall,
                                                                 color =
                                                                         MaterialTheme.colorScheme
                                                                                 .onSurfaceVariant
@@ -157,6 +157,15 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                         MaterialTheme.colorScheme
                                                                                 .secondary,
                                                                 fontWeight = FontWeight.ExtraBold
+                                                        )
+                                                        Text(
+                                                                "$totalItems items",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .bodySmall,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
                                                         )
                                                 }
                                                 Button(
