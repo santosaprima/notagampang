@@ -185,7 +185,13 @@ fun FloatingTabsScreen(
                                 }
                         } else {
                                 LazyColumn(
-                                        contentPadding = PaddingValues(20.dp),
+                                        contentPadding =
+                                                PaddingValues(
+                                                        start = 20.dp,
+                                                        top = 20.dp,
+                                                        end = 20.dp,
+                                                        bottom = 0.dp
+                                                ),
                                         verticalArrangement = Arrangement.spacedBy(12.dp),
                                         modifier = Modifier.fillMaxSize()
                                 ) {
