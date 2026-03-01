@@ -14,8 +14,7 @@ interface MenuItemDao {
   @Query("SELECT * FROM menu_items ORDER BY name ASC")
   fun getAllMenuItems(): Flow<List<MenuItemEntity>>
 
-  @Query("SELECT COUNT(*) FROM menu_items")
-  suspend fun getCount(): Int
+  @Query("SELECT COUNT(*) FROM menu_items") suspend fun getCount(): Int
 
   @Query("SELECT * FROM menu_items WHERE category = :category ORDER BY name ASC")
   fun getMenuItemsByCategory(category: String): Flow<List<MenuItemEntity>>
@@ -26,4 +25,7 @@ interface MenuItemDao {
   @Update suspend fun updateMenuItem(menuItem: MenuItemEntity)
 
   @Delete suspend fun deleteMenuItem(menuItem: MenuItemEntity)
+
+  @Query("DELETE FROM menu_items WHERE category = :category")
+  suspend fun deleteMenuItemsByCategory(category: String)
 }

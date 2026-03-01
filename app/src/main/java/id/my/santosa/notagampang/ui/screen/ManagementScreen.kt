@@ -121,35 +121,51 @@ fun MenuManagementTab(
     val categories = categoriesEntities.map { it.name }
     val groupedItems = menuItems.groupBy { it.category }
 
-    LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                    PaddingValues(
-                            start = 20.dp,
-                            end = 20.dp,
-                            top = 24.dp,
-                            bottom = bottomPadding + 20.dp
-                    ),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        categories.forEach { cat ->
-            val itemsInCategory = groupedItems[cat] ?: emptyList()
-            if (itemsInCategory.isNotEmpty()) {
-                item {
-                    Text(
-                            cat,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-                }
-                items(itemsInCategory, key = { it.id }) { item ->
-                    ManagementItemCard(
-                            name = item.name,
-                            detail = "${item.category} • ${formatCurrency(item.price)}",
-                            onDelete = { viewModel.deleteMenuItem(item) }
-                    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (menuItems.isEmpty()) {
+            Box(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 140.dp),
+                    contentAlignment = Alignment.Center
+            ) {
+                Text(
+                        text = "Belum ada menu.\nKetuk tombol + untuk menambah.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            }
+        } else {
+            LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding =
+                            PaddingValues(
+                                    start = 20.dp,
+                                    end = 20.dp,
+                                    top = 24.dp,
+                                    bottom = bottomPadding + 20.dp
+                            ),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                categories.forEach { cat ->
+                    val itemsInCategory = groupedItems[cat] ?: emptyList()
+                    if (itemsInCategory.isNotEmpty()) {
+                        item {
+                            Text(
+                                    cat,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                            )
+                        }
+                        items(itemsInCategory, key = { it.id }) { item ->
+                            ManagementItemCard(
+                                    name = item.name,
+                                    detail = "${item.category} • ${formatCurrency(item.price)}",
+                                    onDelete = { viewModel.deleteMenuItem(item) }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -165,7 +181,10 @@ fun SuggestionPresetsTab(
 
     Box(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
         if (presets.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 140.dp),
+                    contentAlignment = Alignment.Center
+            ) {
                 Text(
                         text = "Belum ada pilihan cepat.\nKetuk tombol + untuk menambah.",
                         style = MaterialTheme.typography.bodyLarge,
@@ -245,10 +264,49 @@ fun CategoryManagementTab(
         bottomPadding: androidx.compose.ui.unit.Dp = 0.dp
 ) {
     val categories by viewModel.categories.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var categoryToDelete by remember {
+        mutableStateOf<id.my.santosa.notagampang.database.entity.CategoryEntity?>(null)
+    }
+
+    if (showDeleteDialog && categoryToDelete != null) {
+        AlertDialog(
+                onDismissRequest = {
+                    showDeleteDialog = false
+                    categoryToDelete = null
+                },
+                confirmButton = {
+                    TextButton(
+                            onClick = {
+                                categoryToDelete?.let { viewModel.deleteCategory(it) }
+                                showDeleteDialog = false
+                                categoryToDelete = null
+                            }
+                    ) { Text("Hapus", color = MaterialTheme.colorScheme.error) }
+                },
+                dismissButton = {
+                    TextButton(
+                            onClick = {
+                                showDeleteDialog = false
+                                categoryToDelete = null
+                            }
+                    ) { Text("Batal") }
+                },
+                title = { Text("Hapus Kategori?") },
+                text = {
+                    Text(
+                            "Menghapus kategori \"${categoryToDelete?.name}\" juga akan menghapus SEMUA menu di dalamnya. Tindakan ini tidak bisa dibatalkan."
+                    )
+                }
+        )
+    }
 
     Box(modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp)) {
         if (categories.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 140.dp),
+                    contentAlignment = Alignment.Center
+            ) {
                 Text(
                         text = "Belum ada kategori.\nKetuk tombol + untuk menambah.",
                         style = MaterialTheme.typography.bodyLarge,
@@ -266,7 +324,10 @@ fun CategoryManagementTab(
                     ManagementItemCard(
                             name = cat.name,
                             detail = "Kategori",
-                            onDelete = { viewModel.deleteCategory(cat) }
+                            onDelete = {
+                                categoryToDelete = cat
+                                showDeleteDialog = true
+                            }
                     )
                 }
             }

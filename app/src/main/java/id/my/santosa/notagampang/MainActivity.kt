@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 val menuRepository = MenuItemRepository(db.menuItemDao())
                 val orderRepository = OrderRepository(db.orderItemDao())
                 val debtRecordRepository = DebtRecordRepository(db.debtRecordDao())
-                val categoryRepository = CategoryRepository(db.categoryDao())
+                val categoryRepository = CategoryRepository(db.categoryDao(), db.menuItemDao())
                 val preferenceManager = PreferenceManager(applicationContext)
 
                 seedDefaultMenu(menuRepository)

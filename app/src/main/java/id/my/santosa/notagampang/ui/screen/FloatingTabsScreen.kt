@@ -141,7 +141,14 @@ fun FloatingTabsScreen(
                 Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
                         if (activeGroups.isEmpty() && searchQuery.isEmpty()) {
                                 Column(
-                                        modifier = Modifier.fillMaxSize().padding(32.dp),
+                                        modifier =
+                                                Modifier.fillMaxSize()
+                                                        .padding(
+                                                                start = 32.dp,
+                                                                end = 32.dp,
+                                                                top = 32.dp,
+                                                                bottom = 140.dp
+                                                        ),
                                         horizontalAlignment = Alignment.CenterHorizontally,
                                         verticalArrangement = Arrangement.Center
                                 ) {
