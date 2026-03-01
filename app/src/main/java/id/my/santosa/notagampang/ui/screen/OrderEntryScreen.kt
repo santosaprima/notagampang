@@ -66,17 +66,16 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                                 .onSurfaceVariant
                                                         )
                                                 }
-                                                Spacer(modifier = Modifier.height(8.dp))
-                                                Text(
-                                                        "Daftar Menu",
-                                                        style =
-                                                                MaterialTheme.typography
-                                                                        .titleMedium,
-                                                        fontWeight = FontWeight.ExtraBold,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                )
                                         }
                                 }
+
+                                HorizontalDivider(
+                                        modifier = Modifier.padding(horizontal = 20.dp),
+                                        color =
+                                                MaterialTheme.colorScheme.outlineVariant.copy(
+                                                        alpha = 0.3f
+                                                )
+                                )
 
                                 val categories = listOf("Minuman", "Makanan", "Sate", "Snack")
                                 val groupedItems = uiState.menuItems.groupBy { it.category }
@@ -228,7 +227,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                         horizontal = 32.dp,
                                                                         vertical = 12.dp
                                                                 )
-                                                ) { Text("Checkout", fontWeight = FontWeight.Bold) }
+                                                ) { Text("Bayar", fontWeight = FontWeight.Bold) }
                                         }
                                 }
                         }
