@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -28,13 +30,48 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                 Box(modifier = Modifier.fillMaxSize()) {
                         Column(modifier = Modifier.fillMaxSize().imePadding()) {
-                                Text(
-                                        "Daftar Menu",
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.padding(20.dp)
-                                )
+                                Row(
+                                        modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        Column {
+                                                Text(
+                                                        text = "Nota #${uiState.group?.id ?: ""}",
+                                                        style = MaterialTheme.typography.labelLarge,
+                                                        color = MaterialTheme.colorScheme.secondary,
+                                                        fontWeight = FontWeight.Bold
+                                                )
+                                                Text(
+                                                        "Daftar Menu",
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .displaySmall,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                                uiState.group?.let { group ->
+                                                        val dateFormat = remember {
+                                                                SimpleDateFormat(
+                                                                        "dd MMM yyyy • HH:mm",
+                                                                        Locale.forLanguageTag(
+                                                                                "id-ID"
+                                                                        )
+                                                                )
+                                                        }
+                                                        Text(
+                                                                text =
+                                                                        "Buka: ${dateFormat.format(Date(group.createdAt))}",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .bodySmall,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
+                                                        )
+                                                }
+                                        }
+                                }
 
                                 LazyColumn(
                                         modifier = Modifier.weight(1f),
@@ -74,6 +111,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
 
                         // Custom Bottom Bar for Checkout
                         val total = uiState.currentOrders.sumOf { it.priceAtOrder * it.quantity }
+                        val totalItems = uiState.currentOrders.sumOf { it.quantity }
                         Surface(
                                 tonalElevation = 0.dp,
                                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
@@ -97,7 +135,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                         ) {
                                                 Column {
                                                         Text(
-                                                                "Total Pesanan",
+                                                                "$totalItems items",
                                                                 style =
                                                                         MaterialTheme.typography
                                                                                 .labelMedium,

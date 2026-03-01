@@ -27,6 +27,9 @@ class CustomerGroupRepository(
   suspend fun getGroupById(groupId: Long): CustomerGroupEntity? =
           customerGroupDao.getGroupById(groupId)
 
+  fun getGroupFlowById(groupId: Long): Flow<CustomerGroupEntity?> =
+          customerGroupDao.getGroupFlowById(groupId)
+
   suspend fun createNewGroup(alias: String): Long {
     val newGroup =
             CustomerGroupEntity(

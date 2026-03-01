@@ -21,6 +21,7 @@ data class OrderEntryUiState(
         val selectedCategory: String = "Semua",
         val otherActiveGroups: List<id.my.santosa.notagampang.database.entity.CustomerGroupEntity> =
                 emptyList(),
+        val group: id.my.santosa.notagampang.database.entity.CustomerGroupEntity? = null,
 )
 
 class OrderEntryViewModel(
@@ -37,7 +38,8 @@ class OrderEntryViewModel(
                           orderRepository.getOrdersForGroup(groupId),
                           selectedCategoryState,
                           groupRepository.getOtherActiveGroups(groupId),
-                  ) { menu, orders, category, otherGroups ->
+                          groupRepository.getGroupFlowById(groupId),
+                  ) { menu, orders, category, otherGroups, group ->
                     val filteredMenu =
                             if (category == "Semua") {
                               menu
@@ -49,6 +51,7 @@ class OrderEntryViewModel(
                             currentOrders = orders,
                             selectedCategory = category,
                             otherActiveGroups = otherGroups,
+                            group = group,
                     )
                   }
                   .stateIn(
