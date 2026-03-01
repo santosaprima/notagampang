@@ -2,6 +2,7 @@ package id.my.santosa.notagampang
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
@@ -116,6 +117,22 @@ class MainActivity : ComponentActivity() {
                                 var showDeleteConfirm by remember { mutableStateOf(false) }
                                 var showMergeDialog by remember { mutableStateOf(false) }
                                 val scope = rememberCoroutineScope()
+
+                                // Back navigation handler
+                                BackHandler(enabled = currentScreen !is Screen.FloatingTabs) {
+                                        currentScreen =
+                                                when (val s = currentScreen) {
+                                                        is Screen.Checkout ->
+                                                                Screen.OrderEntry(s.groupId)
+                                                        is Screen.OrderEntry -> Screen.FloatingTabs
+                                                        is Screen.Settings -> Screen.FloatingTabs
+                                                        is Screen.Kasbon -> Screen.FloatingTabs
+                                                        is Screen.Management -> Screen.FloatingTabs
+                                                        is Screen.ShiftManagement ->
+                                                                Screen.FloatingTabs
+                                                        else -> Screen.FloatingTabs
+                                                }
+                                }
 
                                 val presets by
                                         presetsViewModel.presets.collectAsState(
