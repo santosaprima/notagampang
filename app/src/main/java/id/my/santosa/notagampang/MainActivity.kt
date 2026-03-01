@@ -190,10 +190,32 @@ class MainActivity : ComponentActivity() {
                                                                                                 )
                                                                         ) {
                                                                                 if (!showBack) {
+                                                                                        val topIcon =
+                                                                                                when (currentScreen
+                                                                                                ) {
+                                                                                                        is Screen.FloatingTabs ->
+                                                                                                                Icons.AutoMirrored
+                                                                                                                        .Filled
+                                                                                                                        .ReceiptLong
+                                                                                                        is Screen.Kasbon ->
+                                                                                                                Icons.Default
+                                                                                                                        .History
+                                                                                                        is Screen.Management ->
+                                                                                                                Icons.Default
+                                                                                                                        .SettingsInputComponent
+                                                                                                        is Screen.ShiftManagement ->
+                                                                                                                Icons.Default
+                                                                                                                        .ManageHistory
+                                                                                                        is Screen.Settings ->
+                                                                                                                Icons.Default
+                                                                                                                        .Settings
+                                                                                                        else ->
+                                                                                                                Icons.AutoMirrored
+                                                                                                                        .Filled
+                                                                                                                        .Notes
+                                                                                                }
                                                                                         Icon(
-                                                                                                Icons.AutoMirrored
-                                                                                                        .Filled
-                                                                                                        .Notes,
+                                                                                                topIcon,
                                                                                                 contentDescription =
                                                                                                         null,
                                                                                                 modifier =
