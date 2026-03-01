@@ -42,14 +42,6 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                         color = MaterialTheme.colorScheme.secondary,
                                                         fontWeight = FontWeight.Bold
                                                 )
-                                                Text(
-                                                        "Daftar Menu",
-                                                        style =
-                                                                MaterialTheme.typography
-                                                                        .displaySmall,
-                                                        fontWeight = FontWeight.ExtraBold,
-                                                        color = MaterialTheme.colorScheme.onSurface
-                                                )
                                                 uiState.group?.let { group ->
                                                         val dateFormat = remember {
                                                                 SimpleDateFormat(
@@ -70,6 +62,15 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                                 .onSurfaceVariant
                                                         )
                                                 }
+                                                Spacer(modifier = Modifier.height(8.dp))
+                                                Text(
+                                                        "Daftar Menu",
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .titleMedium,
+                                                        fontWeight = FontWeight.ExtraBold,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                )
                                         }
                                 }
 
