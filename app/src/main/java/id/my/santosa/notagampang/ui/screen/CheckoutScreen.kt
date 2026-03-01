@@ -134,6 +134,13 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                 if (it) viewModel.selectAll()
                                                                 else viewModel.clearSelection()
                                                         },
+                                                        colors =
+                                                                CheckboxDefaults.colors(
+                                                                        checkedColor =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .secondary
+                                                                )
                                                 )
                                                 Text(
                                                         "Pilih Semua (Bayar Semua)",
@@ -213,6 +220,13 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                                         item.id
                                                                                 )
                                                                 },
+                                                                colors =
+                                                                        CheckboxDefaults.colors(
+                                                                                checkedColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary
+                                                                        )
                                                         )
                                                         Column(
                                                                 modifier =
