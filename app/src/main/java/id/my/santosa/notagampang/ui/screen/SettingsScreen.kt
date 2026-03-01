@@ -45,7 +45,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                 ) {
                         Column(modifier = Modifier.selectableGroup()) {
                                 ThemeOption(
-                                        mode = ThemeMode.LIGHT,
                                         selected = currentTheme == ThemeMode.LIGHT,
                                         onSelect = { viewModel.setThemeMode(ThemeMode.LIGHT) },
                                         icon = Icons.Default.BrightnessHigh,
@@ -59,7 +58,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                                                 )
                                 )
                                 ThemeOption(
-                                        mode = ThemeMode.DARK,
                                         selected = currentTheme == ThemeMode.DARK,
                                         onSelect = { viewModel.setThemeMode(ThemeMode.DARK) },
                                         icon = Icons.Default.Brightness4,
@@ -73,7 +71,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                                                 )
                                 )
                                 ThemeOption(
-                                        mode = ThemeMode.SYSTEM,
                                         selected = currentTheme == ThemeMode.SYSTEM,
                                         onSelect = { viewModel.setThemeMode(ThemeMode.SYSTEM) },
                                         icon = Icons.Default.BrightnessAuto,
@@ -101,13 +98,7 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
 }
 
 @Composable
-fun ThemeOption(
-        mode: ThemeMode,
-        selected: Boolean,
-        onSelect: () -> Unit,
-        icon: ImageVector,
-        label: String
-) {
+fun ThemeOption(selected: Boolean, onSelect: () -> Unit, icon: ImageVector, label: String) {
         Row(
                 modifier =
                         Modifier.fillMaxWidth()
