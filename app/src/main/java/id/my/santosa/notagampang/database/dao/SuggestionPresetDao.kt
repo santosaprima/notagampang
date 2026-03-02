@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SuggestionPresetDao {
-  @Query("SELECT * FROM suggestion_presets ORDER BY sortOrder ASC, id ASC")
+  @Query("SELECT * FROM suggestion_presets ORDER BY label ASC")
   fun getAllPresets(): Flow<List<SuggestionPresetEntity>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -18,6 +18,5 @@ interface SuggestionPresetDao {
 
   @Delete suspend fun deletePreset(preset: SuggestionPresetEntity)
 
-  @Query("SELECT COUNT(*) FROM suggestion_presets")
-  suspend fun getCount(): Int
+  @Query("SELECT COUNT(*) FROM suggestion_presets") suspend fun getCount(): Int
 }

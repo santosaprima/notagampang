@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.my.santosa.notagampang.data.PreferenceManager
 import id.my.santosa.notagampang.data.ThemeMode
 import id.my.santosa.notagampang.database.AppDatabase
+import id.my.santosa.notagampang.database.dao.SuggestionPresetDao
 import id.my.santosa.notagampang.database.entity.*
 import id.my.santosa.notagampang.repository.CategoryRepository
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
 
                 seedDefaultMenu(menuRepository)
                 seedDefaultCategories(categoryRepository)
+                seedDefaultPresets(db.suggestionPresetDao())
 
                 setContent {
                         val settingsViewModel: SettingsViewModel =
@@ -975,6 +977,28 @@ class MainActivity : ComponentActivity() {
                                         )
                                 for (category in categories) {
                                         repository.insertCategory(category)
+                                }
+                        }
+                }
+        }
+
+        private fun seedDefaultPresets(dao: SuggestionPresetDao) {
+                val scope = MainScope()
+                scope.launch(Dispatchers.IO) {
+                        if (dao.getCount() == 0) {
+                                val presets =
+                                        listOf(
+                                                SuggestionPresetEntity(label = "Pedas"),
+                                                SuggestionPresetEntity(label = "Sedang"),
+                                                SuggestionPresetEntity(label = "Tidak Pedas"),
+                                                SuggestionPresetEntity(label = "Bungkus"),
+                                                SuggestionPresetEntity(label = "Makan Sini"),
+                                                SuggestionPresetEntity(label = "Tanpa Sayur"),
+                                                SuggestionPresetEntity(label = "Tambah Nasi"),
+                                                SuggestionPresetEntity(label = "Pisah Kuah")
+                                        )
+                                for (preset in presets) {
+                                        dao.insertPreset(preset)
                                 }
                         }
                 }
