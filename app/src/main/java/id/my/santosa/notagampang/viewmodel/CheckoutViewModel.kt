@@ -123,6 +123,7 @@ class CheckoutViewModel(
                         remainingDebt = remainingDebt,
                         status = "Unpaid",
                         timestamp = System.currentTimeMillis(),
+                        groupId = state.group?.id,
                 )
         debtRecordRepository.insertDebtRecord(debtRecord)
       }

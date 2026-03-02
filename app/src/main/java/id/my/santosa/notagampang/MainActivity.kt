@@ -58,7 +58,8 @@ class MainActivity : ComponentActivity() {
                         CustomerGroupRepository(db.customerGroupDao(), db.orderItemDao())
                 val menuRepository = MenuItemRepository(db.menuItemDao())
                 val orderRepository = OrderRepository(db.orderItemDao())
-                val debtRecordRepository = DebtRecordRepository(db.debtRecordDao())
+                val debtRecordRepository =
+                        DebtRecordRepository(db.debtRecordDao(), db.debtPaymentDao())
                 val categoryRepository = CategoryRepository(db.categoryDao(), db.menuItemDao())
                 val preferenceManager = PreferenceManager(applicationContext)
 
@@ -156,9 +157,8 @@ class MainActivity : ComponentActivity() {
                                                         when (currentScreen) {
                                                                 is Screen.FloatingTabs ->
                                                                         "Nota Aktif"
-                                                                is Screen.Kasbon -> "Buku Kasbon"
-                                                                is Screen.Management ->
-                                                                        "Kelola & Pengaturan"
+                                                                is Screen.Kasbon -> "Kasbon"
+                                                                is Screen.Management -> "Kelola"
                                                                 is Screen.ShiftManagement ->
                                                                         "Tutup Kasir (Shift)"
                                                                 is Screen.OrderEntry -> "Pesanan"
@@ -201,7 +201,7 @@ class MainActivity : ComponentActivity() {
                                                                                                                         .ReceiptLong
                                                                                                         is Screen.Kasbon ->
                                                                                                                 Icons.Default
-                                                                                                                        .History
+                                                                                                                        .Payments
                                                                                                         is Screen.Management ->
                                                                                                                 Icons.Default
                                                                                                                         .SettingsInputComponent
@@ -333,8 +333,6 @@ class MainActivity : ComponentActivity() {
                                                                 currentScreen is Screen.Kasbon ||
                                                                 currentScreen is
                                                                         Screen.Management ||
-                                                                currentScreen is
-                                                                        Screen.ShiftManagement ||
                                                                 currentScreen is Screen.Settings
 
                                                 if (showBottomBar) {
@@ -390,7 +388,7 @@ class MainActivity : ComponentActivity() {
                                                                         icon = {
                                                                                 Icon(
                                                                                         Icons.Default
-                                                                                                .History,
+                                                                                                .Payments,
                                                                                         "Kasbon"
                                                                                 )
                                                                         },
@@ -442,47 +440,6 @@ class MainActivity : ComponentActivity() {
                                                                         onClick = {
                                                                                 currentScreen =
                                                                                         Screen.Management
-                                                                        },
-                                                                        colors =
-                                                                                NavigationBarItemDefaults
-                                                                                        .colors(
-                                                                                                selectedIconColor =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .secondary,
-                                                                                                selectedTextColor =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .secondary,
-                                                                                                unselectedIconColor =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .onSurfaceVariant,
-                                                                                                unselectedTextColor =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .onSurfaceVariant,
-                                                                                                indicatorColor =
-                                                                                                        MaterialTheme
-                                                                                                                .colorScheme
-                                                                                                                .primary
-                                                                                        )
-                                                                )
-                                                                NavigationBarItem(
-                                                                        icon = {
-                                                                                Icon(
-                                                                                        Icons.Default
-                                                                                                .ManageHistory,
-                                                                                        "Shift"
-                                                                                )
-                                                                        },
-                                                                        label = { Text("Shift") },
-                                                                        selected =
-                                                                                currentScreen is
-                                                                                        Screen.ShiftManagement,
-                                                                        onClick = {
-                                                                                currentScreen =
-                                                                                        Screen.ShiftManagement
                                                                         },
                                                                         colors =
                                                                                 NavigationBarItemDefaults
@@ -860,6 +817,14 @@ class MainActivity : ComponentActivity() {
                                                                         onBack = {
                                                                                 currentScreen =
                                                                                         Screen.FloatingTabs
+                                                                        },
+                                                                        onViewNote = { groupId ->
+                                                                                currentScreen =
+                                                                                        Screen.OrderEntry(
+                                                                                                groupId,
+                                                                                                isReadOnly =
+                                                                                                        true
+                                                                                        )
                                                                         }
                                                                 )
                                                         }
@@ -988,14 +953,14 @@ class MainActivity : ComponentActivity() {
                         if (dao.getCount() == 0) {
                                 val presets =
                                         listOf(
-                                                SuggestionPresetEntity(label = "Pedas"),
-                                                SuggestionPresetEntity(label = "Sedang"),
-                                                SuggestionPresetEntity(label = "Tidak Pedas"),
-                                                SuggestionPresetEntity(label = "Bungkus"),
-                                                SuggestionPresetEntity(label = "Makan Sini"),
-                                                SuggestionPresetEntity(label = "Tanpa Sayur"),
-                                                SuggestionPresetEntity(label = "Tambah Nasi"),
-                                                SuggestionPresetEntity(label = "Pisah Kuah")
+                                                SuggestionPresetEntity(label = "Ojol"),
+                                                SuggestionPresetEntity(label = "Karyawan"),
+                                                SuggestionPresetEntity(label = "Anak Sekolah"),
+                                                SuggestionPresetEntity(label = "Juru Parkir"),
+                                                SuggestionPresetEntity(label = "Pelanggan"),
+                                                SuggestionPresetEntity(label = "Member"),
+                                                SuggestionPresetEntity(label = "Pak Bos"),
+                                                SuggestionPresetEntity(label = "Bu Bos")
                                         )
                                 for (preset in presets) {
                                         dao.insertPreset(preset)

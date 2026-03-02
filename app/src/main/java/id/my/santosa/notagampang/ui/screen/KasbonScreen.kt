@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
 import id.my.santosa.notagampang.viewmodel.KasbonViewModel
@@ -22,224 +26,440 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
-  val uiState by viewModel.uiState.collectAsState()
-  val context = LocalContext.current
-  val currencyFormat = remember {
-    val format = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
-    format.maximumFractionDigits = 0
-    format
-  }
-  val dateFormat = remember {
-    SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.forLanguageTag("id-ID"))
-  }
+fun KasbonScreen(
+        viewModel: KasbonViewModel,
+        onBack: () -> Unit = {},
+        onViewNote: (Long) -> Unit = {}
+) {
+        val uiState by viewModel.uiState.collectAsState()
+        val context = LocalContext.current
+        val currencyFormat = remember {
+                val format = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
+                format.maximumFractionDigits = 0
+                format
+        }
+        val dateFormat = remember {
+                SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.forLanguageTag("id-ID"))
+        }
 
-  var selectedRecordForPayment by remember { mutableStateOf<DebtRecordEntity?>(null) }
-  var paymentAmountStr by remember { mutableStateOf("") }
-  val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        var selectedRecordForPayment by remember { mutableStateOf<DebtRecordEntity?>(null) }
+        var paymentAmountStr by remember { mutableStateOf("") }
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-  if (uiState.isLoading) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-      CircularProgressIndicator()
-    }
-  } else if (uiState.activeDebts.isEmpty()) {
-    Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) { Text("Alhamdulillah, tidak ada Kasbon aktif!", style = MaterialTheme.typography.bodyLarge) }
-  } else {
-    LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-      items(uiState.activeDebts, key = { it.id }) { record ->
-        Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium,
-                colors =
-                        CardDefaults.cardColors(
-                                containerColor =
-                                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                        ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-          Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-            ) {
-              Surface(
-                      modifier = Modifier.size(40.dp),
-                      color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.2f),
-                      shape = MaterialTheme.shapes.small
-              ) {
-                Box(contentAlignment = Alignment.Center) {
-                  Text(
-                          "!",
-                          style = MaterialTheme.typography.titleLarge,
-                          fontWeight = FontWeight.ExtraBold,
-                          color = MaterialTheme.colorScheme.error
-                  )
+        if (uiState.isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                 }
-              }
-
-              Spacer(modifier = Modifier.width(16.dp))
-
-              Column(modifier = Modifier.weight(1f)) {
-                Text(
-                        record.customerName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                        dateFormat.format(Date(record.timestamp)),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-              }
-
-              Column(horizontalAlignment = Alignment.End) {
-                Text(
-                        currencyFormat.format(record.remainingDebt),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = MaterialTheme.colorScheme.error
-                )
-                Text(
-                        "Sisa Tagihan",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-              }
-            }
-
-            if (!record.customerPhone.isNullOrBlank()) {
-              Spacer(modifier = Modifier.height(12.dp))
-              Text(
-                      record.customerPhone,
-                      style = MaterialTheme.typography.bodySmall,
-                      fontWeight = FontWeight.Medium,
-                      color = MaterialTheme.colorScheme.primary,
-                      modifier = Modifier.padding(start = 56.dp)
-              )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-              if (!record.customerPhone.isNullOrBlank()) {
-                OutlinedButton(
-                        modifier = Modifier.weight(1f),
-                        shape = MaterialTheme.shapes.medium,
-                        onClick = {
-                          val phone = record.customerPhone
-                          val formattedPhone =
-                                  if (phone.startsWith("0")) {
-                                    "62" + phone.drop(1)
-                                  } else {
-                                    phone
-                                  }
-                          val message =
-                                  "Halo ${record.customerName}, mengingatkan ada tagihan di Angkringan sebesar ${currencyFormat.format(record.remainingDebt)}. Terima kasih!"
-                          val intent = Intent(Intent.ACTION_VIEW)
-                          intent.data =
-                                  Uri.parse(
-                                          "https://api.whatsapp.com/send?phone=$formattedPhone&text=${Uri.encode(message)}"
-                                  )
-                          context.startActivity(intent)
+        } else if (uiState.activeDebts.isEmpty()) {
+                Column(
+                        modifier = Modifier.fillMaxSize().padding(32.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                        Surface(
+                                modifier = Modifier.size(120.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = MaterialTheme.shapes.large
+                        ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                                Icons.AutoMirrored.Filled.ReceiptLong,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(48.dp),
+                                                tint = MaterialTheme.colorScheme.secondary
+                                        )
+                                }
                         }
-                ) { Text("Tagih WA") }
-              }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text(
+                                "Tidak ada Kasbon aktif",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                                "Semua tagihan sudah lunas. Catatan kasbon baru akan muncul di sini jika ada pembayaran yang belum selesai.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                }
+        } else {
+                LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(20.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                        items(uiState.activeDebts, key = { it.id }) { record ->
+                                Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.medium,
+                                        colors =
+                                                CardDefaults.cardColors(
+                                                        containerColor =
+                                                                MaterialTheme.colorScheme
+                                                                        .surfaceVariant.copy(
+                                                                        alpha = 0.5f
+                                                                )
+                                                ),
+                                        elevation =
+                                                CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                ) {
+                                        Column(modifier = Modifier.padding(16.dp)) {
+                                                Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        verticalAlignment =
+                                                                Alignment.CenterVertically
+                                                ) {
+                                                        Surface(
+                                                                modifier = Modifier.size(40.dp),
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .errorContainer
+                                                                                .copy(alpha = 0.2f),
+                                                                shape = MaterialTheme.shapes.small
+                                                        ) {
+                                                                Box(
+                                                                        contentAlignment =
+                                                                                Alignment.Center
+                                                                ) {
+                                                                        Text(
+                                                                                "!",
+                                                                                style =
+                                                                                        MaterialTheme
+                                                                                                .typography
+                                                                                                .titleLarge,
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .ExtraBold,
+                                                                                color =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .error
+                                                                        )
+                                                                }
+                                                        }
 
-              Button(
-                      modifier = Modifier.weight(1f),
-                      shape = MaterialTheme.shapes.medium,
-                      colors =
-                              ButtonDefaults.buttonColors(
-                                      containerColor = MaterialTheme.colorScheme.primary,
-                                      contentColor = MaterialTheme.colorScheme.secondary
-                              ),
-                      onClick = {
-                        selectedRecordForPayment = record
-                        paymentAmountStr = ""
-                      }
-              ) { Text("Terima Pembayaran") }
-            }
-          }
-        }
-      }
-    }
-  }
+                                                        Spacer(modifier = Modifier.width(16.dp))
 
-  if (selectedRecordForPayment != null) {
-    ModalBottomSheet(
-            onDismissRequest = { selectedRecordForPayment = null },
-            sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surface,
-            dragHandle = { BottomSheetDefaults.DragHandle() },
-    ) {
-      Column(
-              modifier =
-                      Modifier.fillMaxWidth()
-                              .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
-                              .imePadding()
-      ) {
-        Text(
-                "Terima Pembayaran",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-                "Sisa tagihan: ${currencyFormat.format(selectedRecordForPayment!!.remainingDebt)}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        OutlinedTextField(
-                value = paymentAmountStr,
-                onValueChange = { if (it.all { char -> char.isDigit() }) paymentAmountStr = it },
-                label = { Text("Jumlah Dibayar") },
-                prefix = { Text("Rp ") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-          OutlinedButton(
-                  onClick = { selectedRecordForPayment = null },
-                  modifier = Modifier.weight(1f),
-                  shape = MaterialTheme.shapes.medium
-          ) { Text("Batal") }
-          Button(
-                  onClick = {
-                    val amount = paymentAmountStr.toIntOrNull() ?: 0
-                    if (amount > 0) {
-                      viewModel.receiveInstallment(selectedRecordForPayment!!, amount)
-                    }
-                    selectedRecordForPayment = null
-                  },
-                  enabled = (paymentAmountStr.toIntOrNull() ?: 0) > 0,
-                  modifier = Modifier.weight(1f),
-                  shape = MaterialTheme.shapes.medium,
-                  colors =
-                          ButtonDefaults.buttonColors(
-                                  containerColor = MaterialTheme.colorScheme.primary,
-                                  contentColor = MaterialTheme.colorScheme.secondary
-                          )
-          ) { Text("Simpan") }
+                                                        Column(modifier = Modifier.weight(1f)) {
+                                                                Text(
+                                                                        record.customerName,
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .titleMedium,
+                                                                        fontWeight =
+                                                                                FontWeight.Bold,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onSurface
+                                                                )
+                                                                Text(
+                                                                        dateFormat.format(
+                                                                                Date(
+                                                                                        record.timestamp
+                                                                                )
+                                                                        ),
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .labelSmall,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onSurfaceVariant
+                                                                )
+                                                        }
+
+                                                        Column(
+                                                                horizontalAlignment = Alignment.End
+                                                        ) {
+                                                                Text(
+                                                                        currencyFormat.format(
+                                                                                record.remainingDebt
+                                                                        ),
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .titleMedium,
+                                                                        fontWeight =
+                                                                                FontWeight
+                                                                                        .ExtraBold,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .error
+                                                                )
+                                                                Text(
+                                                                        "Sisa Tagihan",
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .labelSmall,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .onSurfaceVariant
+                                                                )
+                                                        }
+                                                }
+
+                                                if (!record.customerPhone.isNullOrBlank()) {
+                                                        Spacer(modifier = Modifier.height(12.dp))
+                                                        Text(
+                                                                record.customerPhone,
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .bodySmall,
+                                                                fontWeight = FontWeight.Medium,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
+                                                        )
+                                                }
+
+                                                val recordPayments =
+                                                        uiState.payments[record.id] ?: emptyList()
+                                                if (recordPayments.isNotEmpty()) {
+                                                        Spacer(modifier = Modifier.height(16.dp))
+                                                        HorizontalDivider(
+                                                                thickness = 0.5.dp,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
+                                                                                .copy(alpha = 0.2f)
+                                                        )
+                                                        Spacer(modifier = Modifier.height(8.dp))
+                                                        Text(
+                                                                "History Pembayaran:",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .labelMedium,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
+                                                        )
+                                                        for (payment in recordPayments) {
+                                                                Row(
+                                                                        modifier =
+                                                                                Modifier.fillMaxWidth()
+                                                                                        .padding(
+                                                                                                vertical =
+                                                                                                        4.dp
+                                                                                        ),
+                                                                        horizontalArrangement =
+                                                                                Arrangement
+                                                                                        .SpaceBetween,
+                                                                        verticalAlignment =
+                                                                                Alignment
+                                                                                        .CenterVertically
+                                                                ) {
+                                                                        Text(
+                                                                                dateFormat.format(
+                                                                                        Date(
+                                                                                                payment.timestamp
+                                                                                        )
+                                                                                ),
+                                                                                style =
+                                                                                        MaterialTheme
+                                                                                                .typography
+                                                                                                .bodySmall,
+                                                                                color =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .onSurfaceVariant
+                                                                        )
+                                                                        Text(
+                                                                                "+ ${currencyFormat.format(payment.amount)}",
+                                                                                style =
+                                                                                        MaterialTheme
+                                                                                                .typography
+                                                                                                .bodySmall,
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .Bold,
+                                                                                color =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary
+                                                                        )
+                                                                }
+                                                        }
+                                                }
+
+                                                Spacer(modifier = Modifier.height(16.dp))
+
+                                                Row(
+                                                        modifier = Modifier.fillMaxWidth(),
+                                                        horizontalArrangement =
+                                                                Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                        if (!record.customerPhone.isNullOrBlank()) {
+                                                                OutlinedButton(
+                                                                        modifier =
+                                                                                Modifier.weight(1f),
+                                                                        shape =
+                                                                                MaterialTheme.shapes
+                                                                                        .medium,
+                                                                        onClick = {
+                                                                                val phone =
+                                                                                        record.customerPhone
+                                                                                val formattedPhone =
+                                                                                        if (phone.startsWith(
+                                                                                                        "0"
+                                                                                                )
+                                                                                        ) {
+                                                                                                "62" +
+                                                                                                        phone.drop(
+                                                                                                                1
+                                                                                                        )
+                                                                                        } else {
+                                                                                                phone
+                                                                                        }
+                                                                                val message =
+                                                                                        "Halo ${record.customerName}, mengingatkan ada tagihan di Angkringan sebesar ${currencyFormat.format(record.remainingDebt)}. Terima kasih!"
+                                                                                val intent =
+                                                                                        Intent(
+                                                                                                Intent.ACTION_VIEW
+                                                                                        )
+                                                                                intent.data =
+                                                                                        Uri.parse(
+                                                                                                "https://api.whatsapp.com/send?phone=$formattedPhone&text=${Uri.encode(message)}"
+                                                                                        )
+                                                                                context.startActivity(
+                                                                                        intent
+                                                                                )
+                                                                        }
+                                                                ) { Text("Tagih WA") }
+                                                        }
+
+                                                        Button(
+                                                                modifier = Modifier.weight(1f),
+                                                                shape = MaterialTheme.shapes.medium,
+                                                                colors =
+                                                                        ButtonDefaults.buttonColors(
+                                                                                containerColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary,
+                                                                                contentColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary
+                                                                        ),
+                                                                onClick = {
+                                                                        selectedRecordForPayment =
+                                                                                record
+                                                                        paymentAmountStr = ""
+                                                                }
+                                                        ) { Text("Terima Pembayaran") }
+                                                }
+
+                                                if (record.groupId != null) {
+                                                        Spacer(modifier = Modifier.height(8.dp))
+                                                        TextButton(
+                                                                modifier = Modifier.fillMaxWidth(),
+                                                                onClick = {
+                                                                        onViewNote(record.groupId)
+                                                                },
+                                                                shape = MaterialTheme.shapes.medium
+                                                        ) {
+                                                                Icon(
+                                                                        Icons.Default.Visibility,
+                                                                        contentDescription = null
+                                                                )
+                                                                Spacer(
+                                                                        modifier =
+                                                                                Modifier.width(8.dp)
+                                                                )
+                                                                Text("Lihat Nota")
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
         }
-      }
-    }
-  }
+
+        if (selectedRecordForPayment != null) {
+                ModalBottomSheet(
+                        onDismissRequest = { selectedRecordForPayment = null },
+                        sheetState = sheetState,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        dragHandle = { BottomSheetDefaults.DragHandle() },
+                ) {
+                        Column(
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
+                                                .imePadding()
+                        ) {
+                                Text(
+                                        "Terima Pembayaran",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                        "Sisa tagihan: ${currencyFormat.format(selectedRecordForPayment!!.remainingDebt)}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                OutlinedTextField(
+                                        value = paymentAmountStr,
+                                        onValueChange = {
+                                                if (it.all { char -> char.isDigit() })
+                                                        paymentAmountStr = it
+                                        },
+                                        label = { Text("Jumlah Dibayar") },
+                                        prefix = { Text("Rp ") },
+                                        keyboardOptions =
+                                                KeyboardOptions(keyboardType = KeyboardType.Number),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.medium
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                        OutlinedButton(
+                                                onClick = { selectedRecordForPayment = null },
+                                                modifier = Modifier.weight(1f),
+                                                shape = MaterialTheme.shapes.medium
+                                        ) { Text("Batal") }
+                                        Button(
+                                                onClick = {
+                                                        val amount =
+                                                                paymentAmountStr.toIntOrNull() ?: 0
+                                                        if (amount > 0) {
+                                                                viewModel.receiveInstallment(
+                                                                        selectedRecordForPayment!!,
+                                                                        amount
+                                                                )
+                                                        }
+                                                        selectedRecordForPayment = null
+                                                },
+                                                enabled = (paymentAmountStr.toIntOrNull() ?: 0) > 0,
+                                                modifier = Modifier.weight(1f),
+                                                shape = MaterialTheme.shapes.medium,
+                                                colors =
+                                                        ButtonDefaults.buttonColors(
+                                                                containerColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary,
+                                                                contentColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary
+                                                        )
+                                        ) { Text("Simpan") }
+                                }
+                        }
+                }
+        }
 }

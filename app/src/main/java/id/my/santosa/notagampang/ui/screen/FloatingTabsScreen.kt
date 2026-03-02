@@ -205,9 +205,7 @@ fun FloatingTabsScreen(
                                 ) {
                                         Surface(
                                                 modifier = Modifier.size(120.dp),
-                                                color =
-                                                        MaterialTheme.colorScheme.primaryContainer
-                                                                .copy(alpha = 0.3f),
+                                                color = MaterialTheme.colorScheme.primary,
                                                 shape = MaterialTheme.shapes.large
                                         ) {
                                                 Box(contentAlignment = Alignment.Center) {
@@ -218,7 +216,7 @@ fun FloatingTabsScreen(
                                                                 modifier = Modifier.size(48.dp),
                                                                 tint =
                                                                         MaterialTheme.colorScheme
-                                                                                .primary
+                                                                                .secondary
                                                         )
                                                 }
                                         }

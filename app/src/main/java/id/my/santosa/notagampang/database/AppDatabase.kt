@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import id.my.santosa.notagampang.database.dao.CategoryDao
 import id.my.santosa.notagampang.database.dao.CustomerGroupDao
+import id.my.santosa.notagampang.database.dao.DebtPaymentDao
 import id.my.santosa.notagampang.database.dao.DebtRecordDao
 import id.my.santosa.notagampang.database.dao.MenuItemDao
 import id.my.santosa.notagampang.database.dao.OrderItemDao
 import id.my.santosa.notagampang.database.dao.SuggestionPresetDao
 import id.my.santosa.notagampang.database.entity.CategoryEntity
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
+import id.my.santosa.notagampang.database.entity.DebtPaymentEntity
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.database.entity.OrderItemEntity
@@ -26,8 +28,9 @@ import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
                         DebtRecordEntity::class,
                         SuggestionPresetEntity::class,
                         CategoryEntity::class,
+                        DebtPaymentEntity::class,
                 ],
-        version = 3,
+        version = 4,
         exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -42,6 +45,8 @@ abstract class AppDatabase : RoomDatabase() {
         abstract fun suggestionPresetDao(): SuggestionPresetDao
 
         abstract fun categoryDao(): CategoryDao
+
+        abstract fun debtPaymentDao(): DebtPaymentDao
 
         companion object {
                 @Volatile private var instance: AppDatabase? = null
