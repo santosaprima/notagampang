@@ -588,11 +588,8 @@ fun CheckoutScreen(
                                                         },
                                                         enabled =
                                                                 isReadOnly ||
-                                                                        (uiState.selectedItemIds
-                                                                                .isNotEmpty() &&
-                                                                                (!isKasbon ||
-                                                                                        customerName
-                                                                                                .isNotBlank())),
+                                                                        uiState.selectedItemIds
+                                                                                .isNotEmpty(),
                                                         shape = MaterialTheme.shapes.medium,
                                                         colors =
                                                                 ButtonDefaults.buttonColors(

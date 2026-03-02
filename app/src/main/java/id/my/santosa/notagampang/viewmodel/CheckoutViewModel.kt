@@ -69,6 +69,14 @@ class CheckoutViewModel(
     viewModelScope.launch {
       val loadedGroup = customerGroupRepository.getGroupById(groupId)
       groupState.value = loadedGroup
+
+      // Select all unpaid items by default
+      orderRepository.getOrdersForGroup(groupId).collect { items ->
+        val unpaidIds = items.filter { it.status == "Unpaid" }.map { it.id }.toSet()
+        if (selectedItemIdsState.value.isEmpty() && unpaidIds.isNotEmpty()) {
+          selectedItemIdsState.value = unpaidIds
+        }
+      }
     }
   }
 
