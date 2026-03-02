@@ -46,14 +46,17 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
         val cashReceived = cashReceivedStr.toIntOrNull() ?: 0
         val isKasbon = cashReceived < totalToPay
 
-        Column(modifier = Modifier.fillMaxSize().imePadding()) {
+        Box(modifier = Modifier.fillMaxSize()) {
                 if (uiState.isLoading) {
                         Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                         ) { CircularProgressIndicator() }
                 } else {
-                        LazyColumn(modifier = Modifier.weight(1f)) {
+                        LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                contentPadding = PaddingValues(bottom = 140.dp)
+                        ) {
                                 item {
                                         // Premium Header consistent with OrderEntry
                                         Row(
@@ -274,7 +277,7 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                 }
 
                                 item {
-                                        // Summary Section moved inside LazyColumn (non-sticky)
+                                        // Summary Section (Scrollable inputs)
                                         Column(
                                                 modifier = Modifier.padding(20.dp).fillMaxWidth(),
                                                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -286,46 +289,6 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                         alpha = 0.3f
                                                                 )
                                                 )
-
-                                                Row(
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        horizontalArrangement =
-                                                                Arrangement.SpaceBetween,
-                                                        verticalAlignment =
-                                                                Alignment.CenterVertically
-                                                ) {
-                                                        Column {
-                                                                Text(
-                                                                        "Bayar",
-                                                                        style =
-                                                                                MaterialTheme
-                                                                                        .typography
-                                                                                        .titleSmall,
-                                                                        fontWeight =
-                                                                                FontWeight.Bold,
-                                                                        color =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .onSurfaceVariant
-                                                                )
-                                                                Text(
-                                                                        currencyFormat.format(
-                                                                                totalToPay
-                                                                        ),
-                                                                        style =
-                                                                                MaterialTheme
-                                                                                        .typography
-                                                                                        .headlineSmall,
-                                                                        fontWeight =
-                                                                                FontWeight
-                                                                                        .ExtraBold,
-                                                                        color =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .primary,
-                                                                )
-                                                        }
-                                                }
 
                                                 OutlinedTextField(
                                                         value = cashReceivedStr,
@@ -437,6 +400,69 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                 singleLine = true,
                                                         )
                                                 }
+                                        }
+                                }
+                        }
+
+                        // Sticky Footer (Total & Button)
+                        Surface(
+                                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
+                                tonalElevation = 3.dp
+                        ) {
+                                Column {
+                                        HorizontalDivider(
+                                                color =
+                                                        MaterialTheme.colorScheme.outlineVariant
+                                                                .copy(alpha = 0.3f)
+                                        )
+                                        Row(
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .padding(
+                                                                        horizontal = 20.dp,
+                                                                        vertical = 16.dp
+                                                                ),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                                val selectedItemsCount =
+                                                        uiState.unpaidItems.count {
+                                                                uiState.selectedItemIds.contains(
+                                                                        it.id
+                                                                )
+                                                        }
+                                                Column {
+                                                        Text(
+                                                                "Total",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .titleSmall,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant,
+                                                                fontWeight = FontWeight.Bold
+                                                        )
+                                                        Text(
+                                                                currencyFormat.format(totalToPay),
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .headlineSmall,
+                                                                fontWeight = FontWeight.ExtraBold,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary,
+                                                        )
+                                                        Text(
+                                                                "$selectedItemsCount items",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .bodySmall,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSurfaceVariant
+                                                        )
+                                                }
 
                                                 Button(
                                                         onClick = {
@@ -446,9 +472,12 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                         customerPhone,
                                                                 )
                                                         },
-                                                        modifier =
-                                                                Modifier.fillMaxWidth()
-                                                                        .height(56.dp),
+                                                        enabled =
+                                                                uiState.selectedItemIds
+                                                                        .isNotEmpty() &&
+                                                                        (!isKasbon ||
+                                                                                customerName
+                                                                                        .isNotBlank()),
                                                         shape = MaterialTheme.shapes.medium,
                                                         colors =
                                                                 ButtonDefaults.buttonColors(
@@ -461,21 +490,14 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                                         .colorScheme
                                                                                         .secondary
                                                                 ),
-                                                        enabled =
-                                                                uiState.selectedItemIds
-                                                                        .isNotEmpty() &&
-                                                                        (!isKasbon ||
-                                                                                customerName
-                                                                                        .isNotBlank()),
+                                                        modifier = Modifier.height(56.dp)
                                                 ) {
                                                         Text(
-                                                                if (isKasbon)
-                                                                        "Selesaikan & Catat Kasbon"
+                                                                if (isKasbon) "Catat Kasbon"
                                                                 else "Bayar Lunas",
                                                                 fontWeight = FontWeight.ExtraBold
                                                         )
                                                 }
-                                                Spacer(modifier = Modifier.height(32.dp))
                                         }
                                 }
                         }
