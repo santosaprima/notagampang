@@ -24,6 +24,14 @@ class CustomerGroupRepository(
     }
   }
 
+  fun getInactiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
+    return customerGroupDao.getGroupsWithTotalByStatus("Paid").map { groups ->
+      groups.map { daoModel ->
+        CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid, daoModel.itemCount)
+      }
+    }
+  }
+
   suspend fun getGroupById(groupId: Long): CustomerGroupEntity? =
           customerGroupDao.getGroupById(groupId)
 

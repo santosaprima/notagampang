@@ -56,9 +56,10 @@ fun ManagementScreen(
                         text = {
                             Text(
                                     title,
+                                    style = MaterialTheme.typography.titleMedium,
                                     fontWeight =
-                                            if (selectedTab == index) FontWeight.Bold
-                                            else FontWeight.Normal
+                                            if (selectedTab == index) FontWeight.ExtraBold
+                                            else FontWeight.SemiBold
                             )
                         },
                         selectedContentColor = MaterialTheme.colorScheme.secondary,

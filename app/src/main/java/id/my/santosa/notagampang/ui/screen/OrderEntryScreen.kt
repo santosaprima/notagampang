@@ -19,7 +19,11 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
+fun OrderEntryScreen(
+        viewModel: OrderEntryViewModel,
+        isReadOnly: Boolean = false,
+        onCheckout: () -> Unit
+) {
         val uiState by viewModel.uiState.collectAsState()
         val currencyFormat = remember {
                 val format = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
@@ -36,12 +40,61 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                         verticalAlignment = Alignment.CenterVertically
                                 ) {
                                         Column {
-                                                Text(
-                                                        text = "Nota #${uiState.group?.id ?: ""}",
-                                                        style = MaterialTheme.typography.labelLarge,
-                                                        color = MaterialTheme.colorScheme.secondary,
-                                                        fontWeight = FontWeight.Bold
-                                                )
+                                                Row(
+                                                        verticalAlignment =
+                                                                Alignment.CenterVertically,
+                                                        horizontalArrangement =
+                                                                Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                        Text(
+                                                                text =
+                                                                        "Nota #${uiState.group?.id ?: ""}",
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .labelLarge,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary,
+                                                                fontWeight = FontWeight.Bold
+                                                        )
+                                                        if (isReadOnly) {
+                                                                Surface(
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary
+                                                                                        .copy(
+                                                                                                alpha =
+                                                                                                        0.1f
+                                                                                        ),
+                                                                        shape =
+                                                                                MaterialTheme.shapes
+                                                                                        .extraSmall,
+                                                                ) {
+                                                                        Text(
+                                                                                "SUDAH DIBAYAR",
+                                                                                modifier =
+                                                                                        Modifier.padding(
+                                                                                                horizontal =
+                                                                                                        6.dp,
+                                                                                                vertical =
+                                                                                                        2.dp
+                                                                                        ),
+                                                                                style =
+                                                                                        MaterialTheme
+                                                                                                .typography
+                                                                                                .labelSmall,
+                                                                                color =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary,
+                                                                                fontWeight =
+                                                                                        FontWeight
+                                                                                                .Bold
+                                                                        )
+                                                                }
+                                                        }
+                                                }
                                                 uiState.group?.let { group ->
                                                         val dateFormat = remember {
                                                                 SimpleDateFormat(
@@ -132,6 +185,7 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                         quantity = quantity,
                                                                         currencyFormat =
                                                                                 currencyFormat,
+                                                                        isReadOnly = isReadOnly,
                                                                         onIncrease = {
                                                                                 viewModel
                                                                                         .addItemToOrder(
@@ -206,28 +260,36 @@ fun OrderEntryScreen(viewModel: OrderEntryViewModel, onCheckout: () -> Unit) {
                                                                                 .onSurfaceVariant
                                                         )
                                                 }
-                                                Button(
-                                                        onClick = onCheckout,
-                                                        enabled =
-                                                                uiState.currentOrders.isNotEmpty(),
-                                                        shape = MaterialTheme.shapes.medium,
-                                                        colors =
-                                                                ButtonDefaults.buttonColors(
-                                                                        containerColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .primary,
-                                                                        contentColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .secondary
-                                                                ),
-                                                        contentPadding =
-                                                                PaddingValues(
-                                                                        horizontal = 32.dp,
-                                                                        vertical = 12.dp
+                                                if (!isReadOnly) {
+                                                        Button(
+                                                                onClick = onCheckout,
+                                                                enabled =
+                                                                        uiState.currentOrders
+                                                                                .isNotEmpty(),
+                                                                shape = MaterialTheme.shapes.medium,
+                                                                colors =
+                                                                        ButtonDefaults.buttonColors(
+                                                                                containerColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary,
+                                                                                contentColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary
+                                                                        ),
+                                                                contentPadding =
+                                                                        PaddingValues(
+                                                                                horizontal = 32.dp,
+                                                                                vertical = 12.dp
+                                                                        )
+                                                        ) {
+                                                                Text(
+                                                                        "Bayar",
+                                                                        fontWeight = FontWeight.Bold
                                                                 )
-                                                ) { Text("Bayar", fontWeight = FontWeight.Bold) }
+                                                        }
+                                                }
                                         }
                                 }
                         }
@@ -241,6 +303,7 @@ fun MenuItemRow(
         price: Int,
         quantity: Int,
         currencyFormat: NumberFormat,
+        isReadOnly: Boolean = false,
         onIncrease: () -> Unit,
         onDecrease: () -> Unit
 ) {
@@ -273,57 +336,74 @@ fun MenuItemRow(
                                 )
                         }
 
-                        Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                                if (quantity > 0) {
+                        if (!isReadOnly) {
+                                Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                        if (quantity > 0) {
+                                                Surface(
+                                                        modifier = Modifier.size(32.dp),
+                                                        color =
+                                                                MaterialTheme.colorScheme.primary
+                                                                        .copy(alpha = 0.1f),
+                                                        shape = MaterialTheme.shapes.small,
+                                                        onClick = onDecrease
+                                                ) {
+                                                        Box(contentAlignment = Alignment.Center) {
+                                                                Icon(
+                                                                        imageVector =
+                                                                                Icons.Outlined
+                                                                                        .RemoveCircleOutline,
+                                                                        contentDescription =
+                                                                                "Kurangi",
+                                                                        modifier =
+                                                                                Modifier.size(
+                                                                                        20.dp
+                                                                                ),
+                                                                        tint =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .primary
+                                                                )
+                                                        }
+                                                }
+
+                                                Text(
+                                                        quantity.toString(),
+                                                        style =
+                                                                MaterialTheme.typography
+                                                                        .titleMedium,
+                                                        fontWeight = FontWeight.Bold,
+                                                        color = MaterialTheme.colorScheme.onSurface
+                                                )
+                                        }
+
                                         Surface(
                                                 modifier = Modifier.size(32.dp),
-                                                color =
-                                                        MaterialTheme.colorScheme.primary.copy(
-                                                                alpha = 0.1f
-                                                        ),
+                                                color = MaterialTheme.colorScheme.primary,
                                                 shape = MaterialTheme.shapes.small,
-                                                onClick = onDecrease
+                                                onClick = onIncrease
                                         ) {
                                                 Box(contentAlignment = Alignment.Center) {
                                                         Icon(
-                                                                imageVector =
-                                                                        Icons.Outlined
-                                                                                .RemoveCircleOutline,
-                                                                contentDescription = "Kurangi",
+                                                                Icons.Default.Add,
+                                                                contentDescription = "Tambah",
                                                                 modifier = Modifier.size(20.dp),
                                                                 tint =
                                                                         MaterialTheme.colorScheme
-                                                                                .primary
+                                                                                .secondary
                                                         )
                                                 }
                                         }
-
-                                        Text(
-                                                quantity.toString(),
-                                                style = MaterialTheme.typography.titleMedium,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                        )
                                 }
-
-                                Surface(
-                                        modifier = Modifier.size(32.dp),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        shape = MaterialTheme.shapes.small,
-                                        onClick = onIncrease
-                                ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                                Icon(
-                                                        Icons.Default.Add,
-                                                        contentDescription = "Tambah",
-                                                        modifier = Modifier.size(20.dp),
-                                                        tint = MaterialTheme.colorScheme.secondary
-                                                )
-                                        }
-                                }
+                        } else if (quantity > 0) {
+                                Text(
+                                        "${quantity}x",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = MaterialTheme.colorScheme.primary
+                                )
                         }
                 }
         }

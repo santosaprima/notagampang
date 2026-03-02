@@ -18,8 +18,17 @@ class FloatingTabsViewModel(
   private val _searchQuery = MutableStateFlow("")
   val searchQuery: StateFlow<String> = _searchQuery
 
-  val activeGroups: StateFlow<List<CustomerGroupWithTotal>> =
-          combine(repository.getActiveGroupsWithTotals(), _searchQuery) { groups, query ->
+  private val _selectedTab = MutableStateFlow(0) // 0: Aktif, 1: Selesai
+  val selectedTab: StateFlow<Int> = _selectedTab
+
+  val filteredGroups: StateFlow<List<CustomerGroupWithTotal>> =
+          combine(
+                          _selectedTab,
+                          _searchQuery,
+                          repository.getActiveGroupsWithTotals(),
+                          repository.getInactiveGroupsWithTotals()
+                  ) { tab, query, active, inactive ->
+                    val groups = if (tab == 0) active else inactive
                     if (query.isEmpty()) groups
                     else groups.filter { it.group.alias.contains(query, ignoreCase = true) }
                   }
@@ -28,6 +37,10 @@ class FloatingTabsViewModel(
                           started = SharingStarted.WhileSubscribed(5000),
                           initialValue = emptyList(),
                   )
+
+  fun onTabSelected(tabIndex: Int) {
+    _selectedTab.value = tabIndex
+  }
 
   fun onSearchQueryChange(newQuery: String) {
     _searchQuery.value = newQuery

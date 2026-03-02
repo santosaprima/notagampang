@@ -42,8 +42,8 @@ sealed class Screen {
         object Management : Screen()
         object ShiftManagement : Screen()
         object Kasbon : Screen()
-        data class OrderEntry(val groupId: Long) : Screen()
-        data class Checkout(val groupId: Long) : Screen()
+        data class OrderEntry(val groupId: Long, val isReadOnly: Boolean = false) : Screen()
+        data class Checkout(val groupId: Long, val isReadOnly: Boolean = false) : Screen()
         object Settings : Screen()
 }
 
@@ -243,7 +243,8 @@ class MainActivity : ComponentActivity() {
                                                                                                                         Screen.FloatingTabs
                                                                                                                 is Screen.Checkout ->
                                                                                                                         Screen.OrderEntry(
-                                                                                                                                s.groupId
+                                                                                                                                s.groupId,
+                                                                                                                                s.isReadOnly
                                                                                                                         )
                                                                                                                 else ->
                                                                                                                         Screen.FloatingTabs
@@ -261,22 +262,26 @@ class MainActivity : ComponentActivity() {
                                                                         }
                                                                 },
                                                                 actions = {
-                                                                        if (currentScreen is
+                                                                        val screen = currentScreen
+                                                                        if (screen is
                                                                                         Screen.OrderEntry
                                                                         ) {
-                                                                                IconButton(
-                                                                                        onClick = {
-                                                                                                showMergeDialog =
-                                                                                                        true
-                                                                                        }
+                                                                                if (!screen.isReadOnly
                                                                                 ) {
-                                                                                        Icon(
-                                                                                                Icons.AutoMirrored
-                                                                                                        .Filled
-                                                                                                        .CallMerge,
-                                                                                                contentDescription =
-                                                                                                        "Gabung Nota"
-                                                                                        )
+                                                                                        IconButton(
+                                                                                                onClick = {
+                                                                                                        showMergeDialog =
+                                                                                                                true
+                                                                                                }
+                                                                                        ) {
+                                                                                                Icon(
+                                                                                                        Icons.AutoMirrored
+                                                                                                                .Filled
+                                                                                                                .CallMerge,
+                                                                                                        contentDescription =
+                                                                                                                "Gabung Nota"
+                                                                                                )
+                                                                                        }
                                                                                 }
                                                                                 IconButton(
                                                                                         onClick = {
@@ -763,10 +768,13 @@ class MainActivity : ComponentActivity() {
                                                                         bottomPadding =
                                                                                 innerPadding
                                                                                         .calculateBottomPadding(),
-                                                                        onTabClick = { groupId ->
+                                                                        onTabClick = {
+                                                                                groupId,
+                                                                                isReadOnly ->
                                                                                 currentScreen =
                                                                                         Screen.OrderEntry(
-                                                                                                groupId
+                                                                                                groupId,
+                                                                                                isReadOnly
                                                                                         )
                                                                         }
                                                                 )
@@ -808,10 +816,13 @@ class MainActivity : ComponentActivity() {
                                                                 OrderEntryScreen(
                                                                         viewModel =
                                                                                 orderEntryViewModel,
+                                                                        isReadOnly =
+                                                                                screen.isReadOnly,
                                                                         onCheckout = {
                                                                                 currentScreen =
                                                                                         Screen.Checkout(
-                                                                                                screen.groupId
+                                                                                                screen.groupId,
+                                                                                                screen.isReadOnly
                                                                                         )
                                                                         }
                                                                 )
@@ -833,6 +844,8 @@ class MainActivity : ComponentActivity() {
                                                                 CheckoutScreen(
                                                                         viewModel =
                                                                                 checkoutViewModel,
+                                                                        isReadOnly =
+                                                                                screen.isReadOnly,
                                                                         onCheckoutComplete = {
                                                                                 currentScreen =
                                                                                         Screen.FloatingTabs

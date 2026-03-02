@@ -33,10 +33,11 @@ fun FloatingTabsScreen(
         viewModel: FloatingTabsViewModel,
         suggestions: List<String>,
         bottomPadding: androidx.compose.ui.unit.Dp = 0.dp,
-        onTabClick: (Long) -> Unit
+        onTabClick: (Long, Boolean) -> Unit
 ) {
-        val activeGroups by viewModel.activeGroups.collectAsState()
+        val filteredGroups by viewModel.filteredGroups.collectAsState()
         val searchQuery by viewModel.searchQuery.collectAsState()
+        val selectedTab by viewModel.selectedTab.collectAsState()
         var showAddDialog by remember { mutableStateOf(false) }
         var newGroupName by remember { mutableStateOf("") }
 
@@ -76,17 +77,64 @@ fun FloatingTabsScreen(
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                Text(
-                                        "Nota Aktif",
-                                        style = MaterialTheme.typography.displaySmall,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                        "Kelola semua grup dan pesanan aktif di sini",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+
+                                val tabs = listOf("Aktif", "Selesai")
+                                PrimaryTabRow(
+                                        selectedTabIndex = selectedTab,
+                                        containerColor =
+                                                androidx.compose.ui.graphics.Color.Transparent,
+                                        contentColor = MaterialTheme.colorScheme.secondary,
+                                        divider = {},
+                                        indicator = {
+                                                TabRowDefaults.PrimaryIndicator(
+                                                        modifier =
+                                                                Modifier.tabIndicatorOffset(
+                                                                        selectedTab
+                                                                ),
+                                                        width = 64.dp,
+                                                        color = MaterialTheme.colorScheme.secondary
+                                                )
+                                        }
+                                ) {
+                                        tabs.forEachIndexed { index, title ->
+                                                Tab(
+                                                        selected = selectedTab == index,
+                                                        onClick = {
+                                                                viewModel.onTabSelected(index)
+                                                        },
+                                                        text = {
+                                                                Text(
+                                                                        text = title,
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .titleMedium,
+                                                                        fontWeight =
+                                                                                if (selectedTab ==
+                                                                                                index
+                                                                                )
+                                                                                        FontWeight
+                                                                                                .ExtraBold
+                                                                                else
+                                                                                        FontWeight
+                                                                                                .SemiBold,
+                                                                        color =
+                                                                                if (selectedTab ==
+                                                                                                index
+                                                                                )
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary
+                                                                                else
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .onSurfaceVariant
+                                                                )
+                                                        }
+                                                )
+                                        }
+                                }
 
                                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -142,7 +190,7 @@ fun FloatingTabsScreen(
                 contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { paddingValues ->
                 Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-                        if (activeGroups.isEmpty() && searchQuery.isEmpty()) {
+                        if (filteredGroups.isEmpty() && searchQuery.isEmpty()) {
                                 Column(
                                         modifier =
                                                 Modifier.fillMaxSize()
@@ -176,19 +224,23 @@ fun FloatingTabsScreen(
                                         }
                                         Spacer(modifier = Modifier.height(24.dp))
                                         Text(
-                                                "Belum ada nota aktif",
+                                                if (selectedTab == 0) "Belum ada nota aktif"
+                                                else "Belum ada nota selesai",
                                                 style = MaterialTheme.typography.titleLarge,
                                                 fontWeight = FontWeight.Bold
                                         )
                                         Spacer(modifier = Modifier.height(8.dp))
                                         Text(
-                                                "Ketuk tombol + di pojok bawah untuk membuat nota baru bagi pelanggan Anda.",
+                                                if (selectedTab == 0)
+                                                        "Ketuk tombol + di pojok bawah untuk membuat nota baru bagi pelanggan Anda."
+                                                else
+                                                        "Nota yang sudah dibayar lunas akan muncul di sini.",
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 textAlign = TextAlign.Center,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 }
-                        } else if (activeGroups.isEmpty() && searchQuery.isNotEmpty()) {
+                        } else if (filteredGroups.isEmpty() && searchQuery.isNotEmpty()) {
                                 Box(
                                         modifier = Modifier.fillMaxSize(),
                                         contentAlignment = Alignment.Center
@@ -211,7 +263,7 @@ fun FloatingTabsScreen(
                                         modifier = Modifier.fillMaxSize()
                                 ) {
                                         items(
-                                                items = activeGroups,
+                                                items = filteredGroups,
                                                 key = { item: CustomerGroupWithTotal ->
                                                         item.group.id
                                                 }
@@ -219,7 +271,12 @@ fun FloatingTabsScreen(
                                                 NotaCard(
                                                         groupWithTotal = groupWithTotal,
                                                         onClick = {
-                                                                onTabClick(groupWithTotal.group.id)
+                                                                onTabClick(
+                                                                        groupWithTotal.group.id,
+                                                                        groupWithTotal
+                                                                                .group
+                                                                                .status == "Paid"
+                                                                )
                                                         }
                                                 )
                                         }
@@ -449,15 +506,20 @@ fun NotaCard(
                                 horizontalAlignment = Alignment.End,
                                 verticalArrangement = Arrangement.SpaceBetween
                         ) {
+                                val isPaid = groupWithTotal.group.status == "Paid"
                                 Surface(
                                         color =
-                                                MaterialTheme.colorScheme.secondaryContainer.copy(
-                                                        alpha = 0.7f
-                                                ),
+                                                if (isPaid)
+                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                alpha = 0.1f
+                                                        )
+                                                else
+                                                        MaterialTheme.colorScheme.secondaryContainer
+                                                                .copy(alpha = 0.7f),
                                         shape = MaterialTheme.shapes.extraSmall
                                 ) {
                                         Text(
-                                                "AKTIF",
+                                                if (isPaid) "SELESAI" else "AKTIF",
                                                 modifier =
                                                         Modifier.padding(
                                                                 horizontal = 6.dp,
@@ -466,8 +528,11 @@ fun NotaCard(
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color =
-                                                        MaterialTheme.colorScheme
-                                                                .onSecondaryContainer
+                                                        if (isPaid)
+                                                                MaterialTheme.colorScheme.primary
+                                                        else
+                                                                MaterialTheme.colorScheme
+                                                                        .onSecondaryContainer
                                         )
                                 }
 

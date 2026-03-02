@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 data class CheckoutUiState(
         val group: CustomerGroupEntity? = null,
         val unpaidItems: List<OrderItemEntity> = emptyList(),
+        val paidItems: List<OrderItemEntity> = emptyList(),
         val selectedItemIds: Set<Long> = emptySet(),
         val isLoading: Boolean = true,
         val checkoutComplete: Boolean = false,
@@ -48,9 +49,11 @@ class CheckoutViewModel(
                           isComplete: Boolean,
                     ->
                     val unpaidItems = items.filter { it.status == "Unpaid" }
+                    val paidItems = items.filter { it.status == "Paid" }
                     CheckoutUiState(
                             group = group,
                             unpaidItems = unpaidItems,
+                            paidItems = paidItems,
                             selectedItemIds = selectedIds,
                             isLoading = false,
                             checkoutComplete = isComplete,

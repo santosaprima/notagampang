@@ -19,7 +19,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit) {
+fun CheckoutScreen(
+        viewModel: CheckoutViewModel,
+        isReadOnly: Boolean = false,
+        onCheckoutComplete: () -> Unit
+) {
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(uiState.checkoutComplete) {
@@ -35,8 +39,14 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
         val allSelected = allIds.isNotEmpty() && uiState.selectedItemIds.containsAll(allIds)
 
         val totalToPay =
-                uiState.unpaidItems.filter { uiState.selectedItemIds.contains(it.id) }.sumOf {
-                        it.priceAtOrder * it.quantity
+                if (isReadOnly) {
+                        (uiState.unpaidItems + uiState.paidItems).sumOf {
+                                it.priceAtOrder * it.quantity
+                        }
+                } else {
+                        uiState.unpaidItems
+                                .filter { uiState.selectedItemIds.contains(it.id) }
+                                .sumOf { it.priceAtOrder * it.quantity }
                 }
 
         var cashReceivedStr by remember { mutableStateOf("") }
@@ -64,17 +74,64 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                 verticalAlignment = Alignment.CenterVertically
                                         ) {
                                                 Column(modifier = Modifier.weight(1f)) {
-                                                        Text(
-                                                                text =
-                                                                        "Nota #${uiState.group?.id ?: ""}",
-                                                                style =
-                                                                        MaterialTheme.typography
-                                                                                .labelLarge,
-                                                                color =
-                                                                        MaterialTheme.colorScheme
-                                                                                .secondary,
-                                                                fontWeight = FontWeight.Bold
-                                                        )
+                                                        Row(
+                                                                verticalAlignment =
+                                                                        Alignment.CenterVertically,
+                                                                horizontalArrangement =
+                                                                        Arrangement.spacedBy(8.dp)
+                                                        ) {
+                                                                Text(
+                                                                        text =
+                                                                                "Nota #${uiState.group?.id ?: ""}",
+                                                                        style =
+                                                                                MaterialTheme
+                                                                                        .typography
+                                                                                        .labelLarge,
+                                                                        color =
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .secondary,
+                                                                        fontWeight = FontWeight.Bold
+                                                                )
+                                                                if (isReadOnly) {
+                                                                        Surface(
+                                                                                color =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary
+                                                                                                .copy(
+                                                                                                        alpha =
+                                                                                                                0.1f
+                                                                                                ),
+                                                                                shape =
+                                                                                        MaterialTheme
+                                                                                                .shapes
+                                                                                                .extraSmall,
+                                                                        ) {
+                                                                                Text(
+                                                                                        "SUDAH DIBAYAR",
+                                                                                        modifier =
+                                                                                                Modifier.padding(
+                                                                                                        horizontal =
+                                                                                                                6.dp,
+                                                                                                        vertical =
+                                                                                                                2.dp
+                                                                                                ),
+                                                                                        style =
+                                                                                                MaterialTheme
+                                                                                                        .typography
+                                                                                                        .labelSmall,
+                                                                                        color =
+                                                                                                MaterialTheme
+                                                                                                        .colorScheme
+                                                                                                        .primary,
+                                                                                        fontWeight =
+                                                                                                FontWeight
+                                                                                                        .Bold
+                                                                                )
+                                                                        }
+                                                                }
+                                                        }
                                                         uiState.group?.let { group ->
                                                                 val dateFormat = remember {
                                                                         SimpleDateFormat(
@@ -113,50 +170,70 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
 
                                         Spacer(modifier = Modifier.height(8.dp))
 
-                                        Row(
-                                                modifier =
-                                                        Modifier.fillMaxWidth()
-                                                                .clickable {
-                                                                        if (allSelected) {
-                                                                                viewModel
-                                                                                        .clearSelection()
-                                                                        } else {
+                                        if (!isReadOnly && uiState.unpaidItems.isNotEmpty()) {
+                                                Row(
+                                                        modifier =
+                                                                Modifier.fillMaxWidth()
+                                                                        .clickable {
+                                                                                if (allSelected) {
+                                                                                        viewModel
+                                                                                                .clearSelection()
+                                                                                } else {
+                                                                                        viewModel
+                                                                                                .selectAll()
+                                                                                }
+                                                                        }
+                                                                        .padding(
+                                                                                horizontal = 20.dp,
+                                                                                vertical = 12.dp
+                                                                        ),
+                                                        verticalAlignment =
+                                                                Alignment.CenterVertically,
+                                                ) {
+                                                        Checkbox(
+                                                                checked = allSelected,
+                                                                onCheckedChange = {
+                                                                        if (it)
                                                                                 viewModel
                                                                                         .selectAll()
-                                                                        }
-                                                                }
-                                                                .padding(
-                                                                        horizontal = 20.dp,
-                                                                        vertical = 12.dp
-                                                                ),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                                Checkbox(
-                                                        checked = allSelected,
-                                                        onCheckedChange = {
-                                                                if (it) viewModel.selectAll()
-                                                                else viewModel.clearSelection()
-                                                        },
-                                                        colors =
-                                                                CheckboxDefaults.colors(
-                                                                        checkedColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .secondary
-                                                                )
-                                                )
-                                                Text(
-                                                        "Pilih Semua (Bayar Semua)",
-                                                        modifier = Modifier.padding(start = 8.dp),
-                                                        style = MaterialTheme.typography.bodyLarge,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = MaterialTheme.colorScheme.primary
-                                                )
+                                                                        else
+                                                                                viewModel
+                                                                                        .clearSelection()
+                                                                },
+                                                                colors =
+                                                                        CheckboxDefaults.colors(
+                                                                                checkedColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary
+                                                                        )
+                                                        )
+                                                        Text(
+                                                                "Pilih Semua (Bayar Semua)",
+                                                                modifier =
+                                                                        Modifier.padding(
+                                                                                start = 8.dp
+                                                                        ),
+                                                                style =
+                                                                        MaterialTheme.typography
+                                                                                .bodyLarge,
+                                                                fontWeight = FontWeight.Bold,
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .primary
+                                                        )
+                                                }
                                         }
                                 }
 
-                                items(uiState.unpaidItems, key = { it.id }) { item ->
-                                        val isSelected = uiState.selectedItemIds.contains(item.id)
+                                val itemsToDisplay =
+                                        if (isReadOnly) uiState.unpaidItems + uiState.paidItems
+                                        else uiState.unpaidItems
+
+                                items(itemsToDisplay, key = { it.id }) { item ->
+                                        val isSelected =
+                                                isReadOnly ||
+                                                        uiState.selectedItemIds.contains(item.id)
                                         Card(
                                                 modifier =
                                                         Modifier.fillMaxWidth()
@@ -164,12 +241,16 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                         horizontal = 20.dp,
                                                                         vertical = 6.dp
                                                                 )
-                                                                .clickable {
-                                                                        viewModel
-                                                                                .toggleItemSelection(
-                                                                                        item.id
-                                                                                )
-                                                                },
+                                                                .then(
+                                                                        if (!isReadOnly)
+                                                                                Modifier.clickable {
+                                                                                        viewModel
+                                                                                                .toggleItemSelection(
+                                                                                                        item.id
+                                                                                                )
+                                                                                }
+                                                                        else Modifier
+                                                                ),
                                                 shape = MaterialTheme.shapes.medium,
                                                 colors =
                                                         CardDefaults.cardColors(
@@ -215,27 +296,35 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                         verticalAlignment =
                                                                 Alignment.CenterVertically,
                                                 ) {
-                                                        Checkbox(
-                                                                checked = isSelected,
-                                                                onCheckedChange = {
-                                                                        viewModel
-                                                                                .toggleItemSelection(
-                                                                                        item.id
-                                                                                )
-                                                                },
-                                                                colors =
-                                                                        CheckboxDefaults.colors(
-                                                                                checkedColor =
-                                                                                        MaterialTheme
-                                                                                                .colorScheme
-                                                                                                .secondary
-                                                                        )
-                                                        )
+                                                        if (!isReadOnly) {
+                                                                Checkbox(
+                                                                        checked = isSelected,
+                                                                        onCheckedChange = {
+                                                                                viewModel
+                                                                                        .toggleItemSelection(
+                                                                                                item.id
+                                                                                        )
+                                                                        },
+                                                                        colors =
+                                                                                CheckboxDefaults
+                                                                                        .colors(
+                                                                                                checkedColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .secondary
+                                                                                        )
+                                                                )
+                                                        }
                                                         Column(
                                                                 modifier =
                                                                         Modifier.weight(1f)
                                                                                 .padding(
-                                                                                        start = 8.dp
+                                                                                        start =
+                                                                                                if (isReadOnly
+                                                                                                )
+                                                                                                        0.dp
+                                                                                                else
+                                                                                                        8.dp
                                                                                 )
                                                         ) {
                                                                 Text(
@@ -276,129 +365,146 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                         }
                                 }
 
-                                item {
-                                        // Summary Section (Scrollable inputs)
-                                        Column(
-                                                modifier = Modifier.padding(20.dp).fillMaxWidth(),
-                                                verticalArrangement = Arrangement.spacedBy(16.dp),
-                                        ) {
-                                                HorizontalDivider(
-                                                        color =
-                                                                MaterialTheme.colorScheme
-                                                                        .outlineVariant.copy(
-                                                                        alpha = 0.3f
-                                                                )
-                                                )
-
-                                                OutlinedTextField(
-                                                        value = cashReceivedStr,
-                                                        onValueChange = {
-                                                                if (it.all { char ->
-                                                                                char.isDigit()
-                                                                        }
-                                                                )
-                                                                        cashReceivedStr = it
-                                                        },
-                                                        label = { Text("Uang Diterima (Rp)") },
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        keyboardOptions =
-                                                                KeyboardOptions(
-                                                                        keyboardType =
-                                                                                KeyboardType.Number
-                                                                ),
-                                                        singleLine = true,
-                                                        shape = MaterialTheme.shapes.medium
-                                                )
-
-                                                if (isKasbon && totalToPay > 0) {
-                                                        Card(
-                                                                colors =
-                                                                        CardDefaults.cardColors(
-                                                                                containerColor =
-                                                                                        MaterialTheme
-                                                                                                .colorScheme
-                                                                                                .errorContainer
-                                                                                                .copy(
-                                                                                                        alpha =
-                                                                                                                0.5f
-                                                                                                )
-                                                                        ),
-                                                                shape = MaterialTheme.shapes.medium,
-                                                                modifier = Modifier.fillMaxWidth()
-                                                        ) {
-                                                                Column(
-                                                                        modifier =
-                                                                                Modifier.padding(
-                                                                                        12.dp
-                                                                                )
-                                                                ) {
-                                                                        Text(
-                                                                                "Sisa Pembayaran: ${currencyFormat.format(totalToPay - cashReceived)}",
-                                                                                color =
-                                                                                        MaterialTheme
-                                                                                                .colorScheme
-                                                                                                .error,
-                                                                                style =
-                                                                                        MaterialTheme
-                                                                                                .typography
-                                                                                                .bodySmall,
-                                                                                fontWeight =
-                                                                                        FontWeight
-                                                                                                .Bold
-                                                                        )
-                                                                        Text(
-                                                                                "Akan dicatat sebagai Kasbon.",
-                                                                                color =
-                                                                                        MaterialTheme
-                                                                                                .colorScheme
-                                                                                                .error,
-                                                                                style =
-                                                                                        MaterialTheme
-                                                                                                .typography
-                                                                                                .labelSmall
-                                                                        )
-                                                                }
-                                                        }
-                                                        OutlinedTextField(
-                                                                value = customerName,
-                                                                onValueChange = {
-                                                                        customerName = it
-                                                                },
-                                                                label = {
-                                                                        Text(
-                                                                                "Nama Lengkap Peminjam"
-                                                                        )
-                                                                },
-                                                                modifier = Modifier.fillMaxWidth(),
-                                                                singleLine = true,
-                                                                shape = MaterialTheme.shapes.medium,
-                                                                keyboardOptions =
-                                                                        KeyboardOptions(
-                                                                                capitalization =
-                                                                                        KeyboardCapitalization
-                                                                                                .Words
-                                                                        ),
+                                if (!isReadOnly) {
+                                        item {
+                                                // Summary Section (Scrollable inputs)
+                                                Column(
+                                                        modifier =
+                                                                Modifier.padding(20.dp)
+                                                                        .fillMaxWidth(),
+                                                        verticalArrangement =
+                                                                Arrangement.spacedBy(16.dp),
+                                                ) {
+                                                        HorizontalDivider(
+                                                                color =
+                                                                        MaterialTheme.colorScheme
+                                                                                .outlineVariant
+                                                                                .copy(alpha = 0.3f)
                                                         )
+
                                                         OutlinedTextField(
-                                                                value = customerPhone,
+                                                                value = cashReceivedStr,
                                                                 onValueChange = {
-                                                                        customerPhone = it
+                                                                        if (it.all { char ->
+                                                                                        char.isDigit()
+                                                                                }
+                                                                        )
+                                                                                cashReceivedStr = it
                                                                 },
                                                                 label = {
-                                                                        Text(
-                                                                                "No. WhatsApp (Opsional)"
-                                                                        )
+                                                                        Text("Uang Diterima (Rp)")
                                                                 },
                                                                 modifier = Modifier.fillMaxWidth(),
-                                                                shape = MaterialTheme.shapes.medium,
                                                                 keyboardOptions =
                                                                         KeyboardOptions(
                                                                                 keyboardType =
                                                                                         KeyboardType
-                                                                                                .Phone
+                                                                                                .Number
                                                                         ),
                                                                 singleLine = true,
+                                                                shape = MaterialTheme.shapes.medium
                                                         )
+
+                                                        if (isKasbon && totalToPay > 0) {
+                                                                Card(
+                                                                        colors =
+                                                                                CardDefaults
+                                                                                        .cardColors(
+                                                                                                containerColor =
+                                                                                                        MaterialTheme
+                                                                                                                .colorScheme
+                                                                                                                .errorContainer
+                                                                                                                .copy(
+                                                                                                                        alpha =
+                                                                                                                                0.5f
+                                                                                                                )
+                                                                                        ),
+                                                                        shape =
+                                                                                MaterialTheme.shapes
+                                                                                        .medium,
+                                                                        modifier =
+                                                                                Modifier.fillMaxWidth()
+                                                                ) {
+                                                                        Column(
+                                                                                modifier =
+                                                                                        Modifier.padding(
+                                                                                                12.dp
+                                                                                        )
+                                                                        ) {
+                                                                                Text(
+                                                                                        "Sisa Pembayaran: ${currencyFormat.format(totalToPay - cashReceived)}",
+                                                                                        color =
+                                                                                                MaterialTheme
+                                                                                                        .colorScheme
+                                                                                                        .error,
+                                                                                        style =
+                                                                                                MaterialTheme
+                                                                                                        .typography
+                                                                                                        .bodySmall,
+                                                                                        fontWeight =
+                                                                                                FontWeight
+                                                                                                        .Bold
+                                                                                )
+                                                                                Text(
+                                                                                        "Akan dicatat sebagai Kasbon.",
+                                                                                        color =
+                                                                                                MaterialTheme
+                                                                                                        .colorScheme
+                                                                                                        .error,
+                                                                                        style =
+                                                                                                MaterialTheme
+                                                                                                        .typography
+                                                                                                        .labelSmall
+                                                                                )
+                                                                        }
+                                                                }
+                                                                OutlinedTextField(
+                                                                        value = customerName,
+                                                                        onValueChange = {
+                                                                                customerName = it
+                                                                        },
+                                                                        label = {
+                                                                                Text(
+                                                                                        "Nama Lengkap Peminjam"
+                                                                                )
+                                                                        },
+                                                                        modifier =
+                                                                                Modifier.fillMaxWidth(),
+                                                                        singleLine = true,
+                                                                        shape =
+                                                                                MaterialTheme.shapes
+                                                                                        .medium,
+                                                                        keyboardOptions =
+                                                                                KeyboardOptions(
+                                                                                        capitalization =
+                                                                                                KeyboardCapitalization
+                                                                                                        .Words
+                                                                                ),
+                                                                )
+                                                                OutlinedTextField(
+                                                                        value = customerPhone,
+                                                                        onValueChange = {
+                                                                                customerPhone = it
+                                                                        },
+                                                                        label = {
+                                                                                Text(
+                                                                                        "No. WhatsApp (Opsional)"
+                                                                                )
+                                                                        },
+                                                                        modifier =
+                                                                                Modifier.fillMaxWidth(),
+                                                                        shape =
+                                                                                MaterialTheme.shapes
+                                                                                        .medium,
+                                                                        keyboardOptions =
+                                                                                KeyboardOptions(
+                                                                                        keyboardType =
+                                                                                                KeyboardType
+                                                                                                        .Phone
+                                                                                ),
+                                                                        singleLine = true,
+                                                                )
+                                                        }
                                                 }
                                         }
                                 }
@@ -426,12 +532,16 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                 horizontalArrangement = Arrangement.SpaceBetween,
                                                 verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                                val selectedItemsCount =
-                                                        uiState.unpaidItems.count {
-                                                                uiState.selectedItemIds.contains(
-                                                                        it.id
-                                                                )
-                                                        }
+                                                val itemsCount =
+                                                        if (isReadOnly)
+                                                                (uiState.unpaidItems +
+                                                                                uiState.paidItems)
+                                                                        .count()
+                                                        else
+                                                                uiState.unpaidItems.count {
+                                                                        uiState.selectedItemIds
+                                                                                .contains(it.id)
+                                                                }
                                                 Column {
                                                         Text(
                                                                 "Total",
@@ -454,7 +564,7 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                                                 .secondary,
                                                         )
                                                         Text(
-                                                                "$selectedItemsCount items",
+                                                                "$itemsCount items",
                                                                 style =
                                                                         MaterialTheme.typography
                                                                                 .bodySmall,
@@ -466,18 +576,23 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
 
                                                 Button(
                                                         onClick = {
-                                                                viewModel.processCheckout(
-                                                                        cashReceived,
-                                                                        customerName,
-                                                                        customerPhone,
-                                                                )
+                                                                if (isReadOnly) {
+                                                                        onCheckoutComplete()
+                                                                } else {
+                                                                        viewModel.processCheckout(
+                                                                                cashReceived,
+                                                                                customerName,
+                                                                                customerPhone,
+                                                                        )
+                                                                }
                                                         },
                                                         enabled =
-                                                                uiState.selectedItemIds
-                                                                        .isNotEmpty() &&
-                                                                        (!isKasbon ||
-                                                                                customerName
-                                                                                        .isNotBlank()),
+                                                                isReadOnly ||
+                                                                        (uiState.selectedItemIds
+                                                                                .isNotEmpty() &&
+                                                                                (!isKasbon ||
+                                                                                        customerName
+                                                                                                .isNotBlank())),
                                                         shape = MaterialTheme.shapes.medium,
                                                         colors =
                                                                 ButtonDefaults.buttonColors(
@@ -493,7 +608,8 @@ fun CheckoutScreen(viewModel: CheckoutViewModel, onCheckoutComplete: () -> Unit)
                                                         modifier = Modifier.height(56.dp)
                                                 ) {
                                                         Text(
-                                                                if (isKasbon) "Catat Kasbon"
+                                                                if (isReadOnly) "Selesai"
+                                                                else if (isKasbon) "Catat Kasbon"
                                                                 else "Bayar Lunas",
                                                                 fontWeight = FontWeight.ExtraBold
                                                         )
