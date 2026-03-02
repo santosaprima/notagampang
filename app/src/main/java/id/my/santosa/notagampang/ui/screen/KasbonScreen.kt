@@ -20,6 +20,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
   val uiState by viewModel.uiState.collectAsState()
@@ -35,6 +36,7 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
 
   var selectedRecordForPayment by remember { mutableStateOf<DebtRecordEntity?>(null) }
   var paymentAmountStr by remember { mutableStateOf("") }
+  val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
   if (uiState.isLoading) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -167,7 +169,7 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
                         selectedRecordForPayment = record
                         paymentAmountStr = ""
                       }
-              ) { Text("Terima Cicilan") }
+              ) { Text("Terima Pembayaran") }
             }
           }
         }
@@ -176,49 +178,68 @@ fun KasbonScreen(viewModel: KasbonViewModel, onBack: () -> Unit = {}) {
   }
 
   if (selectedRecordForPayment != null) {
-    AlertDialog(
+    ModalBottomSheet(
             onDismissRequest = { selectedRecordForPayment = null },
-            title = { Text("Terima Pembayaran") },
-            text = {
-              Column {
-                Text(
-                        "Sisa tagihan: ${currencyFormat.format(selectedRecordForPayment!!.remainingDebt)}"
-                )
-                Spacer(modifier = Modifier.padding(8.dp))
-                OutlinedTextField(
-                        value = paymentAmountStr,
-                        onValueChange = {
-                          if (it.all { char -> char.isDigit() }) paymentAmountStr = it
-                        },
-                        label = { Text("Jumlah Dibayar") },
-                        prefix = { Text("Rp ") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.medium
-                )
-              }
-            },
-            confirmButton = {
-              Button(
-                      onClick = {
-                        val amount = paymentAmountStr.toIntOrNull() ?: 0
-                        if (amount > 0) {
-                          viewModel.receiveInstallment(selectedRecordForPayment!!, amount)
-                        }
-                        selectedRecordForPayment = null
-                      },
-                      enabled = (paymentAmountStr.toIntOrNull() ?: 0) > 0,
-                      shape = MaterialTheme.shapes.medium,
-                      colors =
-                              ButtonDefaults.buttonColors(
-                                      containerColor = MaterialTheme.colorScheme.primary,
-                                      contentColor = MaterialTheme.colorScheme.secondary
-                              )
-              ) { Text("Simpan") }
-            },
-            dismissButton = {
-              TextButton(onClick = { selectedRecordForPayment = null }) { Text("Batal") }
-            }
-    )
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface,
+            dragHandle = { BottomSheetDefaults.DragHandle() },
+    ) {
+      Column(
+              modifier =
+                      Modifier.fillMaxWidth()
+                              .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
+                              .imePadding()
+      ) {
+        Text(
+                "Terima Pembayaran",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+                "Sisa tagihan: ${currencyFormat.format(selectedRecordForPayment!!.remainingDebt)}",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        OutlinedTextField(
+                value = paymentAmountStr,
+                onValueChange = { if (it.all { char -> char.isDigit() }) paymentAmountStr = it },
+                label = { Text("Jumlah Dibayar") },
+                prefix = { Text("Rp ") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+          OutlinedButton(
+                  onClick = { selectedRecordForPayment = null },
+                  modifier = Modifier.weight(1f),
+                  shape = MaterialTheme.shapes.medium
+          ) { Text("Batal") }
+          Button(
+                  onClick = {
+                    val amount = paymentAmountStr.toIntOrNull() ?: 0
+                    if (amount > 0) {
+                      viewModel.receiveInstallment(selectedRecordForPayment!!, amount)
+                    }
+                    selectedRecordForPayment = null
+                  },
+                  enabled = (paymentAmountStr.toIntOrNull() ?: 0) > 0,
+                  modifier = Modifier.weight(1f),
+                  shape = MaterialTheme.shapes.medium,
+                  colors =
+                          ButtonDefaults.buttonColors(
+                                  containerColor = MaterialTheme.colorScheme.primary,
+                                  contentColor = MaterialTheme.colorScheme.secondary
+                          )
+          ) { Text("Simpan") }
+        }
+      }
+    }
   }
 }
