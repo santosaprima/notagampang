@@ -1,10 +1,13 @@
 package id.my.santosa.notagampang.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Add
@@ -225,79 +228,145 @@ fun FloatingTabsScreen(
                 }
         }
 
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
         if (showAddDialog) {
-                AlertDialog(
+                ModalBottomSheet(
                         onDismissRequest = {
                                 showAddDialog = false
                                 newGroupName = ""
                         },
-                        title = { Text("Tambah Nota Baru") },
-                        text = {
-                                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        sheetState = sheetState,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        dragHandle = { BottomSheetDefaults.DragHandle() },
+                ) {
+                        Column(
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .padding(start = 24.dp, end = 24.dp, bottom = 48.dp)
+                                                .imePadding()
+                        ) {
+                                Column(
+                                        modifier =
+                                                Modifier.weight(1f, fill = false)
+                                                        .verticalScroll(rememberScrollState())
+                                ) {
+                                        Text(
+                                                "Tambah Nota Baru",
+                                                style = MaterialTheme.typography.titleLarge,
+                                                fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(24.dp))
                                         OutlinedTextField(
                                                 value = newGroupName,
                                                 onValueChange = { newGroupName = it },
                                                 label = { Text("Nama Nota (misal: Meja 1)") },
-                                                modifier = Modifier.fillMaxWidth(),
-                                                shape = MaterialTheme.shapes.medium
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .heightIn(max = 120.dp),
+                                                shape = MaterialTheme.shapes.medium,
+                                                singleLine = false,
+                                                minLines = 3,
+                                                maxLines = 3
                                         )
+
+                                        Spacer(modifier = Modifier.height(24.dp))
 
                                         Text(
                                                 "Pilihan Cepat:",
-                                                style = MaterialTheme.typography.labelLarge
+                                                style = MaterialTheme.typography.labelLarge,
+                                                color = MaterialTheme.colorScheme.primary
                                         )
 
-                                        FlowRow(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                        Spacer(modifier = Modifier.height(12.dp))
+
+                                        val chunkedSuggestions =
+                                                suggestions.chunked((suggestions.size + 2) / 3)
+                                        Box(
+                                                modifier =
+                                                        Modifier.fillMaxWidth()
+                                                                .horizontalScroll(
+                                                                        rememberScrollState()
+                                                                )
                                         ) {
-                                                suggestions.forEach { suggestion ->
-                                                        FilterChip(
-                                                                selected = false,
-                                                                onClick = {
-                                                                        newGroupName =
-                                                                                if (newGroupName
-                                                                                                .isEmpty()
-                                                                                )
-                                                                                        suggestion
-                                                                                else if (newGroupName
-                                                                                                .endsWith(
-                                                                                                        " "
+                                                Column(
+                                                        verticalArrangement =
+                                                                Arrangement.spacedBy(8.dp)
+                                                ) {
+                                                        chunkedSuggestions.forEach { rowSuggestions
+                                                                ->
+                                                                Row(
+                                                                        horizontalArrangement =
+                                                                                Arrangement
+                                                                                        .spacedBy(
+                                                                                                8.dp
+                                                                                        )
+                                                                ) {
+                                                                        rowSuggestions.forEach {
+                                                                                suggestion ->
+                                                                                FilterChip(
+                                                                                        selected =
+                                                                                                false,
+                                                                                        onClick = {
+                                                                                                newGroupName =
+                                                                                                        if (newGroupName
+                                                                                                                        .isEmpty()
+                                                                                                        )
+                                                                                                                suggestion
+                                                                                                        else if (newGroupName
+                                                                                                                        .endsWith(
+                                                                                                                                " "
+                                                                                                                        )
+                                                                                                        )
+                                                                                                                "$newGroupName$suggestion"
+                                                                                                        else
+                                                                                                                "$newGroupName $suggestion"
+                                                                                        },
+                                                                                        label = {
+                                                                                                Text(
+                                                                                                        suggestion
                                                                                                 )
+                                                                                        },
+                                                                                        shape =
+                                                                                                MaterialTheme
+                                                                                                        .shapes
+                                                                                                        .medium
                                                                                 )
-                                                                                        "$newGroupName$suggestion"
-                                                                                else
-                                                                                        "$newGroupName $suggestion"
-                                                                },
-                                                                label = { Text(suggestion) },
-                                                                shape = MaterialTheme.shapes.medium
-                                                        )
+                                                                        }
+                                                                }
+                                                        }
                                                 }
                                         }
+                                        Spacer(modifier = Modifier.height(32.dp))
                                 }
-                        },
-                        confirmButton = {
-                                Button(
-                                        onClick = {
-                                                if (newGroupName.isNotBlank()) {
-                                                        viewModel.createNewTab(newGroupName)
+
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                        OutlinedButton(
+                                                onClick = {
                                                         showAddDialog = false
                                                         newGroupName = ""
-                                                }
-                                        },
-                                        shape = MaterialTheme.shapes.medium
-                                ) { Text("Buat Nota") }
-                        },
-                        dismissButton = {
-                                TextButton(
-                                        onClick = {
-                                                showAddDialog = false
-                                                newGroupName = ""
-                                        }
-                                ) { Text("Batal") }
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                shape = MaterialTheme.shapes.medium
+                                        ) { Text("Batal") }
+                                        Button(
+                                                onClick = {
+                                                        if (newGroupName.isNotBlank()) {
+                                                                viewModel.createNewTab(newGroupName)
+                                                                showAddDialog = false
+                                                                newGroupName = ""
+                                                        }
+                                                },
+                                                enabled = newGroupName.isNotBlank(),
+                                                modifier = Modifier.weight(1f),
+                                                shape = MaterialTheme.shapes.medium
+                                        ) { Text("Buat Nota") }
+                                }
                         }
-                )
+                }
         }
 }
 
