@@ -294,7 +294,7 @@ fun CheckoutScreen(
                                                 Row(
                                                         modifier =
                                                                 Modifier.padding(
-                                                                        start = 8.dp,
+                                                                        start = 4.dp,
                                                                         top = 16.dp,
                                                                         end = 16.dp,
                                                                         bottom = 16.dp

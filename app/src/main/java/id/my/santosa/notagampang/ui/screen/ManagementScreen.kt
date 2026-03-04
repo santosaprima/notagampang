@@ -224,7 +224,9 @@ fun ManagementItemCard(name: String, detail: String, onDelete: () -> Unit) {
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                modifier =
+                        Modifier.padding(start = 16.dp, top = 16.dp, end = 4.dp, bottom = 16.dp)
+                                .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
         ) {
