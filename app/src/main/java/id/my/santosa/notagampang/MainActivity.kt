@@ -52,6 +52,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -60,7 +61,10 @@ import id.my.santosa.notagampang.data.PreferenceManager
 import id.my.santosa.notagampang.data.ThemeMode
 import id.my.santosa.notagampang.database.AppDatabase
 import id.my.santosa.notagampang.database.dao.SuggestionPresetDao
+import id.my.santosa.notagampang.database.entity.CategoryEntity
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
+import id.my.santosa.notagampang.database.entity.MenuItemEntity
+import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
 import id.my.santosa.notagampang.repository.CategoryRepository
 import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.DebtRecordRepository
@@ -77,12 +81,16 @@ import id.my.santosa.notagampang.ui.theme.NotaGampangTheme
 import id.my.santosa.notagampang.ui.util.PriorityBackHandler
 import id.my.santosa.notagampang.viewmodel.CategoryManagementViewModel
 import id.my.santosa.notagampang.viewmodel.CategoryManagementViewModelFactory
+import id.my.santosa.notagampang.viewmodel.CheckoutViewModel
+import id.my.santosa.notagampang.viewmodel.CheckoutViewModelFactory
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModelFactory
 import id.my.santosa.notagampang.viewmodel.KasbonViewModel
 import id.my.santosa.notagampang.viewmodel.KasbonViewModelFactory
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModel
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModelFactory
+import id.my.santosa.notagampang.viewmodel.OrderEntryViewModel
+import id.my.santosa.notagampang.viewmodel.OrderEntryViewModelFactory
 import id.my.santosa.notagampang.viewmodel.SettingsViewModel
 import id.my.santosa.notagampang.viewmodel.SettingsViewModelFactory
 import id.my.santosa.notagampang.viewmodel.ShiftManagementViewModel
@@ -201,7 +209,6 @@ class MainActivity : ComponentActivity() {
         val focusManager = LocalFocusManager.current
 
         val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-        // Back navigation handler
         val backHandlerEnabled =
           (
             currentScreen !is Screen.FloatingTabs ||
