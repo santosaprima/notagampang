@@ -24,7 +24,7 @@ interface CustomerGroupDao {
   fun getGroupsByStatus(status: String): Flow<List<CustomerGroupEntity>>
 
   @Query(
-          """
+    """
     SELECT cg.*, COALESCE(SUM(oi.priceAtOrder * oi.quantity), 0) as totalUnpaid, COALESCE(SUM(oi.quantity), 0) as itemCount 
     FROM customer_groups cg 
     LEFT JOIN order_items oi ON cg.id = oi.customerGroupId AND oi.status = 'Unpaid' 
@@ -36,7 +36,7 @@ interface CustomerGroupDao {
   fun getGroupsWithTotalUnpaidByStatus(status: String): Flow<List<CustomerGroupWithTotalDaoModel>>
 
   @Query(
-          """
+    """
     SELECT cg.*, COALESCE(SUM(oi.priceAtOrder * oi.quantity), 0) as totalUnpaid, COALESCE(SUM(oi.quantity), 0) as itemCount 
     FROM customer_groups cg 
     LEFT JOIN order_items oi ON cg.id = oi.customerGroupId 
@@ -45,9 +45,7 @@ interface CustomerGroupDao {
     ORDER BY cg.createdAt DESC
   """,
   )
-  fun getGroupsWithTotalByStatuses(
-          statuses: List<String>
-  ): Flow<List<CustomerGroupWithTotalDaoModel>>
+  fun getGroupsWithTotalByStatuses(statuses: List<String>): Flow<List<CustomerGroupWithTotalDaoModel>>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertGroup(group: CustomerGroupEntity): Long
@@ -56,7 +54,12 @@ interface CustomerGroupDao {
 
   @Delete suspend fun deleteGroup(group: CustomerGroupEntity)
 
-  @Query("DELETE FROM customer_groups WHERE status = 'Paid'") suspend fun deletePaidGroups()
+  @Query("DELETE FROM customer_groups WHERE status = 'Paid'")
+  suspend fun deletePaidGroups()
+
   @Query("UPDATE customer_groups SET status = :status WHERE id = :groupId")
-  suspend fun updateGroupStatus(groupId: Long, status: String)
+  suspend fun updateGroupStatus(
+    groupId: Long,
+    status: String,
+  )
 }

@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FloatingTabsViewModel(
-        private val repository: CustomerGroupRepository,
+  private val repository: CustomerGroupRepository,
 ) : ViewModel() {
   private val _searchQuery = MutableStateFlow("")
   val searchQuery: StateFlow<String> = _searchQuery
@@ -22,21 +22,24 @@ class FloatingTabsViewModel(
   val selectedTab: StateFlow<Int> = _selectedTab
 
   val filteredGroups: StateFlow<List<CustomerGroupWithTotal>> =
-          combine(
-                          _selectedTab,
-                          _searchQuery,
-                          repository.getActiveGroupsWithTotals(),
-                          repository.getInactiveGroupsWithTotals()
-                  ) { tab, query, active, inactive ->
-                    val groups = if (tab == 0) active else inactive
-                    if (query.isEmpty()) groups
-                    else groups.filter { it.group.alias.contains(query, ignoreCase = true) }
-                  }
-                  .stateIn(
-                          scope = viewModelScope,
-                          started = SharingStarted.WhileSubscribed(5000),
-                          initialValue = emptyList(),
-                  )
+    combine(
+      _selectedTab,
+      _searchQuery,
+      repository.getActiveGroupsWithTotals(),
+      repository.getInactiveGroupsWithTotals(),
+    ) { tab, query, active, inactive ->
+      val groups = if (tab == 0) active else inactive
+      if (query.isEmpty()) {
+        groups
+      } else {
+        groups.filter { it.group.alias.contains(query, ignoreCase = true) }
+      }
+    }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList(),
+      )
 
   fun onTabSelected(tabIndex: Int) {
     _selectedTab.value = tabIndex
@@ -52,17 +55,21 @@ class FloatingTabsViewModel(
     }
   }
 
-  fun mergeGroups(sourceId: Long, targetId: Long) {
+  fun mergeGroups(
+    sourceId: Long,
+    targetId: Long,
+  ) {
     viewModelScope.launch { repository.mergeGroups(sourceId, targetId) }
   }
 }
 
 class FloatingTabsViewModelFactory(
-        private val repository: CustomerGroupRepository,
+  private val repository: CustomerGroupRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(FloatingTabsViewModel::class.java)) {
-      @Suppress("UNCHECKED_CAST") return FloatingTabsViewModel(repository) as T
+      @Suppress("UNCHECKED_CAST")
+      return FloatingTabsViewModel(repository) as T
     }
     throw IllegalArgumentException("Unknown ViewModel class")
   }

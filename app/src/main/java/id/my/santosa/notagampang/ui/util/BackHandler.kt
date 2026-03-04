@@ -11,9 +11,12 @@ import androidx.compose.ui.platform.LocalDensity
  * soft keyboard closes first before the application intercepts the back gesture.
  */
 @Composable
-fun PriorityBackHandler(enabled: Boolean = true, onBack: () -> Unit) {
-    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    // Only enable the handler if the keyboard is NOT visible.
-    // This allows the system to handle the first back gesture to close the keyboard.
-    BackHandler(enabled = enabled && !isKeyboardVisible, onBack = onBack)
+fun PriorityBackHandler(
+  enabled: Boolean = true,
+  onBack: () -> Unit,
+) {
+  val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+  // Only enable the handler if the keyboard is NOT visible.
+  // This allows the system to handle the first back gesture to close the keyboard.
+  BackHandler(enabled = enabled && !isKeyboardVisible, onBack = onBack)
 }

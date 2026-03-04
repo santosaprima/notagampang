@@ -11,26 +11,27 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CategoryManagementViewModel(private val repository: CategoryRepository) : ViewModel() {
-    val categories: StateFlow<List<CategoryEntity>> =
-            repository
-                    .getAllCategories()
-                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+  val categories: StateFlow<List<CategoryEntity>> =
+    repository
+      .getAllCategories()
+      .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun addCategory(name: String) {
-        viewModelScope.launch { repository.insertCategory(CategoryEntity(name = name)) }
-    }
+  fun addCategory(name: String) {
+    viewModelScope.launch { repository.insertCategory(CategoryEntity(name = name)) }
+  }
 
-    fun deleteCategory(category: CategoryEntity) {
-        viewModelScope.launch { repository.deleteCategory(category) }
-    }
+  fun deleteCategory(category: CategoryEntity) {
+    viewModelScope.launch { repository.deleteCategory(category) }
+  }
 }
 
 class CategoryManagementViewModelFactory(private val repository: CategoryRepository) :
-        ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CategoryManagementViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST") return CategoryManagementViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
+  ViewModelProvider.Factory {
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    if (modelClass.isAssignableFrom(CategoryManagementViewModel::class.java)) {
+      @Suppress("UNCHECKED_CAST")
+      return CategoryManagementViewModel(repository) as T
     }
+    throw IllegalArgumentException("Unknown ViewModel class")
+  }
 }

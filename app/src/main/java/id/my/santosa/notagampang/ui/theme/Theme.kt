@@ -12,53 +12,56 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme =
-        darkColorScheme(
-                primary = PrimaryDark,
-                onPrimary = OnPrimaryDark,
-                primaryContainer = PrimaryContainerDark,
-                onPrimaryContainer = OnPrimaryContainerDark,
-                secondary = SecondaryDark,
-                onSecondary = OnSecondaryDark,
-                secondaryContainer = SecondaryContainerDark,
-                onSecondaryContainer = OnSecondaryContainerDark,
-                background = BackgroundDark,
-                surface = SurfaceDark,
-                onSurface = OnSurfaceDark,
-                onSurfaceVariant = OnSurfaceVariantDark
-        )
+  darkColorScheme(
+    primary = PrimaryDark,
+    onPrimary = OnPrimaryDark,
+    primaryContainer = PrimaryContainerDark,
+    onPrimaryContainer = OnPrimaryContainerDark,
+    secondary = SecondaryDark,
+    onSecondary = OnSecondaryDark,
+    secondaryContainer = SecondaryContainerDark,
+    onSecondaryContainer = OnSecondaryContainerDark,
+    background = BackgroundDark,
+    surface = SurfaceDark,
+    onSurface = OnSurfaceDark,
+    onSurfaceVariant = OnSurfaceVariantDark,
+  )
 
 private val LightColorScheme =
-        lightColorScheme(
-                primary = PrimaryLight,
-                onPrimary = OnPrimaryLight,
-                primaryContainer = PrimaryContainerLight,
-                onPrimaryContainer = OnPrimaryContainerLight,
-                secondary = SecondaryLight,
-                onSecondary = OnSecondaryLight,
-                secondaryContainer = SecondaryContainerLight,
-                onSecondaryContainer = OnSecondaryContainerLight,
-                background = BackgroundLight,
-                surface = SurfaceLight,
-                onSurface = OnSurfaceLight,
-                onSurfaceVariant = OnSurfaceVariantLight
-        )
+  lightColorScheme(
+    primary = PrimaryLight,
+    onPrimary = OnPrimaryLight,
+    primaryContainer = PrimaryContainerLight,
+    onPrimaryContainer = OnPrimaryContainerLight,
+    secondary = SecondaryLight,
+    onSecondary = OnSecondaryLight,
+    secondaryContainer = SecondaryContainerLight,
+    onSecondaryContainer = OnSecondaryContainerLight,
+    background = BackgroundLight,
+    surface = SurfaceLight,
+    onSurface = OnSurfaceLight,
+    onSurfaceVariant = OnSurfaceVariantLight,
+  )
 
 @Composable
-fun NotaGampangTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
-        }
+fun NotaGampangTheme(
+  darkTheme: Boolean = isSystemInDarkTheme(),
+  content: @Composable () -> Unit,
+) {
+  val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+  val view = LocalView.current
+  if (!view.isInEditMode) {
+    SideEffect {
+      val window = (view.context as Activity).window
+      window.statusBarColor = colorScheme.background.toArgb()
+      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
     }
+  }
 
-    MaterialTheme(
-            colorScheme = colorScheme,
-            typography = Typography,
-            shapes = Shapes,
-            content = content
-    )
+  MaterialTheme(
+    colorScheme = colorScheme,
+    typography = Typography,
+    shapes = Shapes,
+    content = content,
+  )
 }

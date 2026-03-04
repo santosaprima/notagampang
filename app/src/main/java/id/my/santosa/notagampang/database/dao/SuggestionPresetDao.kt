@@ -18,5 +18,6 @@ interface SuggestionPresetDao {
 
   @Delete suspend fun deletePreset(preset: SuggestionPresetEntity)
 
-  @Query("SELECT COUNT(*) FROM suggestion_presets") suspend fun getCount(): Int
+  @Query("SELECT COUNT(*) FROM suggestion_presets")
+  suspend fun getCount(): Int
 }

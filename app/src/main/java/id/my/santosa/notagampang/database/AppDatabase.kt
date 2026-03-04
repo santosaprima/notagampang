@@ -20,51 +20,51 @@ import id.my.santosa.notagampang.database.entity.OrderItemEntity
 import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
 
 @Database(
-        entities =
-                [
-                        CustomerGroupEntity::class,
-                        MenuItemEntity::class,
-                        OrderItemEntity::class,
-                        DebtRecordEntity::class,
-                        SuggestionPresetEntity::class,
-                        CategoryEntity::class,
-                        DebtPaymentEntity::class,
-                ],
-        version = 4,
-        exportSchema = false,
+  entities =
+    [
+      CustomerGroupEntity::class,
+      MenuItemEntity::class,
+      OrderItemEntity::class,
+      DebtRecordEntity::class,
+      SuggestionPresetEntity::class,
+      CategoryEntity::class,
+      DebtPaymentEntity::class,
+    ],
+  version = 4,
+  exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
-        abstract fun customerGroupDao(): CustomerGroupDao
+  abstract fun customerGroupDao(): CustomerGroupDao
 
-        abstract fun menuItemDao(): MenuItemDao
+  abstract fun menuItemDao(): MenuItemDao
 
-        abstract fun orderItemDao(): OrderItemDao
+  abstract fun orderItemDao(): OrderItemDao
 
-        abstract fun debtRecordDao(): DebtRecordDao
+  abstract fun debtRecordDao(): DebtRecordDao
 
-        abstract fun suggestionPresetDao(): SuggestionPresetDao
+  abstract fun suggestionPresetDao(): SuggestionPresetDao
 
-        abstract fun categoryDao(): CategoryDao
+  abstract fun categoryDao(): CategoryDao
 
-        abstract fun debtPaymentDao(): DebtPaymentDao
+  abstract fun debtPaymentDao(): DebtPaymentDao
 
-        companion object {
-                @Volatile private var instance: AppDatabase? = null
+  companion object {
+    @Volatile private var instance: AppDatabase? = null
 
-                fun getDatabase(context: Context): AppDatabase {
-                        return instance
-                                ?: synchronized(this) {
-                                        val newInstance =
-                                                Room.databaseBuilder(
-                                                                context.applicationContext,
-                                                                AppDatabase::class.java,
-                                                                "notagampang_database",
-                                                        )
-                                                        .fallbackToDestructiveMigration()
-                                                        .build()
-                                        instance = newInstance
-                                        newInstance
-                                }
-                }
+    fun getDatabase(context: Context): AppDatabase {
+      return instance
+        ?: synchronized(this) {
+          val newInstance =
+            Room.databaseBuilder(
+              context.applicationContext,
+              AppDatabase::class.java,
+              "notagampang_database",
+            )
+              .fallbackToDestructiveMigration()
+              .build()
+          instance = newInstance
+          newInstance
         }
+    }
+  }
 }
