@@ -273,7 +273,11 @@ fun FloatingTabsScreen(
                                                                         groupWithTotal.group.id,
                                                                         groupWithTotal
                                                                                 .group
-                                                                                .status == "Paid"
+                                                                                .status == "Paid" ||
+                                                                                groupWithTotal
+                                                                                        .group
+                                                                                        .status ==
+                                                                                        "Kasbon"
                                                                 )
                                                         }
                                                 )
@@ -417,7 +421,16 @@ fun FloatingTabsScreen(
                                                 },
                                                 enabled = newGroupName.isNotBlank(),
                                                 modifier = Modifier.weight(1f),
-                                                shape = MaterialTheme.shapes.medium
+                                                shape = MaterialTheme.shapes.medium,
+                                                colors =
+                                                        ButtonDefaults.buttonColors(
+                                                                containerColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary,
+                                                                contentColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSecondary
+                                                        )
                                         ) { Text("Buat Nota") }
                                 }
                         }
@@ -483,7 +496,7 @@ fun NotaCard(
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        maxLines = 1,
+                                        maxLines = 3,
                                         overflow = TextOverflow.Ellipsis
                                 )
                                 Text(
@@ -504,20 +517,40 @@ fun NotaCard(
                                 horizontalAlignment = Alignment.End,
                                 verticalArrangement = Arrangement.SpaceBetween
                         ) {
-                                val isPaid = groupWithTotal.group.status == "Paid"
-                                Surface(
-                                        color =
-                                                if (isPaid)
+                                val statusText =
+                                        when (groupWithTotal.group.status) {
+                                                "Paid" -> "SELESAI"
+                                                "Kasbon" -> "KASBON"
+                                                else -> "AKTIF"
+                                        }
+                                val statusColor =
+                                        when (groupWithTotal.group.status) {
+                                                "Paid" -> MaterialTheme.colorScheme.primary
+                                                "Kasbon" -> MaterialTheme.colorScheme.error
+                                                else ->
+                                                        MaterialTheme.colorScheme
+                                                                .onSecondaryContainer
+                                        }
+                                val containerColor =
+                                        when (groupWithTotal.group.status) {
+                                                "Paid" ->
                                                         MaterialTheme.colorScheme.primary.copy(
                                                                 alpha = 0.1f
                                                         )
-                                                else
+                                                "Kasbon" ->
+                                                        MaterialTheme.colorScheme.error.copy(
+                                                                alpha = 0.1f
+                                                        )
+                                                else ->
                                                         MaterialTheme.colorScheme.secondaryContainer
-                                                                .copy(alpha = 0.7f),
+                                                                .copy(alpha = 0.7f)
+                                        }
+                                Surface(
+                                        color = containerColor,
                                         shape = MaterialTheme.shapes.extraSmall
                                 ) {
                                         Text(
-                                                if (isPaid) "SELESAI" else "AKTIF",
+                                                statusText,
                                                 modifier =
                                                         Modifier.padding(
                                                                 horizontal = 6.dp,
@@ -525,12 +558,7 @@ fun NotaCard(
                                                         ),
                                                 style = MaterialTheme.typography.labelSmall,
                                                 fontWeight = FontWeight.Bold,
-                                                color =
-                                                        if (isPaid)
-                                                                MaterialTheme.colorScheme.primary
-                                                        else
-                                                                MaterialTheme.colorScheme
-                                                                        .onSecondaryContainer
+                                                color = statusColor
                                         )
                                 }
 

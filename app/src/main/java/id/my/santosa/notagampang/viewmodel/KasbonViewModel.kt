@@ -5,7 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.DebtPaymentEntity
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
+import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.DebtRecordRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -17,14 +20,32 @@ import kotlinx.coroutines.launch
 
 data class KasbonUiState(
         val activeDebts: List<DebtRecordEntity> = emptyList(),
+        val completedDebts: List<DebtRecordEntity> = emptyList(),
         val payments: Map<Long, List<DebtPaymentEntity>> = emptyMap(),
+        val selectedTab: Int = 0, // 0: Aktif, 1: Selesai
         val isLoading: Boolean = true,
 )
 
-class KasbonViewModel(private val debtRecordRepository: DebtRecordRepository) : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class KasbonViewModel(
+        private val debtRecordRepository: DebtRecordRepository,
+        private val customerGroupRepository: CustomerGroupRepository,
+        private val preferenceManager: id.my.santosa.notagampang.data.PreferenceManager
+) : ViewModel() {
+        private val _selectedTab = MutableStateFlow(0)
+        val whatsappPrompt: StateFlow<String> =
+                preferenceManager.whatsappPrompt.stateIn(
+                        scope = viewModelScope,
+                        started = SharingStarted.WhileSubscribed(5000),
+                        initialValue =
+                                id.my.santosa.notagampang.data.PreferenceManager
+                                        .DEFAULT_WHATSAPP_PROMPT
+                )
+
         val uiState: StateFlow<KasbonUiState> =
                 combine(
-                                debtRecordRepository.getActiveDebtRecords(),
+                                debtRecordRepository.getAllDebtRecords(),
+                                _selectedTab,
                                 debtRecordRepository.getAllDebtRecords().flatMapLatest { records ->
                                         val paymentFlows =
                                                 records.map {
@@ -36,17 +57,27 @@ class KasbonViewModel(private val debtRecordRepository: DebtRecordRepository) : 
                                                 flowOf(emptyList<List<DebtPaymentEntity>>())
                                         else combine(paymentFlows) { it.toList() }
                                 }
-                        ) { debts, allPaymentsLists ->
+                        ) {
+                                allDebts: List<DebtRecordEntity>,
+                                selectedTab: Int,
+                                allPaymentsLists: List<List<DebtPaymentEntity>> ->
+                                val active = allDebts.filter { it.status != "Lunas" }
+                                val completed = allDebts.filter { it.status == "Lunas" }
+
+                                val currentDebts = if (selectedTab == 0) active else completed
+
                                 val paymentsMap =
-                                        debts.associate { debt ->
+                                        currentDebts.associate { debt ->
                                                 debt.id to
                                                         allPaymentsLists.flatten().filter {
                                                                 it.debtRecordId == debt.id
                                                         }
                                         }
                                 KasbonUiState(
-                                        activeDebts = debts,
+                                        activeDebts = active,
+                                        completedDebts = completed,
                                         payments = paymentsMap,
+                                        selectedTab = selectedTab,
                                         isLoading = false
                                 )
                         }
@@ -55,6 +86,10 @@ class KasbonViewModel(private val debtRecordRepository: DebtRecordRepository) : 
                                 started = SharingStarted.WhileSubscribed(5000),
                                 initialValue = KasbonUiState(),
                         )
+
+        fun onTabSelected(tabIndex: Int) {
+                _selectedTab.value = tabIndex
+        }
 
         fun receiveInstallment(
                 record: DebtRecordEntity,
@@ -71,6 +106,11 @@ class KasbonViewModel(private val debtRecordRepository: DebtRecordRepository) : 
                                         status = newStatus,
                                 ),
                         )
+                        if (newRemaining <= 0) {
+                                record.groupId?.let { groupId ->
+                                        customerGroupRepository.updateGroupStatus(groupId, "Paid")
+                                }
+                        }
                         debtRecordRepository.insertDebtPayment(
                                 DebtPaymentEntity(
                                         debtRecordId = record.id,
@@ -82,12 +122,20 @@ class KasbonViewModel(private val debtRecordRepository: DebtRecordRepository) : 
         }
 }
 
-class KasbonViewModelFactory(private val debtRecordRepository: DebtRecordRepository) :
-        ViewModelProvider.Factory {
+class KasbonViewModelFactory(
+        private val debtRecordRepository: DebtRecordRepository,
+        private val customerGroupRepository: CustomerGroupRepository,
+        private val preferenceManager: id.my.santosa.notagampang.data.PreferenceManager
+) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 if (modelClass.isAssignableFrom(KasbonViewModel::class.java)) {
                         @Suppress("UNCHECKED_CAST")
-                        return KasbonViewModel(debtRecordRepository) as T
+                        return KasbonViewModel(
+                                debtRecordRepository,
+                                customerGroupRepository,
+                                preferenceManager
+                        ) as
+                                T
                 }
                 throw IllegalArgumentException("Unknown ViewModel class")
         }

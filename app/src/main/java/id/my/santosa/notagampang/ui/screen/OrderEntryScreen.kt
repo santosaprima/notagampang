@@ -58,21 +58,35 @@ fun OrderEntryScreen(
                                                                 fontWeight = FontWeight.Bold
                                                         )
                                                         if (isReadOnly) {
-                                                                Surface(
-                                                                        color =
+                                                                val statusText =
+                                                                        if (uiState.group?.status ==
+                                                                                        "Kasbon"
+                                                                        )
+                                                                                "KASBON"
+                                                                        else "SUDAH DIBAYAR"
+                                                                val statusColor =
+                                                                        if (uiState.group?.status ==
+                                                                                        "Kasbon"
+                                                                        )
+                                                                                MaterialTheme
+                                                                                        .colorScheme
+                                                                                        .error
+                                                                        else
                                                                                 MaterialTheme
                                                                                         .colorScheme
                                                                                         .primary
-                                                                                        .copy(
-                                                                                                alpha =
-                                                                                                        0.1f
-                                                                                        ),
+
+                                                                Surface(
+                                                                        color =
+                                                                                statusColor.copy(
+                                                                                        alpha = 0.1f
+                                                                                ),
                                                                         shape =
                                                                                 MaterialTheme.shapes
                                                                                         .extraSmall,
                                                                 ) {
                                                                         Text(
-                                                                                "SUDAH DIBAYAR",
+                                                                                statusText,
                                                                                 modifier =
                                                                                         Modifier.padding(
                                                                                                 horizontal =
@@ -84,10 +98,7 @@ fun OrderEntryScreen(
                                                                                         MaterialTheme
                                                                                                 .typography
                                                                                                 .labelSmall,
-                                                                                color =
-                                                                                        MaterialTheme
-                                                                                                .colorScheme
-                                                                                                .primary,
+                                                                                color = statusColor,
                                                                                 fontWeight =
                                                                                         FontWeight
                                                                                                 .Bold
@@ -272,11 +283,11 @@ fun OrderEntryScreen(
                                                                                 containerColor =
                                                                                         MaterialTheme
                                                                                                 .colorScheme
-                                                                                                .primary,
+                                                                                                .secondary,
                                                                                 contentColor =
                                                                                         MaterialTheme
                                                                                                 .colorScheme
-                                                                                                .secondary
+                                                                                                .onSecondary
                                                                         ),
                                                                 contentPadding =
                                                                         PaddingValues(

@@ -596,11 +596,11 @@ fun CheckoutScreen(
                                                                         containerColor =
                                                                                 MaterialTheme
                                                                                         .colorScheme
-                                                                                        .primary,
+                                                                                        .secondary,
                                                                         contentColor =
                                                                                 MaterialTheme
                                                                                         .colorScheme
-                                                                                        .secondary
+                                                                                        .onSecondary
                                                                 ),
                                                         modifier = Modifier.height(56.dp)
                                                 ) {

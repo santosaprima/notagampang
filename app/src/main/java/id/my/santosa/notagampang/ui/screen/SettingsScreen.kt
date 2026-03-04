@@ -4,13 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Brightness4
-import androidx.compose.material.icons.filled.BrightnessAuto
-import androidx.compose.material.icons.filled.BrightnessHigh
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -76,6 +72,98 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
                                         icon = Icons.Default.BrightnessAuto,
                                         label = "Ikuti Sistem"
                                 )
+                        }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Text(
+                        text = "Pesan WhatsApp",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                val whatsappPrompt by viewModel.whatsappPrompt.collectAsState()
+                var tempPrompt by remember { mutableStateOf(whatsappPrompt) }
+
+                LaunchedEffect(whatsappPrompt) { tempPrompt = whatsappPrompt }
+
+                Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors =
+                                CardDefaults.cardColors(
+                                        containerColor =
+                                                MaterialTheme.colorScheme.surfaceVariant.copy(
+                                                        alpha = 0.5f
+                                                )
+                                )
+                ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                                OutlinedTextField(
+                                        value = tempPrompt,
+                                        onValueChange = { tempPrompt = it },
+                                        label = { Text("Template Pesan") },
+                                        modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                        text =
+                                                "Gunakan {nama} untuk nama pelanggan dan {tagihan} untuk jumlah tagihan.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.fillMaxWidth()
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        TextButton(
+                                                onClick = {
+                                                        viewModel.setWhatsappPrompt(
+                                                                id.my.santosa.notagampang.data
+                                                                        .PreferenceManager
+                                                                        .DEFAULT_WHATSAPP_PROMPT
+                                                        )
+                                                },
+                                                colors =
+                                                        ButtonDefaults.textButtonColors(
+                                                                contentColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .error
+                                                        )
+                                        ) {
+                                                Icon(
+                                                        Icons.Default.Refresh,
+                                                        contentDescription = null
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text("Atur Ulang")
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(
+                                                onClick = {
+                                                        viewModel.setWhatsappPrompt(tempPrompt)
+                                                },
+                                                enabled = tempPrompt != whatsappPrompt,
+                                                colors =
+                                                        ButtonDefaults.buttonColors(
+                                                                containerColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .secondary,
+                                                                contentColor =
+                                                                        MaterialTheme.colorScheme
+                                                                                .onSecondary
+                                                        )
+                                        ) {
+                                                Icon(Icons.Default.Save, contentDescription = null)
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text("Simpan")
+                                        }
+                                }
                         }
                 }
 

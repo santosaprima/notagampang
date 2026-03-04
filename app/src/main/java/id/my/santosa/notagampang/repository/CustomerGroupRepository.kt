@@ -25,7 +25,7 @@ class CustomerGroupRepository(
   }
 
   fun getInactiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
-    return customerGroupDao.getGroupsWithTotalByStatus("Paid").map { groups ->
+    return customerGroupDao.getGroupsWithTotalByStatuses(listOf("Paid", "Kasbon")).map { groups ->
       groups.map { daoModel ->
         CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid, daoModel.itemCount)
       }
@@ -78,5 +78,9 @@ class CustomerGroupRepository(
     return customerGroupDao.getGroupsByStatus("Active").map { groups ->
       groups.filter { it.id != excludeGroupId }
     }
+  }
+
+  suspend fun updateGroupStatus(groupId: Long, status: String) {
+    customerGroupDao.updateGroupStatus(groupId, status)
   }
 }

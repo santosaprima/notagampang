@@ -10,7 +10,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.CallMerge
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.*
@@ -43,8 +42,16 @@ sealed class Screen {
         object Management : Screen()
         object ShiftManagement : Screen()
         object Kasbon : Screen()
-        data class OrderEntry(val groupId: Long, val isReadOnly: Boolean = false) : Screen()
-        data class Checkout(val groupId: Long, val isReadOnly: Boolean = false) : Screen()
+        data class OrderEntry(
+                val groupId: Long,
+                val isReadOnly: Boolean = false,
+                val fromKasbon: Boolean = false
+        ) : Screen()
+        data class Checkout(
+                val groupId: Long,
+                val isReadOnly: Boolean = false,
+                val fromKasbon: Boolean = false
+        ) : Screen()
         object Settings : Screen()
 }
 
@@ -110,7 +117,11 @@ class MainActivity : ComponentActivity() {
                                 val kasbonViewModel: KasbonViewModel =
                                         viewModel(
                                                 factory =
-                                                        KasbonViewModelFactory(debtRecordRepository)
+                                                        KasbonViewModelFactory(
+                                                                debtRecordRepository,
+                                                                groupRepository,
+                                                                preferenceManager
+                                                        )
                                         )
                                 val shiftManagementViewModel: ShiftManagementViewModel =
                                         viewModel(
@@ -135,8 +146,14 @@ class MainActivity : ComponentActivity() {
                                         currentScreen =
                                                 when (val s = currentScreen) {
                                                         is Screen.Checkout ->
-                                                                Screen.OrderEntry(s.groupId)
-                                                        is Screen.OrderEntry -> Screen.FloatingTabs
+                                                                Screen.OrderEntry(
+                                                                        s.groupId,
+                                                                        s.isReadOnly,
+                                                                        s.fromKasbon
+                                                                )
+                                                        is Screen.OrderEntry ->
+                                                                if (s.fromKasbon) Screen.Kasbon
+                                                                else Screen.FloatingTabs
                                                         is Screen.Settings -> Screen.FloatingTabs
                                                         is Screen.Kasbon -> Screen.FloatingTabs
                                                         is Screen.Management -> Screen.FloatingTabs
@@ -242,11 +259,16 @@ class MainActivity : ComponentActivity() {
                                                                                                                         currentScreen
                                                                                                         ) {
                                                                                                                 is Screen.OrderEntry ->
-                                                                                                                        Screen.FloatingTabs
+                                                                                                                        if (s.fromKasbon
+                                                                                                                        )
+                                                                                                                                Screen.Kasbon
+                                                                                                                        else
+                                                                                                                                Screen.FloatingTabs
                                                                                                                 is Screen.Checkout ->
                                                                                                                         Screen.OrderEntry(
                                                                                                                                 s.groupId,
-                                                                                                                                s.isReadOnly
+                                                                                                                                s.isReadOnly,
+                                                                                                                                s.fromKasbon
                                                                                                                         )
                                                                                                                 else ->
                                                                                                                         Screen.FloatingTabs
@@ -268,23 +290,6 @@ class MainActivity : ComponentActivity() {
                                                                         if (screen is
                                                                                         Screen.OrderEntry
                                                                         ) {
-                                                                                if (!screen.isReadOnly
-                                                                                ) {
-                                                                                        IconButton(
-                                                                                                onClick = {
-                                                                                                        showMergeDialog =
-                                                                                                                true
-                                                                                                }
-                                                                                        ) {
-                                                                                                Icon(
-                                                                                                        Icons.AutoMirrored
-                                                                                                                .Filled
-                                                                                                                .CallMerge,
-                                                                                                        contentDescription =
-                                                                                                                "Gabung Nota"
-                                                                                                )
-                                                                                        }
-                                                                                }
                                                                                 IconButton(
                                                                                         onClick = {
                                                                                                 showDeleteConfirm =
@@ -781,7 +786,8 @@ class MainActivity : ComponentActivity() {
                                                                                 currentScreen =
                                                                                         Screen.Checkout(
                                                                                                 screen.groupId,
-                                                                                                screen.isReadOnly
+                                                                                                screen.isReadOnly,
+                                                                                                screen.fromKasbon
                                                                                         )
                                                                         }
                                                                 )
@@ -823,6 +829,8 @@ class MainActivity : ComponentActivity() {
                                                                                         Screen.OrderEntry(
                                                                                                 groupId,
                                                                                                 isReadOnly =
+                                                                                                        true,
+                                                                                                fromKasbon =
                                                                                                         true
                                                                                         )
                                                                         }

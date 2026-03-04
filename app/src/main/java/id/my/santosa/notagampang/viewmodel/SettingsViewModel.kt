@@ -17,9 +17,19 @@ class SettingsViewModel(private val preferenceManager: PreferenceManager) : View
                     started = SharingStarted.WhileSubscribed(5000),
                     initialValue = ThemeMode.SYSTEM
             )
+    val whatsappPrompt: StateFlow<String> =
+            preferenceManager.whatsappPrompt.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = PreferenceManager.DEFAULT_WHATSAPP_PROMPT
+            )
 
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch { preferenceManager.setThemeMode(mode) }
+    }
+
+    fun setWhatsappPrompt(prompt: String) {
+        viewModelScope.launch { preferenceManager.setWhatsappPrompt(prompt) }
     }
 }
 

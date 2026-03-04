@@ -128,10 +128,12 @@ class CheckoutViewModel(
         debtRecordRepository.insertDebtRecord(debtRecord)
       }
 
-      // 3. Mark the group as Paid if all items are now paid
+      // 3. Mark the group as Paid or Kasbon if all items are now paid
       val remainingUnpaidCount = state.unpaidItems.size - itemsToPay.size
       if (remainingUnpaidCount == 0 && state.group != null) {
-        customerGroupRepository.updateGroup(state.group.copy(status = "Paid"))
+        val hasDebt = cashReceived < totalToPay
+        val newStatus = if (hasDebt) "Kasbon" else "Paid"
+        customerGroupRepository.updateGroup(state.group.copy(status = newStatus))
       }
 
       checkoutCompleteState.value = true
