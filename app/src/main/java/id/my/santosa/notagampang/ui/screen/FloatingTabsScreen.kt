@@ -1,6 +1,5 @@
 package id.my.santosa.notagampang.ui.screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.repository.CustomerGroupWithTotal
+import id.my.santosa.notagampang.ui.util.PriorityBackHandler
 import id.my.santosa.notagampang.viewmodel.FloatingTabsViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -294,7 +294,7 @@ fun FloatingTabsScreen(
         val focusManager = LocalFocusManager.current
 
         if (showAddDialog) {
-                BackHandler {
+                PriorityBackHandler {
                         focusManager.clearFocus()
                         showAddDialog = false
                         newGroupName = ""

@@ -2,7 +2,6 @@ package id.my.santosa.notagampang.ui.screen
 
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
+import id.my.santosa.notagampang.ui.util.PriorityBackHandler
 import id.my.santosa.notagampang.viewmodel.KasbonViewModel
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -54,7 +54,7 @@ fun KasbonScreen(
         val focusManager = LocalFocusManager.current
 
         if (selectedRecordForPayment != null) {
-                BackHandler {
+                PriorityBackHandler {
                         focusManager.clearFocus()
                         selectedRecordForPayment = null
                 }

@@ -1,6 +1,5 @@
 package id.my.santosa.notagampang.ui.screen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import id.my.santosa.notagampang.ui.util.PriorityBackHandler
 import id.my.santosa.notagampang.viewmodel.CategoryManagementViewModel
 import id.my.santosa.notagampang.viewmodel.MenuManagementViewModel
 import id.my.santosa.notagampang.viewmodel.SuggestionPresetsViewModel
@@ -344,7 +344,7 @@ fun CategoryManagementTab(
 @Composable
 fun AddCategorySheet(viewModel: CategoryManagementViewModel, onDismiss: () -> Unit) {
     val focusManager = LocalFocusManager.current
-    BackHandler {
+    PriorityBackHandler {
         focusManager.clearFocus()
         onDismiss()
     }
@@ -399,7 +399,7 @@ fun AddMenuSheet(
         onDismiss: () -> Unit
 ) {
     val focusManager = LocalFocusManager.current
-    BackHandler {
+    PriorityBackHandler {
         focusManager.clearFocus()
         onDismiss()
     }
@@ -502,7 +502,7 @@ fun AddMenuSheet(
 @Composable
 fun AddPresetSheet(viewModel: SuggestionPresetsViewModel, onDismiss: () -> Unit) {
     val focusManager = LocalFocusManager.current
-    BackHandler {
+    PriorityBackHandler {
         focusManager.clearFocus()
         onDismiss()
     }

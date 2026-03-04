@@ -2,7 +2,6 @@ package id.my.santosa.notagampang
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.clickable
@@ -17,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,6 +32,7 @@ import id.my.santosa.notagampang.repository.MenuItemRepository
 import id.my.santosa.notagampang.repository.OrderRepository
 import id.my.santosa.notagampang.ui.screen.*
 import id.my.santosa.notagampang.ui.theme.NotaGampangTheme
+import id.my.santosa.notagampang.ui.util.PriorityBackHandler
 import id.my.santosa.notagampang.viewmodel.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
                                                 showMergeDialog
 
                                 // Back navigation handler
-                                BackHandler(enabled = backHandlerEnabled) {
+                                PriorityBackHandler(enabled = backHandlerEnabled) {
                                         focusManager.clearFocus()
                                         if (showAddManagementSheet) {
                                                 showAddManagementSheet = false
