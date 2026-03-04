@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Brightness4
@@ -26,8 +24,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -39,11 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import id.my.santosa.notagampang.data.ThemeMode
+import id.my.santosa.notagampang.ui.component.settings.ThemeOption
 import id.my.santosa.notagampang.viewmodel.SettingsViewModel
 
 @Composable
@@ -201,61 +196,6 @@ fun SettingsScreen(viewModel: SettingsViewModel) {
       text = "NotaGampang v1.0.0",
       style = MaterialTheme.typography.bodyMedium,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-  }
-}
-
-@Composable
-fun ThemeOption(
-  selected: Boolean,
-  onSelect: () -> Unit,
-  icon: ImageVector,
-  label: String,
-) {
-  Row(
-    modifier =
-      Modifier.fillMaxWidth()
-        .height(56.dp)
-        .selectable(
-          selected = selected,
-          onClick = onSelect,
-          role = Role.RadioButton,
-        )
-        .padding(horizontal = 16.dp),
-    verticalAlignment = Alignment.CenterVertically,
-  ) {
-    Icon(
-      imageVector = icon,
-      contentDescription = null,
-      tint =
-        if (selected) {
-          MaterialTheme.colorScheme.secondary
-        } else {
-          MaterialTheme.colorScheme.onSurfaceVariant
-        },
-      modifier = Modifier.size(24.dp),
-    )
-    Spacer(modifier = Modifier.width(16.dp))
-    Text(
-      text = label,
-      style = MaterialTheme.typography.bodyLarge,
-      color =
-        if (selected) {
-          MaterialTheme.colorScheme.secondary
-        } else {
-          MaterialTheme.colorScheme.onSurface
-        },
-      fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-      modifier = Modifier.weight(1f),
-    )
-    RadioButton(
-      selected = selected,
-      // handled by row selectable
-      onClick = null,
-      colors =
-        RadioButtonDefaults.colors(
-          selectedColor = MaterialTheme.colorScheme.secondary,
-        ),
     )
   }
 }
