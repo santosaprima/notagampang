@@ -143,12 +143,14 @@ class MainActivity : ComponentActivity() {
                                 val scope = rememberCoroutineScope()
                                 val focusManager = LocalFocusManager.current
 
+                                val isKeyboardVisible =
+                                        WindowInsets.ime.getBottom(LocalDensity.current) > 0
                                 // Back navigation handler
                                 val backHandlerEnabled =
-                                        currentScreen !is Screen.FloatingTabs ||
+                                        (currentScreen !is Screen.FloatingTabs ||
                                                 showAddManagementSheet ||
                                                 showDeleteConfirm ||
-                                                showMergeDialog
+                                                showMergeDialog) && !isKeyboardVisible
 
                                 // Back navigation handler
                                 PriorityBackHandler(enabled = backHandlerEnabled) {
