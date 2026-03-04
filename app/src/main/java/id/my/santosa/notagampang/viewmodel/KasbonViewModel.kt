@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -33,6 +34,9 @@ class KasbonViewModel(
         private val preferenceManager: id.my.santosa.notagampang.data.PreferenceManager
 ) : ViewModel() {
         private val _selectedTab = MutableStateFlow(0)
+        private val _searchQuery = MutableStateFlow("")
+        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
         val whatsappPrompt: StateFlow<String> =
                 preferenceManager.whatsappPrompt.stateIn(
                         scope = viewModelScope,
@@ -56,13 +60,27 @@ class KasbonViewModel(
                                         if (paymentFlows.isEmpty())
                                                 flowOf(emptyList<List<DebtPaymentEntity>>())
                                         else combine(paymentFlows) { it.toList() }
-                                }
+                                },
+                                _searchQuery
                         ) {
                                 allDebts: List<DebtRecordEntity>,
                                 selectedTab: Int,
-                                allPaymentsLists: List<List<DebtPaymentEntity>> ->
-                                val active = allDebts.filter { it.status != "Lunas" }
-                                val completed = allDebts.filter { it.status == "Lunas" }
+                                allPaymentsLists: List<List<DebtPaymentEntity>>,
+                                query: String ->
+                                val filteredDebts =
+                                        if (query.isEmpty()) {
+                                                allDebts
+                                        } else {
+                                                allDebts.filter {
+                                                        it.customerName.contains(
+                                                                query,
+                                                                ignoreCase = true
+                                                        )
+                                                }
+                                        }
+
+                                val active = filteredDebts.filter { it.status != "Lunas" }
+                                val completed = filteredDebts.filter { it.status == "Lunas" }
 
                                 val currentDebts = if (selectedTab == 0) active else completed
 
@@ -89,6 +107,10 @@ class KasbonViewModel(
 
         fun onTabSelected(tabIndex: Int) {
                 _selectedTab.value = tabIndex
+        }
+
+        fun onSearchQueryChange(query: String) {
+                _searchQuery.value = query
         }
 
         fun receiveInstallment(

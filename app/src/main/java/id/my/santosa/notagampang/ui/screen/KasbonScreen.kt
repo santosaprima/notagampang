@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -33,6 +34,7 @@ fun KasbonScreen(
         onViewNote: (Long) -> Unit = {}
 ) {
         val uiState by viewModel.uiState.collectAsState()
+        val searchQuery by viewModel.searchQuery.collectAsState()
         val whatsappPrompt by viewModel.whatsappPrompt.collectAsState()
         val context = LocalContext.current
         val currencyFormat = remember {
@@ -115,6 +117,45 @@ fun KasbonScreen(
                                                                                 .onSurfaceVariant
                                                 )
                                         }
+                                )
+                        }
+
+                        Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)) {
+                                OutlinedTextField(
+                                        value = searchQuery,
+                                        onValueChange = { viewModel.onSearchQueryChange(it) },
+                                        placeholder = { Text("Cari nama pelanggan...") },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = MaterialTheme.shapes.medium,
+                                        leadingIcon = {
+                                                Icon(
+                                                        androidx.compose.material.icons.Icons
+                                                                .Default.Search,
+                                                        contentDescription = null,
+                                                        tint =
+                                                                MaterialTheme.colorScheme
+                                                                        .onSurfaceVariant
+                                                )
+                                        },
+                                        singleLine = true,
+                                        colors =
+                                                OutlinedTextFieldDefaults.colors(
+                                                        focusedContainerColor =
+                                                                MaterialTheme.colorScheme
+                                                                        .surfaceVariant.copy(
+                                                                        alpha = 0.5f
+                                                                ),
+                                                        unfocusedContainerColor =
+                                                                MaterialTheme.colorScheme
+                                                                        .surfaceVariant.copy(
+                                                                        alpha = 0.5f
+                                                                ),
+                                                        focusedBorderColor =
+                                                                MaterialTheme.colorScheme.primary,
+                                                        unfocusedBorderColor =
+                                                                androidx.compose.ui.graphics.Color
+                                                                        .Transparent
+                                                )
                                 )
                         }
 
@@ -529,7 +570,7 @@ fun KasbonScreen(
                                                                                                         }
                                                                                                 ) {
                                                                                                         Text(
-                                                                                                                "Tagih WA",
+                                                                                                                "Tagih lewat WhatsApp",
                                                                                                                 textAlign =
                                                                                                                         TextAlign
                                                                                                                                 .Center
