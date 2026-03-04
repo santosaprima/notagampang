@@ -375,7 +375,7 @@ fun MenuItemRow(
                                                                         tint =
                                                                                 MaterialTheme
                                                                                         .colorScheme
-                                                                                        .primary
+                                                                                        .secondary
                                                                 )
                                                         }
                                                 }
@@ -392,7 +392,7 @@ fun MenuItemRow(
 
                                         Surface(
                                                 modifier = Modifier.size(32.dp),
-                                                color = MaterialTheme.colorScheme.primary,
+                                                color = MaterialTheme.colorScheme.secondary,
                                                 shape = MaterialTheme.shapes.small,
                                                 onClick = onIncrease
                                         ) {
@@ -403,7 +403,7 @@ fun MenuItemRow(
                                                                 modifier = Modifier.size(20.dp),
                                                                 tint =
                                                                         MaterialTheme.colorScheme
-                                                                                .secondary
+                                                                                .onSecondary
                                                         )
                                                 }
                                         }

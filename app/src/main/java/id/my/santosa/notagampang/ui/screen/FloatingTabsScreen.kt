@@ -179,8 +179,9 @@ fun FloatingTabsScreen(
                         FloatingActionButton(
                                 onClick = { showAddDialog = true },
                                 modifier = Modifier.offset(y = (-30).dp - bottomPadding),
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.secondary, // Amber Gold
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor =
+                                        MaterialTheme.colorScheme.onSecondary, // White text/icon
                                 shape = MaterialTheme.shapes.large,
                                 content = {
                                         Icon(Icons.Default.Add, contentDescription = "Tambah Nota")

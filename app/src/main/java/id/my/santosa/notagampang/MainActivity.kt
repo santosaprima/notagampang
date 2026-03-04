@@ -370,7 +370,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 selectedIconColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .secondary,
+                                                                                                                .onSecondary,
                                                                                                 selectedTextColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -386,7 +386,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .primary
+                                                                                                                .secondary
                                                                                         )
                                                                 )
                                                                 NavigationBarItem(
@@ -411,7 +411,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 selectedIconColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .secondary,
+                                                                                                                .onSecondary,
                                                                                                 selectedTextColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -427,7 +427,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .primary
+                                                                                                                .secondary
                                                                                         )
                                                                 )
                                                                 NavigationBarItem(
@@ -452,7 +452,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 selectedIconColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .secondary,
+                                                                                                                .onSecondary,
                                                                                                 selectedTextColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -468,7 +468,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .primary
+                                                                                                                .secondary
                                                                                         )
                                                                 )
                                                                 NavigationBarItem(
@@ -493,7 +493,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 selectedIconColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .secondary,
+                                                                                                                .onSecondary,
                                                                                                 selectedTextColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
@@ -509,7 +509,7 @@ class MainActivity : ComponentActivity() {
                                                                                                 indicatorColor =
                                                                                                         MaterialTheme
                                                                                                                 .colorScheme
-                                                                                                                .primary
+                                                                                                                .secondary
                                                                                         )
                                                                 )
                                                         }
