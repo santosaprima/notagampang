@@ -276,6 +276,10 @@ fun CategoryManagementTab(
     }
 
     if (showDeleteDialog && categoryToDelete != null) {
+        PriorityBackHandler {
+            showDeleteDialog = false
+            categoryToDelete = null
+        }
         AlertDialog(
                 onDismissRequest = {
                     showDeleteDialog = false
