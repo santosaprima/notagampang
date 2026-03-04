@@ -10,7 +10,7 @@ val PrimaryContainerLight = Color(0xFF1E293B) // Slightly lighter than primary
 val OnPrimaryContainerLight = Color(0xFFF8FAFC)
 
 val SecondaryLight = Color(0xFFD97706) // Deeper Amber Gold
-val OnSecondaryLight = Color(0xFFFFFFFF)
+val OnSecondaryLight = Color(0xFF451A03) // Darker color for better contrast on Gold
 val SecondaryContainerLight = Color(0xFFFEF3C7)
 val OnSecondaryContainerLight = Color(0xFF92400E)
 

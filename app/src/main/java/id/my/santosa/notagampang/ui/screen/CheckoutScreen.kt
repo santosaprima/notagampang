@@ -574,42 +574,79 @@ fun CheckoutScreen(
                                                         )
                                                 }
 
-                                                Button(
-                                                        onClick = {
-                                                                if (isReadOnly) {
-                                                                        onCheckoutComplete()
-                                                                } else {
+                                                if (isReadOnly || !isKasbon) {
+                                                        Button(
+                                                                onClick = {
+                                                                        if (isReadOnly) {
+                                                                                onCheckoutComplete()
+                                                                        } else {
+                                                                                viewModel
+                                                                                        .processCheckout(
+                                                                                                cashReceived,
+                                                                                                customerName,
+                                                                                                customerPhone,
+                                                                                        )
+                                                                        }
+                                                                },
+                                                                enabled =
+                                                                        isReadOnly ||
+                                                                                uiState.selectedItemIds
+                                                                                        .isNotEmpty(),
+                                                                shape = MaterialTheme.shapes.medium,
+                                                                colors =
+                                                                        ButtonDefaults.buttonColors(
+                                                                                containerColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .secondary,
+                                                                                contentColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .onSecondary
+                                                                        ),
+                                                                modifier = Modifier.height(56.dp)
+                                                        ) {
+                                                                Text(
+                                                                        if (isReadOnly) "Selesai"
+                                                                        else "Bayar Lunas",
+                                                                        fontWeight =
+                                                                                FontWeight.ExtraBold
+                                                                )
+                                                        }
+                                                } else {
+                                                        OutlinedButton(
+                                                                onClick = {
                                                                         viewModel.processCheckout(
                                                                                 cashReceived,
                                                                                 customerName,
                                                                                 customerPhone,
                                                                         )
-                                                                }
-                                                        },
-                                                        enabled =
-                                                                isReadOnly ||
+                                                                },
+                                                                enabled =
                                                                         uiState.selectedItemIds
                                                                                 .isNotEmpty(),
-                                                        shape = MaterialTheme.shapes.medium,
-                                                        colors =
-                                                                ButtonDefaults.buttonColors(
-                                                                        containerColor =
+                                                                shape = MaterialTheme.shapes.medium,
+                                                                border =
+                                                                        androidx.compose.foundation
+                                                                                .BorderStroke(
+                                                                                        1.dp,
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .primary
+                                                                                ),
+                                                                modifier = Modifier.height(56.dp)
+                                                        ) {
+                                                                Text(
+                                                                        "Catat Kasbon",
+                                                                        fontWeight =
+                                                                                FontWeight
+                                                                                        .ExtraBold,
+                                                                        color =
                                                                                 MaterialTheme
                                                                                         .colorScheme
-                                                                                        .secondary,
-                                                                        contentColor =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .onSecondary
-                                                                ),
-                                                        modifier = Modifier.height(56.dp)
-                                                ) {
-                                                        Text(
-                                                                if (isReadOnly) "Selesai"
-                                                                else if (isKasbon) "Catat Kasbon"
-                                                                else "Bayar Lunas",
-                                                                fontWeight = FontWeight.ExtraBold
-                                                        )
+                                                                                        .primary
+                                                                )
+                                                        }
                                                 }
                                         }
                                 }
