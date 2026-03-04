@@ -415,6 +415,35 @@ fun AddMenuSheet(
                 color = MaterialTheme.colorScheme.onSurface
         )
 
+        ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                    value = category,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Kategori") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
+            )
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                categories.forEach { selection ->
+                    DropdownMenuItem(
+                            text = { Text(selection) },
+                            onClick = {
+                                category = selection
+                                expanded = false
+                            }
+                    )
+                }
+            }
+        }
+
         OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -425,46 +454,15 @@ fun AddMenuSheet(
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
         )
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedTextField(
-                    value = priceStr,
-                    onValueChange = { if (it.all { char -> char.isDigit() }) priceStr = it },
-                    label = { Text("Harga (Rp)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.weight(1.4f),
-                    shape = MaterialTheme.shapes.medium
-            )
-
-            ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded },
-                    modifier = Modifier.weight(1f)
-            ) {
-                OutlinedTextField(
-                        value = category,
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Kategori") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                        },
-                        modifier = Modifier.menuAnchor(),
-                        shape = MaterialTheme.shapes.medium
-                )
-                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                    categories.forEach { selection ->
-                        DropdownMenuItem(
-                                text = { Text(selection) },
-                                onClick = {
-                                    category = selection
-                                    expanded = false
-                                }
-                        )
-                    }
-                }
-            }
-        }
+        OutlinedTextField(
+                value = priceStr,
+                onValueChange = { if (it.all { char -> char.isDigit() }) priceStr = it },
+                label = { Text("Harga (Rp)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium
+        )
 
         Button(
                 onClick = {

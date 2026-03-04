@@ -570,7 +570,7 @@ fun KasbonScreen(
                                                                                                         }
                                                                                                 ) {
                                                                                                         Text(
-                                                                                                                "Tagih lewat WhatsApp",
+                                                                                                                "Tagih Lewat WhatsApp",
                                                                                                                 textAlign =
                                                                                                                         TextAlign
                                                                                                                                 .Center

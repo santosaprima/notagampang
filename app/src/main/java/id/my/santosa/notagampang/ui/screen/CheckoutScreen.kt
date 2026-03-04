@@ -401,12 +401,30 @@ fun CheckoutScreen(
                                                                         Text("Uang Diterima (Rp)")
                                                                 },
                                                                 modifier = Modifier.fillMaxWidth(),
-                                                                keyboardOptions =
-                                                                        KeyboardOptions(
-                                                                                keyboardType =
-                                                                                        KeyboardType
-                                                                                                .Number
-                                                                        ),
+                                                                trailingIcon = {
+                                                                        TextButton(
+                                                                                onClick = {
+                                                                                        cashReceivedStr =
+                                                                                                totalToPay
+                                                                                                        .toString()
+                                                                                }
+                                                                        ) {
+                                                                                Text(
+                                                                                        "UANG PAS",
+                                                                                        style =
+                                                                                                MaterialTheme
+                                                                                                        .typography
+                                                                                                        .labelSmall,
+                                                                                        fontWeight =
+                                                                                                FontWeight
+                                                                                                        .Bold,
+                                                                                        color =
+                                                                                                MaterialTheme
+                                                                                                        .colorScheme
+                                                                                                        .secondary
+                                                                                )
+                                                                        }
+                                                                },
                                                                 singleLine = true,
                                                                 shape = MaterialTheme.shapes.medium
                                                         )
