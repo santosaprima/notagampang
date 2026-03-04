@@ -528,10 +528,10 @@ class MainActivity : ComponentActivity() {
                                                                         ),
                                                                 containerColor =
                                                                         MaterialTheme.colorScheme
-                                                                                .primary,
+                                                                                .secondary,
                                                                 contentColor =
                                                                         MaterialTheme.colorScheme
-                                                                                .secondary
+                                                                                .onSecondary
                                                         ) { Icon(Icons.Default.Add, "Tambah") }
                                                 }
                                         }

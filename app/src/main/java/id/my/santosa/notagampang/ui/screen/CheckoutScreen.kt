@@ -292,7 +292,13 @@ fun CheckoutScreen(
                                                         )
                                         ) {
                                                 Row(
-                                                        modifier = Modifier.padding(16.dp),
+                                                        modifier =
+                                                                Modifier.padding(
+                                                                        start = 8.dp,
+                                                                        top = 16.dp,
+                                                                        end = 16.dp,
+                                                                        bottom = 16.dp
+                                                                ),
                                                         verticalAlignment =
                                                                 Alignment.CenterVertically,
                                                 ) {
@@ -614,7 +620,7 @@ fun CheckoutScreen(
                                                                 )
                                                         }
                                                 } else {
-                                                        OutlinedButton(
+                                                        Button(
                                                                 onClick = {
                                                                         viewModel.processCheckout(
                                                                                 cashReceived,
@@ -626,25 +632,23 @@ fun CheckoutScreen(
                                                                         uiState.selectedItemIds
                                                                                 .isNotEmpty(),
                                                                 shape = MaterialTheme.shapes.medium,
-                                                                border =
-                                                                        androidx.compose.foundation
-                                                                                .BorderStroke(
-                                                                                        1.dp,
+                                                                colors =
+                                                                        ButtonDefaults.buttonColors(
+                                                                                containerColor =
                                                                                         MaterialTheme
                                                                                                 .colorScheme
-                                                                                                .primary
-                                                                                ),
+                                                                                                .secondary,
+                                                                                contentColor =
+                                                                                        MaterialTheme
+                                                                                                .colorScheme
+                                                                                                .onSecondary
+                                                                        ),
                                                                 modifier = Modifier.height(56.dp)
                                                         ) {
                                                                 Text(
                                                                         "Catat Kasbon",
                                                                         fontWeight =
-                                                                                FontWeight
-                                                                                        .ExtraBold,
-                                                                        color =
-                                                                                MaterialTheme
-                                                                                        .colorScheme
-                                                                                        .primary
+                                                                                FontWeight.ExtraBold
                                                                 )
                                                         }
                                                 }
