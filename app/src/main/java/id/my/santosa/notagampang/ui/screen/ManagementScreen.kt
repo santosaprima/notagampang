@@ -1,5 +1,6 @@
 package id.my.santosa.notagampang.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -340,6 +343,11 @@ fun CategoryManagementTab(
 
 @Composable
 fun AddCategorySheet(viewModel: CategoryManagementViewModel, onDismiss: () -> Unit) {
+    val focusManager = LocalFocusManager.current
+    BackHandler {
+        focusManager.clearFocus()
+        onDismiss()
+    }
     var name by remember { mutableStateOf("") }
     Column(
             modifier = Modifier.fillMaxWidth().padding(24.dp).padding(bottom = 32.dp),
@@ -390,6 +398,11 @@ fun AddMenuSheet(
         categoryViewModel: CategoryManagementViewModel,
         onDismiss: () -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+    BackHandler {
+        focusManager.clearFocus()
+        onDismiss()
+    }
     val categoriesEntities by categoryViewModel.categories.collectAsState()
     val categories = categoriesEntities.map { it.name }
 
@@ -488,6 +501,11 @@ fun AddMenuSheet(
 
 @Composable
 fun AddPresetSheet(viewModel: SuggestionPresetsViewModel, onDismiss: () -> Unit) {
+    val focusManager = LocalFocusManager.current
+    BackHandler {
+        focusManager.clearFocus()
+        onDismiss()
+    }
     var label by remember { mutableStateOf("") }
     Column(
             modifier = Modifier.fillMaxWidth().padding(24.dp).padding(bottom = 32.dp),

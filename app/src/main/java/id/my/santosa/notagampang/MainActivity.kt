@@ -140,6 +140,7 @@ class MainActivity : ComponentActivity() {
                                 var showDeleteConfirm by remember { mutableStateOf(false) }
                                 var showMergeDialog by remember { mutableStateOf(false) }
                                 val scope = rememberCoroutineScope()
+                                val focusManager = LocalFocusManager.current
 
                                 // Back navigation handler
                                 val backHandlerEnabled =
@@ -150,6 +151,7 @@ class MainActivity : ComponentActivity() {
 
                                 // Back navigation handler
                                 BackHandler(enabled = backHandlerEnabled) {
+                                        focusManager.clearFocus()
                                         if (showAddManagementSheet) {
                                                 showAddManagementSheet = false
                                         } else if (showDeleteConfirm) {

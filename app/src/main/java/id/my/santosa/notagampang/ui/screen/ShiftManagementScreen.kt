@@ -1,5 +1,6 @@
 package id.my.santosa.notagampang.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +20,10 @@ fun ShiftManagementScreen(
 ) {
         val uiState by viewModel.uiState.collectAsState()
         var showConfirmDialog by remember { mutableStateOf(false) }
+
+        if (showConfirmDialog) {
+                BackHandler { showConfirmDialog = false }
+        }
 
         val currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("id-ID"))
         currencyFormat.setMaximumFractionDigits(0)

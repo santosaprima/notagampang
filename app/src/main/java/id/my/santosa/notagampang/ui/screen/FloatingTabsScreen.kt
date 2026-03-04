@@ -1,5 +1,6 @@
 package id.my.santosa.notagampang.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -289,6 +291,15 @@ fun FloatingTabsScreen(
         }
 
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val focusManager = LocalFocusManager.current
+
+        if (showAddDialog) {
+                BackHandler {
+                        focusManager.clearFocus()
+                        showAddDialog = false
+                        newGroupName = ""
+                }
+        }
 
         if (showAddDialog) {
                 ModalBottomSheet(
