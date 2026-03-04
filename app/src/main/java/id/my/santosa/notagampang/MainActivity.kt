@@ -142,25 +142,44 @@ class MainActivity : ComponentActivity() {
                                 val scope = rememberCoroutineScope()
 
                                 // Back navigation handler
-                                BackHandler(enabled = currentScreen !is Screen.FloatingTabs) {
-                                        currentScreen =
-                                                when (val s = currentScreen) {
-                                                        is Screen.Checkout ->
-                                                                Screen.OrderEntry(
-                                                                        s.groupId,
-                                                                        s.isReadOnly,
-                                                                        s.fromKasbon
-                                                                )
-                                                        is Screen.OrderEntry ->
-                                                                if (s.fromKasbon) Screen.Kasbon
-                                                                else Screen.FloatingTabs
-                                                        is Screen.Settings -> Screen.FloatingTabs
-                                                        is Screen.Kasbon -> Screen.FloatingTabs
-                                                        is Screen.Management -> Screen.FloatingTabs
-                                                        is Screen.ShiftManagement ->
-                                                                Screen.FloatingTabs
-                                                        else -> Screen.FloatingTabs
-                                                }
+                                val backHandlerEnabled =
+                                        currentScreen !is Screen.FloatingTabs ||
+                                                showAddManagementSheet ||
+                                                showDeleteConfirm ||
+                                                showMergeDialog
+
+                                // Back navigation handler
+                                BackHandler(enabled = backHandlerEnabled) {
+                                        if (showAddManagementSheet) {
+                                                showAddManagementSheet = false
+                                        } else if (showDeleteConfirm) {
+                                                showDeleteConfirm = false
+                                        } else if (showMergeDialog) {
+                                                showMergeDialog = false
+                                        } else {
+                                                currentScreen =
+                                                        when (val s = currentScreen) {
+                                                                is Screen.Checkout ->
+                                                                        Screen.OrderEntry(
+                                                                                s.groupId,
+                                                                                s.isReadOnly,
+                                                                                s.fromKasbon
+                                                                        )
+                                                                is Screen.OrderEntry ->
+                                                                        if (s.fromKasbon)
+                                                                                Screen.Kasbon
+                                                                        else Screen.FloatingTabs
+                                                                is Screen.Settings ->
+                                                                        Screen.FloatingTabs
+                                                                is Screen.Kasbon ->
+                                                                        Screen.FloatingTabs
+                                                                is Screen.Management ->
+                                                                        Screen.FloatingTabs
+                                                                is Screen.ShiftManagement ->
+                                                                        Screen.FloatingTabs
+                                                                else -> Screen.FloatingTabs
+                                                        }
+                                        }
                                 }
 
                                 val presets by

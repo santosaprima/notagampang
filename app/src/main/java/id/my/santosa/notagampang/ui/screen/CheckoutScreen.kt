@@ -425,6 +425,12 @@ fun CheckoutScreen(
                                                                                 )
                                                                         }
                                                                 },
+                                                                keyboardOptions =
+                                                                        KeyboardOptions(
+                                                                                keyboardType =
+                                                                                        KeyboardType
+                                                                                                .Number
+                                                                        ),
                                                                 singleLine = true,
                                                                 shape = MaterialTheme.shapes.medium
                                                         )
@@ -505,6 +511,17 @@ fun CheckoutScreen(
                                                                                                         .Words
                                                                                 ),
                                                                 )
+                                                                val isPhoneValid =
+                                                                        remember(customerPhone) {
+                                                                                customerPhone
+                                                                                        .isEmpty() ||
+                                                                                        customerPhone
+                                                                                                .matches(
+                                                                                                        Regex(
+                                                                                                                "^(?:\\+62|62|0)8[1-9][0-9]{7,10}$"
+                                                                                                        )
+                                                                                                )
+                                                                        }
                                                                 OutlinedTextField(
                                                                         value = customerPhone,
                                                                         onValueChange = {
@@ -527,6 +544,15 @@ fun CheckoutScreen(
                                                                                                         .Phone
                                                                                 ),
                                                                         singleLine = true,
+                                                                        isError = !isPhoneValid,
+                                                                        supportingText =
+                                                                                if (!isPhoneValid) {
+                                                                                        {
+                                                                                                Text(
+                                                                                                        "Format nomor tidak valid (Contoh: 0812...)"
+                                                                                                )
+                                                                                        }
+                                                                                } else null
                                                                 )
                                                         }
                                                 }
