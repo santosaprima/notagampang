@@ -5,9 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.database.entity.OrderItemEntity
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
-import id.my.santosa.notagampang.repository.MenuItemRepository
-import id.my.santosa.notagampang.repository.OrderRepository
+import id.my.santosa.notagampang.repository.ICategoryRepository
+import id.my.santosa.notagampang.repository.ICustomerGroupRepository
+import id.my.santosa.notagampang.repository.IMenuItemRepository
+import id.my.santosa.notagampang.repository.IOrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,10 +28,10 @@ data class OrderEntryUiState(
 
 class OrderEntryViewModel(
   private val groupId: Long,
-  private val groupRepository: CustomerGroupRepository,
-  private val menuRepository: MenuItemRepository,
-  private val orderRepository: OrderRepository,
-  private val categoryRepository: id.my.santosa.notagampang.repository.CategoryRepository,
+  private val groupRepository: ICustomerGroupRepository,
+  private val menuRepository: IMenuItemRepository,
+  private val orderRepository: IOrderRepository,
+  private val categoryRepository: ICategoryRepository,
 ) : ViewModel() {
   private val selectedCategoryState = MutableStateFlow("Semua")
 
@@ -175,10 +176,10 @@ class OrderEntryViewModel(
 
 class OrderEntryViewModelFactory(
   private val groupId: Long,
-  private val groupRepository: CustomerGroupRepository,
-  private val menuRepository: MenuItemRepository,
-  private val orderRepository: OrderRepository,
-  private val categoryRepository: id.my.santosa.notagampang.repository.CategoryRepository,
+  private val groupRepository: ICustomerGroupRepository,
+  private val menuRepository: IMenuItemRepository,
+  private val orderRepository: IOrderRepository,
+  private val categoryRepository: ICategoryRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(OrderEntryViewModel::class.java)) {

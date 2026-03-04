@@ -12,11 +12,11 @@ data class CustomerGroupWithTotal(
   val itemCount: Int,
 )
 
-class CustomerGroupRepository(
+class CustomerGroupRepositoryImpl(
   private val customerGroupDao: CustomerGroupDao,
   private val orderItemDao: OrderItemDao,
-) {
-  fun getActiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
+) : ICustomerGroupRepository {
+  override fun getActiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
     return customerGroupDao.getGroupsWithTotalUnpaidByStatus("Active").map { groups ->
       groups.map { daoModel ->
         CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid, daoModel.itemCount)
@@ -24,7 +24,7 @@ class CustomerGroupRepository(
     }
   }
 
-  fun getInactiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
+  override fun getInactiveGroupsWithTotals(): Flow<List<CustomerGroupWithTotal>> {
     return customerGroupDao.getGroupsWithTotalByStatuses(listOf("Paid", "Kasbon")).map { groups ->
       groups.map { daoModel ->
         CustomerGroupWithTotal(daoModel.group, daoModel.totalUnpaid, daoModel.itemCount)
@@ -32,11 +32,11 @@ class CustomerGroupRepository(
     }
   }
 
-  suspend fun getGroupById(groupId: Long): CustomerGroupEntity? = customerGroupDao.getGroupById(groupId)
+  override suspend fun getGroupById(groupId: Long): CustomerGroupEntity? = customerGroupDao.getGroupById(groupId)
 
-  fun getGroupFlowById(groupId: Long): Flow<CustomerGroupEntity?> = customerGroupDao.getGroupFlowById(groupId)
+  override fun getGroupFlowById(groupId: Long): Flow<CustomerGroupEntity?> = customerGroupDao.getGroupFlowById(groupId)
 
-  suspend fun createNewGroup(alias: String): Long {
+  override suspend fun createNewGroup(alias: String): Long {
     val newGroup =
       CustomerGroupEntity(
         alias = alias,
@@ -46,20 +46,20 @@ class CustomerGroupRepository(
     return customerGroupDao.insertGroup(newGroup)
   }
 
-  suspend fun updateGroup(group: CustomerGroupEntity) {
+  override suspend fun updateGroup(group: CustomerGroupEntity) {
     customerGroupDao.updateGroup(group)
   }
 
-  suspend fun deleteGroup(groupId: Long) {
+  override suspend fun deleteGroup(groupId: Long) {
     val group = customerGroupDao.getGroupById(groupId)
     if (group != null) {
       customerGroupDao.deleteGroup(group)
     }
   }
 
-  suspend fun deletePaidGroups() = customerGroupDao.deletePaidGroups()
+  override suspend fun deletePaidGroups() = customerGroupDao.deletePaidGroups()
 
-  suspend fun mergeGroups(
+  override suspend fun mergeGroups(
     sourceId: Long,
     targetId: Long,
   ) {
@@ -72,13 +72,13 @@ class CustomerGroupRepository(
     }
   }
 
-  fun getOtherActiveGroups(excludeGroupId: Long): Flow<List<CustomerGroupEntity>> {
+  override fun getOtherActiveGroups(excludeGroupId: Long): Flow<List<CustomerGroupEntity>> {
     return customerGroupDao.getGroupsByStatus("Active").map { groups ->
       groups.filter { it.id != excludeGroupId }
     }
   }
 
-  suspend fun updateGroupStatus(
+  override suspend fun updateGroupStatus(
     groupId: Long,
     status: String,
   ) {

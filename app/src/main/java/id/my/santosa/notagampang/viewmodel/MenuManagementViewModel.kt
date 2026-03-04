@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
-import id.my.santosa.notagampang.repository.MenuItemRepository
+import id.my.santosa.notagampang.repository.IMenuItemRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MenuManagementViewModel(
-  private val repository: MenuItemRepository,
+  private val repository: IMenuItemRepository,
 ) : ViewModel() {
   val menuItems: StateFlow<List<MenuItemEntity>> =
     repository
@@ -42,7 +42,7 @@ class MenuManagementViewModel(
 }
 
 class MenuManagementViewModelFactory(
-  private val repository: MenuItemRepository,
+  private val repository: IMenuItemRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(MenuManagementViewModel::class.java)) {

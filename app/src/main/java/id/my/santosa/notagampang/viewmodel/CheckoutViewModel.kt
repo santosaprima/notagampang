@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
 import id.my.santosa.notagampang.database.entity.OrderItemEntity
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
-import id.my.santosa.notagampang.repository.DebtRecordRepository
-import id.my.santosa.notagampang.repository.OrderRepository
+import id.my.santosa.notagampang.repository.ICustomerGroupRepository
+import id.my.santosa.notagampang.repository.IDebtRecordRepository
+import id.my.santosa.notagampang.repository.IOrderRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,9 +28,9 @@ data class CheckoutUiState(
 
 class CheckoutViewModel(
   private val groupId: Long,
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+  private val orderRepository: IOrderRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
 ) : ViewModel() {
   private val selectedItemIdsState = MutableStateFlow<Set<Long>>(emptySet())
   private val groupState = MutableStateFlow<CustomerGroupEntity?>(null)
@@ -143,9 +143,9 @@ class CheckoutViewModel(
 
 class CheckoutViewModelFactory(
   private val groupId: Long,
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+  private val orderRepository: IOrderRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(CheckoutViewModel::class.java)) {

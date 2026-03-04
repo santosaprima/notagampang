@@ -3,8 +3,8 @@ package id.my.santosa.notagampang.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
 import id.my.santosa.notagampang.repository.CustomerGroupWithTotal
+import id.my.santosa.notagampang.repository.ICustomerGroupRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class FloatingTabsViewModel(
-  private val repository: CustomerGroupRepository,
+  private val repository: ICustomerGroupRepository,
 ) : ViewModel() {
   private val _searchQuery = MutableStateFlow("")
   val searchQuery: StateFlow<String> = _searchQuery
@@ -64,7 +64,7 @@ class FloatingTabsViewModel(
 }
 
 class FloatingTabsViewModelFactory(
-  private val repository: CustomerGroupRepository,
+  private val repository: ICustomerGroupRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(FloatingTabsViewModel::class.java)) {

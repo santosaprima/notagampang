@@ -57,19 +57,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import id.my.santosa.notagampang.data.PreferenceManager
 import id.my.santosa.notagampang.data.ThemeMode
-import id.my.santosa.notagampang.database.AppDatabase
-import id.my.santosa.notagampang.database.dao.SuggestionPresetDao
 import id.my.santosa.notagampang.database.entity.CategoryEntity
 import id.my.santosa.notagampang.database.entity.CustomerGroupEntity
 import id.my.santosa.notagampang.database.entity.MenuItemEntity
 import id.my.santosa.notagampang.database.entity.SuggestionPresetEntity
-import id.my.santosa.notagampang.repository.CategoryRepository
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
-import id.my.santosa.notagampang.repository.DebtRecordRepository
-import id.my.santosa.notagampang.repository.MenuItemRepository
-import id.my.santosa.notagampang.repository.OrderRepository
+import id.my.santosa.notagampang.repository.ICategoryRepository
+import id.my.santosa.notagampang.repository.IMenuItemRepository
+import id.my.santosa.notagampang.repository.ISuggestionPresetRepository
 import id.my.santosa.notagampang.ui.screen.CheckoutScreen
 import id.my.santosa.notagampang.ui.screen.FloatingTabsScreen
 import id.my.santosa.notagampang.ui.screen.KasbonScreen
@@ -130,17 +125,12 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
 
-    val db = AppDatabase.getDatabase(applicationContext)
-    val groupRepository = CustomerGroupRepository(db.customerGroupDao(), db.orderItemDao())
-    val menuRepository = MenuItemRepository(db.menuItemDao())
-    val orderRepository = OrderRepository(db.orderItemDao())
-    val debtRecordRepository = DebtRecordRepository(db.debtRecordDao(), db.debtPaymentDao())
-    val categoryRepository = CategoryRepository(db.categoryDao(), db.menuItemDao())
-    val preferenceManager = PreferenceManager(applicationContext)
+    val container = (application as NotaGampangApplication).container
+    val preferenceManager = container.preferenceManager
 
-    seedDefaultMenu(menuRepository)
-    seedDefaultCategories(categoryRepository)
-    seedDefaultPresets(db.suggestionPresetDao())
+    seedDefaultMenu(container.menuItemRepository)
+    seedDefaultCategories(container.categoryRepository)
+    seedDefaultPresets(container.suggestionPresetRepository)
 
     setContent {
       val settingsViewModel: SettingsViewModel =
@@ -158,36 +148,36 @@ class MainActivity : ComponentActivity() {
           viewModel(
             factory =
               FloatingTabsViewModelFactory(
-                groupRepository,
+                container.customerGroupRepository,
               ),
           )
         val menuManagementViewModel: MenuManagementViewModel =
           viewModel(
             factory =
               MenuManagementViewModelFactory(
-                menuRepository,
+                container.menuItemRepository,
               ),
           )
         val presetsViewModel: SuggestionPresetsViewModel =
           viewModel(
             factory =
               SuggestionPresetsViewModelFactory(
-                db.suggestionPresetDao(),
+                container.suggestionPresetRepository,
               ),
           )
         val categoryManagementViewModel: CategoryManagementViewModel =
           viewModel(
             factory =
               CategoryManagementViewModelFactory(
-                categoryRepository,
+                container.categoryRepository,
               ),
           )
         val kasbonViewModel: KasbonViewModel =
           viewModel(
             factory =
               KasbonViewModelFactory(
-                debtRecordRepository,
-                groupRepository,
+                container.debtRecordRepository,
+                container.customerGroupRepository,
                 preferenceManager,
               ),
           )
@@ -195,9 +185,9 @@ class MainActivity : ComponentActivity() {
           viewModel(
             factory =
               ShiftManagementViewModelFactory(
-                orderRepository,
-                groupRepository,
-                debtRecordRepository,
+                container.orderRepository,
+                container.customerGroupRepository,
+                container.debtRecordRepository,
               ),
           )
 
@@ -490,7 +480,8 @@ class MainActivity : ComponentActivity() {
         ) { innerPadding ->
           val otherGroups by
             if (currentScreen is Screen.OrderEntry) {
-              groupRepository
+              container
+                .customerGroupRepository
                 .getOtherActiveGroups(
                   (currentScreen as Screen.OrderEntry).groupId,
                 )
@@ -522,7 +513,7 @@ class MainActivity : ComponentActivity() {
                     val screen = currentScreen
                     if (screen is Screen.OrderEntry) {
                       scope.launch {
-                        groupRepository.deleteGroup(
+                        container.customerGroupRepository.deleteGroup(
                           screen.groupId,
                         )
                         currentScreen = Screen.FloatingTabs
@@ -574,11 +565,15 @@ class MainActivity : ComponentActivity() {
                             )
                             .clickable {
                               scope.launch {
-                                groupRepository.mergeGroups(
-                                  (currentScreen as Screen.OrderEntry)
-                                    .groupId,
-                                  other.id,
-                                )
+                                container.customerGroupRepository
+                                  .mergeGroups(
+                                    (
+                                      currentScreen as
+                                        Screen.OrderEntry
+                                    )
+                                      .groupId,
+                                    other.id,
+                                  )
                                 currentScreen = Screen.FloatingTabs
                               }
                               showMergeDialog = false
@@ -660,10 +655,10 @@ class MainActivity : ComponentActivity() {
                     factory =
                       OrderEntryViewModelFactory(
                         screen.groupId,
-                        groupRepository,
-                        menuRepository,
-                        orderRepository,
-                        categoryRepository,
+                        container.customerGroupRepository,
+                        container.menuItemRepository,
+                        container.orderRepository,
+                        container.categoryRepository,
                       ),
                   )
                 OrderEntryScreen(
@@ -686,9 +681,9 @@ class MainActivity : ComponentActivity() {
                     factory =
                       CheckoutViewModelFactory(
                         screen.groupId,
-                        orderRepository,
-                        groupRepository,
-                        debtRecordRepository,
+                        container.orderRepository,
+                        container.customerGroupRepository,
+                        container.debtRecordRepository,
                       ),
                   )
                 CheckoutScreen(
@@ -730,7 +725,7 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  private fun seedDefaultMenu(repository: MenuItemRepository) {
+  private fun seedDefaultMenu(repository: IMenuItemRepository) {
     val scope = MainScope()
     scope.launch(Dispatchers.IO) {
       if (repository.getCount() == 0) {
@@ -804,7 +799,7 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  private fun seedDefaultCategories(repository: CategoryRepository) {
+  private fun seedDefaultCategories(repository: ICategoryRepository) {
     val scope = MainScope()
     scope.launch(Dispatchers.IO) {
       if (repository.getCount() == 0) {
@@ -822,10 +817,10 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  private fun seedDefaultPresets(dao: SuggestionPresetDao) {
+  private fun seedDefaultPresets(repository: ISuggestionPresetRepository) {
     val scope = MainScope()
     scope.launch(Dispatchers.IO) {
-      if (dao.getCount() == 0) {
+      if (repository.getCount() == 0) {
         val presets =
           listOf(
             SuggestionPresetEntity(label = "Ojol"),
@@ -838,7 +833,7 @@ class MainActivity : ComponentActivity() {
             SuggestionPresetEntity(label = "Bu Bos"),
           )
         for (preset in presets) {
-          dao.insertPreset(preset)
+          repository.insertPreset(preset)
         }
       }
     }

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.DebtPaymentEntity
 import id.my.santosa.notagampang.database.entity.DebtRecordEntity
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
-import id.my.santosa.notagampang.repository.DebtRecordRepository
+import id.my.santosa.notagampang.repository.ICustomerGroupRepository
+import id.my.santosa.notagampang.repository.IDebtRecordRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,8 +30,8 @@ data class KasbonUiState(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class KasbonViewModel(
-  private val debtRecordRepository: DebtRecordRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
   private val preferenceManager: id.my.santosa.notagampang.data.PreferenceManager,
 ) : ViewModel() {
   private val selectedTabState = MutableStateFlow(0)
@@ -148,8 +148,8 @@ class KasbonViewModel(
 }
 
 class KasbonViewModelFactory(
-  private val debtRecordRepository: DebtRecordRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
   private val preferenceManager: id.my.santosa.notagampang.data.PreferenceManager,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {

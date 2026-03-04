@@ -3,9 +3,9 @@ package id.my.santosa.notagampang.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import id.my.santosa.notagampang.repository.CustomerGroupRepository
-import id.my.santosa.notagampang.repository.DebtRecordRepository
-import id.my.santosa.notagampang.repository.OrderRepository
+import id.my.santosa.notagampang.repository.ICustomerGroupRepository
+import id.my.santosa.notagampang.repository.IDebtRecordRepository
+import id.my.santosa.notagampang.repository.IOrderRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -22,9 +22,9 @@ data class ShiftManagementUiState(
 }
 
 class ShiftManagementViewModel(
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+  private val orderRepository: IOrderRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
 ) : ViewModel() {
   val uiState: StateFlow<ShiftManagementUiState> =
     combine(
@@ -54,9 +54,9 @@ class ShiftManagementViewModel(
 }
 
 class ShiftManagementViewModelFactory(
-  private val orderRepository: OrderRepository,
-  private val customerGroupRepository: CustomerGroupRepository,
-  private val debtRecordRepository: DebtRecordRepository,
+  private val orderRepository: IOrderRepository,
+  private val customerGroupRepository: ICustomerGroupRepository,
+  private val debtRecordRepository: IDebtRecordRepository,
 ) : ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(ShiftManagementViewModel::class.java)) {

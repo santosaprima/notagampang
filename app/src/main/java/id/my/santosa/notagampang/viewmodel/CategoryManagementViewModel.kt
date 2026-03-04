@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.my.santosa.notagampang.database.entity.CategoryEntity
-import id.my.santosa.notagampang.repository.CategoryRepository
+import id.my.santosa.notagampang.repository.ICategoryRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class CategoryManagementViewModel(private val repository: CategoryRepository) : ViewModel() {
+class CategoryManagementViewModel(private val repository: ICategoryRepository) : ViewModel() {
   val categories: StateFlow<List<CategoryEntity>> =
     repository
       .getAllCategories()
@@ -25,7 +25,7 @@ class CategoryManagementViewModel(private val repository: CategoryRepository) : 
   }
 }
 
-class CategoryManagementViewModelFactory(private val repository: CategoryRepository) :
+class CategoryManagementViewModelFactory(private val repository: ICategoryRepository) :
   ViewModelProvider.Factory {
   override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(CategoryManagementViewModel::class.java)) {
