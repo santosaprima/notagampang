@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
@@ -20,8 +22,25 @@ android {
     vectorDrawables { useSupportLibrary = true }
   }
 
+  signingConfigs {
+    create("release") {
+      val props = Properties()
+      val localPropertiesFile = rootProject.file("local.properties")
+      if (localPropertiesFile.exists()) {
+        props.load(localPropertiesFile.inputStream())
+      }
+
+      val storeFileProperty = props.getProperty("signing.storeFile")
+      storeFile = if (storeFileProperty != null) file(rootProject.file(storeFileProperty)) else null
+      storePassword = props.getProperty("signing.storePassword")
+      keyAlias = props.getProperty("signing.keyAlias")
+      keyPassword = props.getProperty("signing.keyPassword")
+    }
+  }
+
   buildTypes {
     release {
+      signingConfig = signingConfigs.getByName("release")
       isMinifyEnabled = true
       proguardFiles(
         getDefaultProguardFile("proguard-android-optimize.txt"),
